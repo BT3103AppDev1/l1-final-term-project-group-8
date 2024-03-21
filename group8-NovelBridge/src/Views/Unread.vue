@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header-component></header-component>
+        <layout-header></layout-header>
         <div class = "unread-section" v-if="!loading">
             <h2>Unread</h2>
             <book-list :books = "unreadBooks"></book-list>
@@ -9,13 +9,13 @@
     </div>
 </template>
 <script>
-import header-component from './Header.vue';
+import LayoutHeader from './LayoutHeader.vue';
 import BookList from './BookList.vue';
 import { db } from '@/firebase';
 export default {
     name: 'Unread',
     components: {
-        'header-component': header-component,
+        'layout-header': LayoutHeader,
         'book-list': BookList
 
     },
