@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header-component></header-component>
+        <layout-header></layout-header>
         <div class = "ongoing-section" v-if="!loading">
             <h2>Ongoing</h2>
             <book-list :books = "ongoingBooks"></book-list>
@@ -9,13 +9,13 @@
     </div>
 </template>
 <script>
-import header-component from './Header.vue';
+import LayoutHeader from './layoutHeader.vue';
 import BookList from './BookList.vue';
 import { db } from '@/firebase';
 export default {
     name: 'Ongoing',
     components: {
-        'header-component': header-component,
+        'layout-header': LayoutHeader,
         'book-list': BookList
 
     },

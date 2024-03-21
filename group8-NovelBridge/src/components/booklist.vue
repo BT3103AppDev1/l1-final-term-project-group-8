@@ -1,7 +1,7 @@
 <template>
     <div class="library">
       <div class="book-list">
-        <div class="book-card" v-for="book in books" :key="book.id">
+        <div class="book-card" v-for="book in booklist" :key="book.id">
           <img :src="book.cover" alt="Book cover" class="book-cover">
           <div class="book-details">
             <h2 class="book-title">{{ book.title }}</h2>
@@ -13,27 +13,38 @@
         </div>
       </div>
     </div>
+    <Top10Books :books="books"></Top10Books>
   </template>
   
   <script>
+  import Top10Books from './Top10Books.vue';
+
   export default {
-    data() {
-      return {
-        books: [
-          // Populate this array with your books data
-          {
-            id: 1,
-            title: 'The Kamogawa Food Detectives',
-            author: 'Hishashi Kashiwai',
-            category: 'Mystery',
-            pages: '159',
-            cover: 'path-to-kamogawa-food-detectives-cover.jpg'
-          },
-          // ... other book objects
-        ]
-      };
+    name: "booklist",
+    props: {
+      booklist: Array
     }
-  };
+    /*computed: {
+      /*romanceBooks() {
+        return this.books.filter(book => book.category.includes("Romance"))
+        .slice(0,10)},
+
+      mysteryBooks(){
+        return this.books.filter(book => book.category.includes("Mystery"))
+        .slice(0,10)},
+      }
+      romanceBooks() {
+        const filteredBooks = this.books.filter(book => book.category === "Romance").slice(0, 10);
+        console.log('Romance Books:', filteredBooks);
+        return filteredBooks;
+      },
+      mysteryBooks() {
+        const filteredBooks = this.books.filter(book => book.category === "Mystery").slice(0, 10);
+        console.log('Mystery Books:', filteredBooks);
+        return filteredBooks;
+      }
+     }*/
+    };
   </script>
   
   <style scoped>
@@ -42,7 +53,6 @@
     flex-wrap: wrap;
     justify-content: space-around;
     padding: 20px;
-    background-color: #f1f1f1;
   }
   
   .book-list {
