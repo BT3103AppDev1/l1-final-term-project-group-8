@@ -99,22 +99,19 @@
   }
   
   .actions button {
-    /* Styles for the action buttons */
+    border-radius: 10px; 
+    width: 120px; 
+    text-align: center; 
   }
 
   .read-btn {
     background-color: orange; /* Set the background color to orange */
-    /* Add any other styling you need for the button, such as padding, border, etc. */
-    padding: 5px 20px; /* Example padding */
     border: none; /* Remove border */
-    border-radius: 5px; /* Optional: Adds rounded corners to the button */
     margin-right: 10px;
 }
 
 .bookmark-btn {
-  background-color: white;
-  padding: 5px 20px; /* Adjust the padding to change the size */
-  border-radius: 5px; /* Example border radius */
+  background-color: white;  
   border-color: darkgray;
   margin-right: 10px;
 }
