@@ -1,11 +1,10 @@
 <template>
   <LayoutHeader></LayoutHeader>
+  
   <MovingBanner></MovingBanner>
-
 
   <div class="main-content">
     <section class="recommendation-section">
-      <h2>Recommendation</h2>
       <Recommendation :books="limitedBooks"></Recommendation>
     </section>
 

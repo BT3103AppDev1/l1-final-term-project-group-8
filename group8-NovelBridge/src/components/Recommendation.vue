@@ -1,6 +1,5 @@
 <template>
-    <div class="recommendation-section">
-      <h2>Recommendation</h2>
+    <div class="recommendation-section"> Recommendation </div>
       <div class="book-list">
         <div v-for="(book, index) in books" :key="index" class="book-item">
           <img :src="book.cover" :alt="book.title" class="book-cover" />
@@ -8,7 +7,6 @@
           <div class="book-author">{{ book.author }}</div>
         </div>
       </div>
-    </div>
   </template>
   
   <script>
@@ -22,7 +20,11 @@
   
   <style scoped>
   .recommendation-section {
-    /* Styling for the section */
+    margin-top: 1%;
+    margin-left: 2%;
+    font-size: 19px;
+    font-weight: bolder;
+  /* Rest of your styling */
   }
   
   .book-list {
@@ -44,12 +46,12 @@
     /* Additional styling */
   }
   
-  .book-title {
-    /* Styling for the book title */
-  }
+  /*.book-title {
+    /* Styling for the book title 
+  }*/
   
-  .book-author {
-    /* Styling for the book author */
-  }
+  /*.book-author {
+    /* Styling for the book author 
+  }*/
   </style>
   

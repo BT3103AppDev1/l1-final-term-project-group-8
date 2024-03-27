@@ -54,7 +54,8 @@ export default {
     font-size: 18px;
     color: #333; /* Change this to match your site's color scheme */
     margin-bottom: 5%;
-    font-weight: bold;
+    font-weight: bolder;
+    
 }
 .category-sections {
   display: flex;

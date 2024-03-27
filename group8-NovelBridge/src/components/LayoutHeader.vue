@@ -1,7 +1,7 @@
 <template>
     <header class="header-layout">
         <div class ="logo">
-            <a href="https://imgur.com/wSokIet"><img src="https://i.imgur.com/wSokIet.png" title="source: imgur.com"/></a>
+            <img src="https://i.imgur.com/wSokIet.png" title="source: imgur.com"/>
             <h1>Novel Bridge</h1>
         </div>
         <div class="status-bar">
