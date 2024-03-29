@@ -13,6 +13,30 @@ const routes = [
         name: 'SignUp',
         component: SignUp
       }
+      {
+        path: '/',
+        redirect: '/completed',
+      },
+      {
+        path: '/completed',
+        name: 'Completed',
+        component: Completed
+      },
+      {
+        path: '/ongoing',
+        name: 'Ongoing',
+        component: Ongoing
+      },
+      {
+        path: '/unread',
+        name: 'Unread',
+        component: Unread
+      },
+      {
+        path: '/bookmarked',
+        name: 'BookMarked',
+        component: Bookmarked,
+      },
 ]
 
 const router = createRouter({

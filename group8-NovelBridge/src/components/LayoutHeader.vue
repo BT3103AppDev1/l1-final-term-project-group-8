@@ -8,7 +8,7 @@
             
             <router-link to="/">Home</router-link>
             <a href="/library">Library</a>
-            <a href="/bookmarked">BookMarked</a>
+            <router-link to="/bookmarked">BookMarked</router-link>
         </div>
         <div class = "search-bar">
             <input type="text" placeholder="Search for a book...">
@@ -21,7 +21,6 @@
 </template>
 
 <script>
-
     export default {
         name:"LayoutHeader",
     }
