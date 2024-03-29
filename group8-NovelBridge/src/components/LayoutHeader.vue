@@ -5,7 +5,8 @@
             <h1>Novel Bridge</h1>
         </div>
         <div class="status-bar">
-            <a href="/home">Home</a>
+            
+            <router-link to="/">Home</router-link>
             <a href="/library">Library</a>
             <a href="/bookmarked">BookMarked</a>
         </div>
@@ -13,8 +14,8 @@
             <input type="text" placeholder="Search for a book...">
         </div>
         <div class="login-signup">
-            <h4 @click="onLogin">Log in</h4>
-            <h4 @click="onSignUp">Sign Up</h4>
+            <h4 >Login</h4>
+            <router-link to="/signup">Sign Up</router-link>
         </div>
     </header>
 </template>
@@ -23,10 +24,6 @@
 
     export default {
         name:"LayoutHeader",
-        methods:{
-            onLogin() {},
-            atSignUp() {}
-        }
     }
 </script>
 

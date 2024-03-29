@@ -13,10 +13,17 @@
         </div>
       </div>
     </div>
-    <Top10Books :books="books"></Top10Books>
   </template>
   
+  <script>
+  export default {
+    name:'booklist',
+    props: {
+      books:Array
+    }
+  }
 
+  </script>
   
   <style scoped>
   .library {
