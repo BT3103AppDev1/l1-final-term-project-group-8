@@ -1,13 +1,5 @@
 <template>
-    <div class="main-content">
-      <!-- Include layout header -->
-      <layout-header></layout-header>
-          <!-- Navigation Links -->
-    <nav class="navigation-links">
-      <router-link to="/completed" class="nav-link">Completed</router-link>
-      <router-link to="/ongoing" class="nav-link">Ongoing</router-link>
-      <router-link to="/unread" class="nav-link">Unread</router-link>
-    </nav>
+    <Bookmarked/>
       <!-- Display book cards -->
       <section class="book-section">
         <div class="book-list">
@@ -18,18 +10,17 @@
           </div>
         </div>
       </section>
-    </div>
   </template>
-  
+
   <script>
-  import LayoutHeader from '@/components/LayoutHeader.vue';
+  import Bookmarked from '@/Views/BookMarked.vue';
   // Import the book cover image or define it here
   import bookCover from '@/assets/bookcover.jpg';
   
   export default {
     name: 'Home',
     components: {
-      'layout-header': LayoutHeader,
+      Bookmarked
     },
     data() {
       return {
@@ -51,7 +42,7 @@
     },
   };
   </script>
-  
+
   <style scoped>
   .main-content {
     display: flex;
