@@ -1,13 +1,5 @@
 <template>
-    <div class="main-content">
-      <!-- Include layout header -->
-      <layout-header></layout-header>
-          <!-- Navigation Links -->
-    <nav class="navigation-links">
-      <router-link to="/completed" class="nav-link">Completed</router-link>
-      <router-link to="/ongoing" class="nav-link">Ongoing</router-link>
-      <router-link to="/unread" class="nav-link">Unread</router-link>
-    </nav>
+    <Bookmarked/>
       <!-- Display book cards -->
       <section class="book-section">
         <div class="book-list">
@@ -18,18 +10,16 @@
           </div>
         </div>
       </section>
-    </div>
   </template>
-  
+
   <script>
-  import LayoutHeader from '@/components/LayoutHeader.vue';
-  // Import the book cover image or define it here
+  import Bookmarked from '@/Views/BookMarked.vue';
   import bookCover from '@/assets/bookcover.jpg';
   
   export default {
-    name: 'Home',
+    name: 'Completed',
     components: {
-      'layout-header': LayoutHeader,
+      Bookmarked
     },
     data() {
       return {
@@ -37,12 +27,12 @@
         books: [
           {
             id: 1,
-            title: 'The Kamogawa Food Detectives-Com',
+            title: 'The Kamogawa Food Detectives-complete',
             cover: bookCover,
           },
           {
             id: 2,
-            title: 'Icebreaker-Com',
+            title: 'Icebreaker-complete',
             cover: bookCover,
           },
           // Add more books as needed
@@ -51,7 +41,7 @@
     },
   };
   </script>
-  
+
   <style scoped>
   .main-content {
     display: flex;
@@ -104,4 +94,3 @@
     margin: 0; /* Reset margin */
   }
   </style>
-  

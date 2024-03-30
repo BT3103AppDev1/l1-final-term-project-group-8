@@ -5,17 +5,16 @@
             <h1>Novel Bridge</h1>
         </div>
         <div class="status-bar">
-            
-            <router-link to="/">Home</router-link>
+            <router-link to="/" class="header-link" >Home</router-link>
             <a href="/library">Library</a>
-            <router-link to="/bookmarked">BookMarked</router-link>
+            <router-link to="/bookmarked" class="header-link" active-class="active">Bookmarked</router-link>
         </div>
         <div class = "search-bar">
             <input type="text" placeholder="Search for a book...">
         </div>
         <div class="login-signup">
-            <h4 >Login</h4>
-            <router-link to="/signup">Sign Up</router-link>
+            <router-link to="/login" class="login-link">Login</router-link>
+            <router-link to="/signup" class="login-link">Sign Up</router-link>
         </div>
     </header>
 </template>
@@ -50,13 +49,17 @@
         gap:7vw;
     }
     
-    a {
+    .header-link {
     text-decoration: none;
     color:black;
-  }
+    }
 
-    a:hover{
+    .header-link:hover{
         text-decoration:underline;
+    }
+
+    .active{
+        font-weight: bolder;
     }
     
     .search-bar input{
@@ -79,7 +82,12 @@
         content:"|";        
     }
 
-    .login-signup h4:hover{
+    .login-link {
+        text-decoration: none;
+        color:black;
+    }
+
+    .login-link:hover{
         color:#FF6E05;
     }
 

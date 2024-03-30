@@ -1,6 +1,12 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import Homepage from '@/Views/Homepage.vue'
 import SignUp from '@/components/SignUp.vue'
+import BookMarked from '@/Views/BookMarked.vue'
+import Completed from '@/components/Completed.vue'
+import Ongoing from '@/components/Ongoing.vue'
+import Unread from '@/components/Unread.vue'
+import Login from '@/components/Login.vue'
+
 
 const routes = [
     {
@@ -9,13 +15,9 @@ const routes = [
         component: Homepage
       },
       {
-        path: '/signup',
-        name: 'SignUp',
-        component: SignUp
-      }
-      {
-        path: '/',
-        redirect: '/completed',
+        path: '/bookmarked',
+        name: 'BookMarked',
+        component: BookMarked
       },
       {
         path: '/completed',
@@ -33,10 +35,16 @@ const routes = [
         component: Unread
       },
       {
-        path: '/bookmarked',
-        name: 'BookMarked',
-        component: Bookmarked,
+        path: '/login',
+        name: 'Login',
+        component: Login
       },
+      {
+        path: '/signup',
+        name: 'SignUp',
+        component: SignUp
+      },
+      
 ]
 
 const router = createRouter({

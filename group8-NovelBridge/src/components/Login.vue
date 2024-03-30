@@ -7,7 +7,7 @@
     <router-link to="/" class="backhome-link">> Back to Novel Bridge</router-link>
     <form class="signup-form" @submit.prevent="submitForm">
       <h1>Welcome to Novel Bridge</h1>
-      <p>Sign Up</p>
+      <p>Login</p>
       <div class="form-group">
         <label for="email">Enter your email address</label>
         <input type="email" id="email" v-model="user.email" placeholder="Email address" required>
@@ -16,29 +16,19 @@
         <label for="password">Enter your password</label>
         <input type="password" id="password" v-model="user.password" placeholder="Password" required>
       </div>
-      <div class="form-group">
-        <label for="confirm-password">Re-enter your password</label>
-        <input type="password" id="confirm-password" v-model="user.confirmPassword" placeholder="Confirm Password" required>
-      </div>
-      <button type="submit">Sign Up</button>
+      <button type="submit">Login</button>
     </form>
   </div>
 </template>
 
 <script>
-import LayoutHeader from './LayoutHeader.vue';
-
-export default {
-  name: 'SignUp',
-  components:{
-    LayoutHeader
-  },
+export default{
+  name: 'Login',
   data() {
     return {
       user: {
         email: '',
         password: '',
-        confirmPassword: ''
       },
     };
   },
@@ -63,7 +53,7 @@ export default {
 }
 
 .signup-form {
-  padding:1em;
+  padding: 1em;
   background: white;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -93,7 +83,7 @@ label{
     width:180px;
 }
 
-#email, #password, #confirm-password{
+#email, #password{
     width:230px;
     height:30px;
     margin-left:8%;
