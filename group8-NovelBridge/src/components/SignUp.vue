@@ -30,9 +30,6 @@ import LayoutHeader from './LayoutHeader.vue';
 
 export default {
   name: 'SignUp',
-  components:{
-    LayoutHeader
-  },
   data() {
     return {
       user: {
