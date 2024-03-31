@@ -1,10 +1,25 @@
 <template>
-  <router-view/>
+    <LayoutHeader></LayoutHeader>
+  
+    <MovingBanner></MovingBanner>
+  
+    <div class="main-content">
+      <section class="recommendation-section">
+        <Recommendation :books="limitedBooks"></Recommendation>
+      </section>
+  
+      <section class="top-10-books-section">
+        <Top10Books :books="books"></Top10Books>
+      </section>
+    </div>
 </template>
 
-
 <script setup>
-/*import bookCover from '@/assets/bookcover.jpg'
+import LayoutHeader from '@/components/LayoutHeader.vue'
+import MovingBanner from '@/components/MovingBanner.vue'
+import Top10Books from '@/components/Top10Books.vue'
+import Recommendation from '@/components/Recommendation.vue'
+import bookCover from '@/assets/bookcover.jpg'
 
 const books = [
   {
@@ -44,8 +59,7 @@ const books = [
   
 ];
 
-const limitedBooks = books.slice(0, 7);*/
-
+const limitedBooks = books.slice(0, 7);
 </script>
 
 <style scoped>

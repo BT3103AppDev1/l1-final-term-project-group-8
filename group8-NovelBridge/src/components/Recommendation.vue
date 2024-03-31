@@ -15,7 +15,7 @@
     props: {
         books: Array
     },
-}
+  }
   </script>
   
   <style scoped>
