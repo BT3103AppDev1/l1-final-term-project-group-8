@@ -36,7 +36,6 @@
               <option>한국어</option>
               <!-- ... other languages ... -->
             </select>
-          
           <br><br><button type="submit" @click.prevent="saveProfile">Save</button>
         </div>
     
@@ -148,13 +147,13 @@ input[type="radio"] {
   appearance: none;
   width: 24px; /* Adjust the size as needed */
   height: 24px; /* Adjust the size as needed */
-  border: 4px solid rgb(255, 153, 0); /* Adjust the border color as needed */
+  border: 4px solid rgb(255, 153, 0);
   border-radius: 50%;
   cursor: pointer;
 }
 
 input[type="radio"]:checked {
-  background-color: rgb(255, 153, 0); /* Adjust the checked color as needed */
+  background-color: rgb(255, 153, 0); 
 }
 
  
