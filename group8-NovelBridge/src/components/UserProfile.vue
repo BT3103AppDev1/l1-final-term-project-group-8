@@ -1,6 +1,5 @@
 <template>
     <div class="profile-page">
-      
         <div class="profile-picture">
           <img :src="user.imageUrl" alt="User's profile picture" class="user-image" />
           <button class="edit-picture-button">
@@ -128,10 +127,11 @@
 }
 
 input, select {
-  font-size: 1.4em; /* Adjust the size as needed */
+  font-size: 1.4em; 
 }
+
 .radio-label {
-  font-size: 1.4em; /* Adjust the size as needed */
+  font-size: 1.4em; 
   margin-right: 20px;
 }
 
@@ -139,8 +139,6 @@ input[type="radio"] {
   margin-right: 5px; 
 }
 
-
- 
   .gender-selection {
     /* Your styles for gender selection */
   }
