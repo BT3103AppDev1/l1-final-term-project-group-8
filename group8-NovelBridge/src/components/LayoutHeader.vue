@@ -15,6 +15,7 @@
         <div class="login-signup">
             <router-link to="/login" class="login-link">Login</router-link>
             <router-link to="/signup" class="login-link">Sign Up</router-link>
+            <router-link to="/userprofile" class="header-link">User</router-link>
         </div>
     </header>
 </template>

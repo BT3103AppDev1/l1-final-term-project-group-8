@@ -37,7 +37,7 @@
 <script>
 import firebaseApp from "@/firebase";
 import {getFirestore} from "firebase/firestore"
-import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword} from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
 const db = getFirestore(firebaseApp)
