@@ -3,39 +3,47 @@
       <img src="@/assets/UserProfile-background.png">
     </div>
     <div class="profile-page">
-      <div class="profile-picture">
+        <div class="profile-picture">
           <img :src="user.imageUrl" alt="User's profile picture" class="user-image" />
-          <div class="container">
-          <div class="round-box"></div>
-          <img src="@/assets/camera-icon.jpg" class="camera-icon" alt="Camera" />
-          </div>
+          <button class="edit-picture-button">
+            <img src="@/assets/camera-icon.png" alt="Edit"  class="camera-image"/>
+          </button><br>
         </div>
-      <section class="user-profile">
-        <form>
-          <label class="profile-form">
+        <div class="form-container">
+          <label class="form-label">
             User Name:
-            <input type="text" v-model="user.name">
+            <input type="text" v-model="user.name"> <br><br>
           </label>
-          <div class="profile-form">
-            <label>Gender:</label>
+
+          <div class="gender-selection">
+            <label class="form-label">Gender:</label>
             <input type="radio" id="male" value="Male" v-model="user.gender">
             <label for="male">Male</label>
             <input type="radio" id="female" value="Female" v-model="user.gender">
             <label for="female">Female</label>
             <input type="radio" id="other" value="Other" v-model="user.gender">
-            <label for="other">Prefer not to say</label>
+            <label for="other">Prefer not to say</label><br><br>
           </div>
-          <label class="profile-form">
+          
+          <label class="form-label">
             Preferred Language:
+          </label>
             <select v-model="user.language">
               <option>English</option>
               <option>中文</option>
+              <option>日本語 </option>
+              <option>Español</option>
+              <option>Français</option>
+              <option>Deutsch</option>
+              <option>Italiano</option>
+              <option>Português</option>
+              <option>Русский</option>
+              <option>한국어</option>
               <!-- ... other languages ... -->
             </select>
-          </label>
-        </form>
-      </section>
-      <button class="submitbtn" type="submit" @click.prevent="saveProfile">Save</button>
+
+          <br><br><button type="submit" @click.prevent="saveProfile">Save</button>
+        </div>
     </div>
   </template>
   
@@ -132,8 +140,3 @@
   input{
     margin-left:2%;
   }
-  .submitbtn{
-    margin-top:3%;
-  }
-  </style>
-  
