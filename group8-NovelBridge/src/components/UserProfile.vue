@@ -54,9 +54,13 @@
   import { getFirestore} from 'firebase/firestore';
   import { doc, setDoc } from "firebase/firestore";
   import avatar from '@/assets/userprofile-avatar.png'
+  import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
 
   const auth = getAuth();
   const db = getFirestore(firebaseApp);
+  const storage = getStorage(firebaseApp);
+
 
   export default {
     name:"UserProfile",
@@ -96,9 +100,38 @@
           console.error(this.error);
         }
       },
-      uploadImg(){
-        
-      }
+      
+      async uploadImg() {
+        try {
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/*';
+          fileInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+              return;
+            }
+
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+              this.error = "No user signed in";
+              console.error(this.error);
+              return;
+            }
+
+            const storageRef = ref(storage, `profilePictures/${currentUser.uid}`);
+            await uploadBytes(storageRef, file);
+            const imageUrl = await getDownloadURL(storageRef);
+
+            this.user.imageUrl = imageUrl;
+          };
+          fileInput.click();
+        } catch (error) {
+          this.error = `Error uploading image: ${error.message}`;
+          console.error(this.error);
+        }
+      },
+
     }
   };
   </script>
@@ -130,7 +163,8 @@
     
   }
   .user-image{
-    width:40%;
+    width: 130px; /* Set the width of the image */
+    height: 130px; /* Set the height of the image */
     height:auto;
   }
   .container {
@@ -147,14 +181,14 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -15%);
   }
 
   .camera-icon {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -7%);
     cursor: pointer; /* This changes the cursor to a pointer when hovering over the icon */
     /* Set the size of your icon */
     width: 50px;
