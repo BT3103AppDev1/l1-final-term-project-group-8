@@ -1,4 +1,7 @@
 <template>
+    <div class="background">
+      <img src="@/assets/UserProfile-background.png">
+    </div>
     <div class="profile-page">
         <div class="profile-picture">
           <img :src="user.imageUrl" alt="User's profile picture" class="user-image" />
@@ -11,6 +14,7 @@
             User Name:
             <input type="text" v-model="user.name"> <br><br>
           </label>
+
           <div class="gender-selection">
             <label class="form-label">Gender:</label>
             <input type="radio" id="male" value="Male" v-model="user.gender">
@@ -20,6 +24,7 @@
             <input type="radio" id="other" value="Other" v-model="user.gender">
             <label for="other">Prefer not to say</label><br><br>
           </div>
+          
           <label class="form-label">
             Preferred Language:
           </label>
@@ -36,21 +41,24 @@
               <option>한국어</option>
               <!-- ... other languages ... -->
             </select>
+
           <br><br><button type="submit" @click.prevent="saveProfile">Save</button>
         </div>
-    
     </div>
   </template>
   
   <script>
+  import avatar from '@/assets/userprofile-avatar.png'
+
   export default {
+    name:"UserProfile",
     data() {
       return {
         user: {
           name: 'Hello', // Default name for the demo
           gender: 'Other', // Default gender selection for the demo
           language: 'English', // Default language for the demo
-          imageUrl: '@/assets/user-placeholder.jpg', // Path to user image placeholder
+          imageUrl: avatar, // Path to user image placeholder
         }
       };
     },
@@ -64,105 +72,71 @@
   </script>
   
   <style scoped>
+  .background{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh; /* This ensures that your background takes at least the full height of the viewport */
+    width: 100vw; /* This ensures that your background takes the full width of the viewport */
+    z-index: -1; /* Keep the z-index to ensure the video stays in the background */
+    overflow: hidden;
+  }
   /* Add your CSS here */
   .profile-page {
-    /* Your styles for the page */
-  }
-
-  .user-profile {
-    /* Your styles for user profile section */
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height:100vh;
+    
   }
   .profile-picture {
-    /* Your styles for the profile picture */
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+  .user-image{
+    width:40%;
+    height:auto;
+  }
+  .container {
+  position: relative;
+  margin-top:30%;
+  /* Set other styles as needed, like width, height, etc. */
+  }
+
+  .round-box {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .camera-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer; /* This changes the cursor to a pointer when hovering over the icon */
+    /* Set the size of your icon */
+    width: 50px;
+    height: 27px;
+
+  }
+  .user-profile {
+    margin-top:3%;
+    width: 300px;
   }
   .profile-form {
-    /* Your styles for the form */
+    margin-top:10%;
+    margin-bottom:10%;
   }
 
-  .bg-image {
-  width: 100%;
-  height: 200px;
-  position: absolute;
-  margin-left: 0%;
-  z-index: 1; 
- }
-
- .user-image {
-    width: 200px;
-    margin-left: 100px;
-    margin-top: 75px;
-    top: 0;
-    position: relative;
-    z-index: 2;
+  input{
+    margin-left:2%;
   }
-  
-
-  .camera-image{
-    width: 100px;
-  }
-
-  .edit-picture-button {
-    border-radius: 50%;
-    height: 80px;
-    margin-left: 200px;
-    margin-top: -50px;
-    position: relative;
-    z-index: 3;
-  }
-
-  .edit-picture-button{
-    width: 100px;
-  }
-
-  .form-container {
-  align-items: center;
-  position: absolute;
-  margin-left: 300px;
-}
-
-.form-label {
-  font-size: 1.5em; /* Adjust the size as needed */
-  margin-right: 15px;
-}
-
-input, select {
-  font-size: 1.4em; 
-}
-
-.radio-label {
-  font-size: 1.4em; 
-  margin-right: 20px;
-}
-
-input[type="radio"] {
-  margin-right: 5px; 
-}
-
-  .gender-selection {
-    /* Your styles for gender selection */
-  }
-
-  input[type="radio"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 24px; /* Adjust the size as needed */
-  height: 24px; /* Adjust the size as needed */
-  border: 4px solid rgb(255, 153, 0);
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-input[type="radio"]:checked {
-  background-color: rgb(255, 153, 0); 
-}
-
- 
-  button[type="submit"] {
-  padding: 5px 25px; 
-  font-size: 1.8em; 
-  background-color: #efa94d; 
-  border: none; 
-  border-radius: 14px; 
-}
-  </style>
-  
