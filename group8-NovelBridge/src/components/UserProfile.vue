@@ -5,9 +5,10 @@
     <div class="profile-page">
         <div class="profile-picture">
           <img :src="user.imageUrl" alt="User's profile picture" class="user-image" />
-          <button class="edit-picture-button">
-            <img src="@/assets/camera-icon.jpg" alt="Edit"  class="camera-image"/>
-          </button><br>
+          <div class="container">
+          <div class="round-box"></div>
+            <img @click="uploadImg" src="@/assets/camera-icon.jpg" alt="Camera"  class="camera-icon"/>
+          </div>
         </div>
         <div class="form-container">
           <label class="form-label">
@@ -41,31 +42,62 @@
               <option>한국어</option>
               <!-- ... other languages ... -->
             </select>
-
-          <br><br><button type="submit" @click.prevent="saveProfile">Save</button>
+          <br><br><button class = "savebtn" type="submit" @click.prevent="saveProfile">Save</button>
         </div>
+        <div>{{ error }}</div>
     </div>
   </template>
   
   <script>
+  import firebaseApp from "@/firebase";
+  import { getAuth, onAuthStateChanged } from 'firebase/auth';
+  import { getFirestore} from 'firebase/firestore';
+  import { doc, setDoc } from "firebase/firestore";
   import avatar from '@/assets/userprofile-avatar.png'
+
+  const auth = getAuth();
+  const db = getFirestore(firebaseApp);
+  const currentUser = auth.currentUser;
 
   export default {
     name:"UserProfile",
     data() {
       return {
         user: {
-          name: 'Hello', // Default name for the demo
+          name: '', // Default name for the demo
           gender: 'Other', // Default gender selection for the demo
           language: 'English', // Default language for the demo
           imageUrl: avatar, // Path to user image placeholder
-        }
+        },
+        error:''
       };
     },
     methods: {
-      saveProfile() {
-        // Here you would handle the logic to save the user's profile
-        alert('Profile saved');
+      async saveProfile() {
+        if (!currentUser) {
+          this.error = "No user signed in";
+          console.error(this.error,)
+        }
+
+        try{
+
+          const userDoc = doc(db, 'users', currentUser.uid);
+          await setDoc(userDoc,{
+            Username: this.user.name,
+            Gender: this.user.gender,
+            language:this.user.language,
+            imageUrl: this.user.imageUrl,
+          }, {merge: true});
+
+          console.log('Profile saved')
+          this.$router.push({path:"/"})
+        } catch (error) {
+          this.error = `Error saving profile: ${error.message}`;
+          console.error(this.error);
+        }
+      },
+      uploadImg(){
+        
       }
     }
   };
@@ -88,6 +120,7 @@
     justify-content: center;
     align-items: center;
     height:100vh;
+    width:100%;
     
   }
   .profile-picture {
@@ -107,8 +140,8 @@
   }
 
   .round-box {
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background-color: #f0f0f0;
     position: absolute;
@@ -132,6 +165,10 @@
     margin-top:3%;
     width: 300px;
   }
+  .form-container{
+    margin-top:3%;
+
+  }
   .profile-form {
     margin-top:10%;
     margin-bottom:10%;
@@ -140,4 +177,7 @@
   input{
     margin-left:2%;
   }
-  </style>
+  .savebtn{
+    margin-left:40%;
+  }
+</style>

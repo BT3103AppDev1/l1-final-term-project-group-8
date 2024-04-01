@@ -7,7 +7,18 @@
         <div class="status-bar">
             <router-link to="/" class="header-link" >Home</router-link>
             <a href="/library">Library</a>
-            <router-link to="/bookmarked" class="header-link" active-class="active">Bookmarked</router-link>
+            <router-link
+            v-if = "isLoggedIn"
+            to="/bookmarked"
+            class = "header-link"
+            active-class="active"
+            >bookmarked</router-link>
+            <a
+            v-else
+            href ="#"
+            class = "header-link"
+            @click.prevent = "promptSignUp"
+            >bookmarked</a>
         </div>
         <div class = "search-bar">
             <input type="text" placeholder="Search for a book...">
@@ -15,14 +26,29 @@
         <div class="login-signup">
             <router-link to="/login" class="login-link">Login</router-link>
             <router-link to="/signup" class="login-link">Sign Up</router-link>
+            <router-link to="/userprofile" class="header-link">User</router-link>
         </div>
     </header>
 </template>
 
 <script>
-    export default {
-        name:"LayoutHeader",
+export default {
+    name: "LayoutHeader",
+    data() {
+        return {
+            isLoggedIn: false, 
+        }
+    },
+    methods: {
+        promptSignUp() {
+            if (confirm('You must be signed up to bookmark. Would you like to sign up now?')) {
+                this.$router.push('/signup');
+            } else {
+                this.$router.push('/');
+            }
+        },
     }
+}
 </script>
 
 <style scoped>
