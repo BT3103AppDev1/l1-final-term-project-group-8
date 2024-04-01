@@ -16,28 +16,50 @@
             <a
             v-else
             href ="#"
-            class = "header-link"
+            class = "header-link" 
             @click.prevent = "promptSignUp"
             >bookmarked</a>
         </div>
         <div class = "search-bar">
             <input type="text" placeholder="Search for a book...">
         </div>
-        <div class="login-signup">
+        <div v-if="isLoggedIn" class="logout" @click="signOut">
+            <h4>LogOut</h4>
+        </div>
+        <div v-else class="login-signup">
             <router-link to="/login" class="login-link">Login</router-link>
             <router-link to="/signup" class="login-link">Sign Up</router-link>
-            <router-link to="/userprofile" class="header-link">User</router-link>
+        </div>
+        <div v-if="isLoggedIn"> 
+            <router-link to="/userprofile"><img :src="userProfile"alt="User profile img" class="profileImg"></router-link>
         </div>
     </header>
 </template>
 
 <script>
+import firebaseApp from "@/firebase";
+import {getFirestore, doc, getDoc} from "firebase/firestore"
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+
 export default {
     name: "LayoutHeader",
     data() {
         return {
             isLoggedIn: false, 
+            userProfile: ''
         }
+    },
+    created() {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        console.log ("User info", user)
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                this.isLoggedIn = true;
+                this.fetchProfilePhoto(user.uid);
+            }
+        });
     },
     methods: {
         promptSignUp() {
@@ -47,8 +69,31 @@ export default {
                 this.$router.push('/');
             }
         },
-    }
-}
+        async fetchProfilePhoto(userID) {
+            const db = getFirestore(firebaseApp)
+            const userDocInfo = doc(db,'users', userID);
+            
+            try {
+                const userDoc = await getDoc(userDocInfo);
+                if ( userDoc.exists()) {
+                    const userData = userDoc.data();
+                    this.userProfile = userData.imageUrl;
+
+                } else {
+                console.log('No such document!');
+            }
+        } catch (error) {
+            console.error('Error getting document:', error);
+        }},
+
+        signOut() {
+            const auth = getAuth();
+            const user = auth.currentUser;
+            signOut(auth,user)
+            this.isLoggedIn = false
+            this.$router.push({path:"/"})
+        }
+    }}
 </script>
 
 <style scoped>
@@ -95,8 +140,10 @@ export default {
         border:0px;
         border-radius: 20px;    
     }
-
-
+    .profileImg{
+        width:50px;
+        height:auto;
+    }
     .login-signup{
         display:flex;
         gap:5vw;
@@ -114,6 +161,17 @@ export default {
     }
 
     .login-link:hover{
+        color:#FF6E05;
+    }
+
+    .logout{
+        display:flex;
+        gap:5vw;
+        margin-right:10px;
+        cursor: pointer;
+    }
+    
+    .logout:hover{
         color:#FF6E05;
     }
 

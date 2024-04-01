@@ -58,7 +58,6 @@
   const auth = getAuth();
   const db = getFirestore(firebaseApp);
 
-
   export default {
     name:"UserProfile",
     data() {

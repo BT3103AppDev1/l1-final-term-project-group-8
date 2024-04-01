@@ -34,6 +34,7 @@ import firebaseApp from "@/firebase";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 const auth = getAuth();
+const user = auth.currentUser;
 
 export default {
     name: 'Login',
