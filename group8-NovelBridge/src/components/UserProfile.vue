@@ -6,7 +6,7 @@
         <div class="profile-picture">
           <img :src="user.imageUrl" alt="User's profile picture" class="user-image" />
           <button class="edit-picture-button">
-            <img src="@/assets/camera-icon.png" alt="Edit"  class="camera-image"/>
+            <img src="@/assets/camera-icon.jpg" alt="Edit"  class="camera-image"/>
           </button><br>
         </div>
         <div class="form-container">
@@ -140,3 +140,4 @@
   input{
     margin-left:2%;
   }
+  </style>

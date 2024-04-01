@@ -7,6 +7,7 @@ import Ongoing from '@/components/Ongoing.vue'
 import Unread from '@/components/Unread.vue'
 import Login from '@/components/Login.vue'
 import UserProfile from '@/components/UserProfile.vue'
+import Library from '@/Views/Library.vue'
 
 
 const routes = [
@@ -19,6 +20,11 @@ const routes = [
         path: '/bookmarked',
         name: 'BookMarked',
         component: BookMarked
+      },
+      {
+        path: '/library',
+        name: 'Library',
+        component: Library
       },
       {
         path: '/completed',
