@@ -5,9 +5,10 @@
     <div class="profile-page">
         <div class="profile-picture">
           <img :src="user.imageUrl" alt="User's profile picture" class="user-image" />
-          <button class="edit-picture-button">
-            <img src="@/assets/camera-icon.jpg" alt="Edit"  class="camera-image"/>
-          </button><br>
+          <div class="container">
+          <div class="round-box"></div>
+            <img @click="uploadImg" src="@/assets/camera-icon.jpg" alt="Camera"  class="camera-icon"/>
+          </div>
         </div>
         <div class="form-container">
           <label class="form-label">
@@ -140,4 +141,7 @@
   input{
     margin-left:2%;
   }
-  </style>
+  .savebtn{
+    margin-left:40%;
+  }
+</style>
