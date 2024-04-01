@@ -57,7 +57,7 @@
 
   const auth = getAuth();
   const db = getFirestore(firebaseApp);
-  const currentUser = auth.currentUser;
+
 
   export default {
     name:"UserProfile",
@@ -74,6 +74,7 @@
     },
     methods: {
       async saveProfile() {
+        const currentUser = auth.currentUser;
         if (!currentUser) {
           this.error = "No user signed in";
           console.error(this.error,)

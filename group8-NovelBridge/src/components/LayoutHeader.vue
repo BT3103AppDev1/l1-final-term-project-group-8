@@ -6,7 +6,7 @@
         </div>
         <div class="status-bar">
             <router-link to="/" class="header-link" >Home</router-link>
-            <a href="/library">Library</a>
+            <router-link to="/library" class ="header-link" active-class="active"> library </router-link>
             <router-link
             v-if = "isLoggedIn"
             to="/bookmarked"

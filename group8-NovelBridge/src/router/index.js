@@ -10,6 +10,7 @@ import UserProfile from '@/components/UserProfile.vue'
 import Library from '@/Views/Library.vue'
 
 
+
 const routes = [
     {
         path: '/',
@@ -56,6 +57,11 @@ const routes = [
         name: 'UserProfile',
         component: UserProfile
       },
+      {
+        path:'/library',
+        name:'Library',
+        component: Library
+      }
       
 ]
 
