@@ -6,8 +6,16 @@
     <div class="signup-container">
     <router-link to="/" class="backhome-link">> Back to Novel Bridge</router-link>
     <form class="signup-form" @submit.prevent="submitForm">
-      <h1>Welcome to Novel Bridge</h1>
-      <p>Login</p>
+      <div class = "msg">
+        <div class="account-exist">
+          <h1>Don't have an account?</h1>
+          <router-link to="/signup" class="link">Sign Up</router-link>
+        </div>
+        <div class ="welcome">
+        <h1>Welcome to Novel Bridge</h1>
+        <p>Login</p>
+        </div>
+      </div>
       <div class="form-group">
         <label for="email">Enter your email address</label>
         <input type="email" id="email" v-model="user.email" placeholder="Email address" required>
@@ -16,12 +24,18 @@
         <label for="password">Enter your password</label>
         <input type="password" id="password" v-model="user.password" placeholder="Password" required>
       </div>
+      <div class="error-message">{{error}}</div>
       <button type="submit">Login</button>
     </form>
   </div>
 </template>
 
 <script>
+import firebaseApp from "@/firebase";
+import { getAuth, signInWithEmailAndPassword} from "firebase/auth";
+
+const auth = getAuth();
+
 export default{
   name: 'Login',
   data() {
@@ -30,13 +44,32 @@ export default{
         email: '',
         password: '',
       },
+      error:''
     };
   },
   methods: {
-    submitForm() {
-      // Here you would implement form submission logic,
-      // potentially validating the input and then sending it to a server
-      console.log('Form submitted', this.user);
+    async submitForm() {
+      const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if(!emailFormat.test(this.user.email)) {
+        this.error = "Please re-enter email";
+        return
+      }
+      try{
+        await signInWithEmailAndPassword(auth, this.user.email, this.user.password)
+        this.$router.push({path:"/"})
+        console.log("user log in")
+      } catch (error) {
+        if (error.code === "auth/user-not-found") {
+          this.error = "Account does not exist. Please sign up";
+          return;
+        }
+        if (error.code === "auth/wrong-password") {
+          this.error = "Incorrect password. Please try again.";
+          return
+        } else {
+          this.error = "An error occurred. Please try again later.";
+        }
+      }
     }
   }
 }
@@ -60,16 +93,27 @@ export default{
   width: 300px;
   text-align: center;
 }
+.msg{
+  display:flex;
+  justify-content: space-between;
+  width:100%;
+}
+.account-exist h1{
+  margin-top:2%;
+  font-size:10px;
+  height:15%;
+}
 h1 {
-    font-size:12px;
-    margin-left:50%;
-    
+    font-size:12px;   
 }
 p {
     margin-left:50%;
     font-size:18px;
     font-weight:bolder;
-
+}
+.link{
+  color:#FF6E05;
+  font-size:10px;
 }
 .form-group{
     margin-top:2%;
@@ -108,6 +152,7 @@ button{
     font-weight: bolder;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
 .login-background {
   position: absolute;
@@ -134,5 +179,11 @@ button{
 }
 .backhome-link:hover{
   text-decoration: underline;
+}
+.error-message{
+  color:red;
+  font-size: 12px;
+  margin-right:38%;
+  width:  250px;
 }
 </style>
