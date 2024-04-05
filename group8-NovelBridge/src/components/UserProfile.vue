@@ -7,7 +7,7 @@
           <img :src="user.imageUrl" alt="User's profile picture" class="user-image" />
           <div class="container">
           <div class="round-box"></div>
-            <img @click="uploadImg" src="@/assets/camera-icon.jpg" alt="Camera"  class="camera-icon"/>
+            <img  src="@/assets/camera-icon.jpg" alt="Camera"  class="camera-icon"/>
           </div>
         </div>
         <div class="form-container">
@@ -51,8 +51,8 @@
   <script>
   import firebaseApp from "@/firebase";
   import { getAuth, onAuthStateChanged } from 'firebase/auth';
-  import { getFirestore} from 'firebase/firestore';
-  import { doc, setDoc } from "firebase/firestore";
+  import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+  import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
   import avatar from '@/assets/userprofile-avatar.png'
 
   const auth = getAuth();
@@ -70,6 +70,9 @@
         },
         error:''
       };
+    },
+    created(){
+      this.fetchUserProfilePic();
     },
     methods: {
       async saveProfile() {
@@ -95,12 +98,8 @@
           this.error = `Error saving profile: ${error.message}`;
           console.error(this.error);
         }
-      },
-      uploadImg(){
-        
-      }
-    }
-  };
+      }},
+};
   </script>
   
   <style scoped>

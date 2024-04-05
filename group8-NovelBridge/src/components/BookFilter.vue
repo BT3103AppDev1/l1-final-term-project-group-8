@@ -3,21 +3,21 @@
     <!-- Reader Filter Group -->
     <div class="filter-group reader-group">
       <label>Reader:</label>
-      <button v-for="reader in readers" :key="reader" @click="applyFilter('reader', reader)">
+      <button v-for="reader in readers" :key="reader" @click="applyFilter('reader', reader)" class="filter-font">
         {{ reader }}
       </button>
     </div>
     <!-- Category Filter Group -->
     <div class="filter-group category-group">
       <label>Category:</label>
-      <button v-for="category in categories" :key="category" @click="applyFilter('category', category)">
+      <button v-for="category in categories" :key="category" @click="applyFilter('category', category)" class="filter-font">
         {{ category }}
       </button>
     </div>
     <!-- Word Count Filter Group -->
     <div class="filter-group word-count-group">
       <label>Word count:</label>
-      <button v-for="wordCount in wordCounts" :key="wordCount" @click="applyFilter('wordCount', wordCount)">
+      <button v-for="wordCount in wordCounts" :key="wordCount" @click="applyFilter('wordCount', wordCount)" class="filter-font">
         {{ wordCount }}
       </button>
     </div>
@@ -85,6 +85,11 @@ export default {
 .active {
   background-color: #e9ecef;
   color: #495057;
+}
+
+.filter-font{
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  margin-top:-0.2%;
 }
 
 /* Adjustments for mobile view if necessary */

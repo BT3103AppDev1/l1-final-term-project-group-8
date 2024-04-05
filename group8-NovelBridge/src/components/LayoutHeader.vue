@@ -6,19 +6,19 @@
         </div>
         <div class="status-bar">
             <router-link to="/" class="header-link" >Home</router-link>
-            <router-link to="/library" class ="header-link" active-class="active"> library </router-link>
+            <router-link to="/library" class ="header-link" active-class="active"> Library </router-link>
             <router-link
             v-if = "isLoggedIn"
             to="/bookmarked"
             class = "header-link"
             active-class="active"
-            >bookmarked</router-link>
+            >Bookmarked</router-link>
             <a
             v-else
             href ="#"
             class = "header-link" 
             @click.prevent = "promptSignUp"
-            >bookmarked</a>
+            >Bookmarked</a>
         </div>
         <div class = "search-bar">
             <input type="text" placeholder="Search for a book...">
