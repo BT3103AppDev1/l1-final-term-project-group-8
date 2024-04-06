@@ -19,6 +19,9 @@
   import LayoutHeader from '@/components/LayoutHeader.vue';
   import BookFilter from '@/components/BookFilter.vue'; // Make sure the path is correct
   import bookCover from '@/assets/bookcover.jpg';
+  import firebaseApp from "@/firebase";
+  import {getFirestore, doc, getDocs, collection} from "firebase/firestore"
+  import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
   
   export default {
     name: "Library",
@@ -29,29 +32,29 @@
     data() {
   return {
     categories: ['All', 'Fantasy', 'Historical Fiction', 'Science Fiction', 'Mystery', 'Thriller', 'Horror', 'Adventure', 'Contemporary'],
-    allBooks: [
-      {
-        id: 1,
-        title: 'Mystery of the Ancients',
-        author: 'Jane Doe',
-        categories: ['Mystery', 'Thriller'],
-        cover: bookCover
-        // ...other properties
-      },
-      {
-        id: 2,
-        title: 'The Lost Spells',
-        author: 'John Smith',
-        categories: ['Fantasy', 'Adventure'],
-        cover: bookCover
-        // ...other properties
-      },
-      // Add more example books here
-    ],
+    allBooks: [],
     filteredBooks: []
-  };
-},
+    }},
+    mounted(){
+      this.fetchBooks();
+    },
     methods: {
+      async fetchBooks() {
+        const db = getFirestore(firebaseApp)
+        const queryBooks = await getDocs(collection(db, "Book"));
+        //console.log("fetched",queryBooks.docs)
+        this.allBooks = queryBooks.docs.map(doc => {
+          const docData = doc.data();
+          return { 
+            id: docData.ID,
+            title: doc.id,
+            author:docData.Author,
+            categories:docData.Category,          
+          };
+        });
+        this.filteredBooks = this.allBooks;
+        },
+
       applyFilter(filterData) {
         const { type, value } = filterData;
         if (type === 'category') {
@@ -62,10 +65,10 @@
         // Handle other filter types (reader, wordCount) similarly
       },
     },
-    created() {
+    /*created() {
       // Assuming allBooks would be fetched from an API or similar
       this.filteredBooks = this.allBooks;
-    },
+    },*/
   };
   </script>
   

@@ -29,7 +29,7 @@ export default {
   data() {
     return {
       readers: ['All', 'Female', 'Male'],
-      categories: ['All', 'Fantasy', 'Historical Fiction', 'Science Fiction', 'Mystery', 'Thriller', 'Horror', 'Adventure', 'Contemporary'],
+      categories: ['All', 'Fantasy', 'Historical Fiction', 'Science Fiction', 'Mystery', 'Romance', 'Thriller', 'Horror', 'Adventure', 'Contemporary'],
       wordCounts: ['All', 'Below 30k', '30k - 50k', '50k - 1million', 'Above 1million'],
     };
   },
