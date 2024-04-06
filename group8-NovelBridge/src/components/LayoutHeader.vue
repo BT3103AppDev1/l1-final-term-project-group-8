@@ -141,8 +141,10 @@ export default {
         border-radius: 20px;    
     }
     .profileImg{
-        width:50px;
-        height:auto;
+        width:55px;
+        height:55px;
+        object-fit: cover;
+        border-radius: 50%;
     }
     .login-signup{
         display:flex;
