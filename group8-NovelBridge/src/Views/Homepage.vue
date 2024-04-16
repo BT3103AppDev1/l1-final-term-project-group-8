@@ -1,65 +1,90 @@
 <template>
-    <LayoutHeader></LayoutHeader>
-  
-    <MovingBanner></MovingBanner>
-  
-    <div class="main-content">
-      <section class="recommendation-section">
-        <Recommendation :books="limitedBooks"></Recommendation>
-      </section>
-  
-      <section class="top-10-books-section">
-        <Top10Books :books="books"></Top10Books>
-      </section>
-    </div>
+  <LayoutHeader></LayoutHeader>
+  <MovingBanner></MovingBanner>
+  <div class="main-content">
+    <section class="recommendation-section">
+      <Recommendation :books="filteredBooks"></Recommendation>
+    </section>
+    <section class="top-10-books-section">
+      <Top10Books :books="filteredBooks"></Top10Books>
+    </section>
+  </div>
 </template>
 
-<script setup>
-import LayoutHeader from '@/components/LayoutHeader.vue'
-import MovingBanner from '@/components/MovingBanner.vue'
-import Top10Books from '@/components/Top10Books.vue'
-import Recommendation from '@/components/Recommendation.vue'
-import bookCover from '@/assets/bookcover.jpg'
+<script>
+import LayoutHeader from '@/components/LayoutHeader.vue';
+import MovingBanner from '@/components/MovingBanner.vue';
+import Top10Books from '@/components/Top10Books.vue';
+import Recommendation from '@/components/Recommendation.vue';
+import {getFirestore, doc, getDocs, collection} from "firebase/firestore"
+import firebaseApp from "@/firebase";
 
-const books = [
-  {
-    id: 1,
-    title: 'The Kamogawa Food Detectives',
-    author: 'Hishashi Kashiwai',
-    category: 'Mystery',
-    pages: '159',
-    cover: bookCover
+export default {
+  name: "Library",
+  components: {
+    LayoutHeader,
+    MovingBanner,
+    Top10Books,
+    Recommendation
   },
-  {
-    id: 1,
-    title: 'The Kamogawa Food Detectives',
-    author: 'Hishashi Kashiwai',
-    category: 'Mystery',
-    pages: '159',
-    cover: bookCover
+  data() {
+    return {
+      allBooks: [],
+      filteredBooks: []
+    };
   },
-  
-  {
-    id: 2,
-    title: 'Icebreaker',
-    author: 'Hannah Grace',
-    category: 'Romance, Contemporary', 
-    pages:'424',
-    cover: bookCover
+  mounted() {
+    this.fetchBooks();
   },
-  {
-    id: 2,
-    title: 'Icebreaker',
-    author: 'Hannah Grace',
-    category: 'Romance, Contemporary',
-    pages:'424',
-    cover: bookCover
-  },
-  
-  
-];
-
-const limitedBooks = books.slice(0, 7);
+  methods: {
+    async fetchBooks() {
+      try {
+        const db = getFirestore(firebaseApp);
+        const querySnapshot = await getDocs(collection(db, "Book"));
+        this.allBooks = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          title: doc.id,
+          author: doc.data().Author || 'Unknown',
+          categories: doc.data().Category || [],
+          cover: doc.data().Cover || '',
+          wordCount: doc.data()['Word Count'] || 0,
+          gender: doc.data().Gender || 'No gender',
+          views: doc.data()['Number of Views'] || 0
+        }));
+        this.filteredBooks = this.allBooks;
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      }
+    },
+    applyFilter(type, value) {
+      switch (type) {
+        case 'category':
+          this.filteredBooks = value === 'All' ?
+            this.allBooks :
+            this.allBooks.filter(book => book.categories && book.categories.includes(value));
+          break;
+        case 'wordCount':
+          break;
+        case 'gender':
+          this.filteredBooks = value === 'All' ?
+            this.allBooks :
+            this.allBooks.filter(book => book.gender && book.gender.toLowerCase() === value.toLowerCase());
+          break;
+        case 'Number of Views':
+          if (value === 'Top 8') {
+            this.filteredBooks = [...this.allBooks]
+              .sort((a, b) => b.views - a.views)
+              .slice(0, 8);
+          } else {
+            this.filteredBooks = this.allBooks;
+          }
+          break;
+        default:
+          this.filteredBooks = this.allBooks;
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>
