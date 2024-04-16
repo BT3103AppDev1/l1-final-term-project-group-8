@@ -109,6 +109,7 @@ export default {
 #reading_pane {
     text-align: center;
     background-color: #F4F2EC;
+    font-size: 16px;
 }
 #gotohome{
     border: none;
