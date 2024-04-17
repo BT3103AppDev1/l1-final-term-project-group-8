@@ -1,14 +1,17 @@
 <template>
     <LayoutHeader />
     <!-- BookFilter component for filtering books -->
-    <BookFilter :categories="categories" @apply-filter="applyFilter" />
+    <BookFilter :categories="categories" @apply-filter="applyFilter" class="category-bar" />
     <!-- Display filtered books -->
     <div class="books-grid">
       <div class="book-card" v-for="book in filteredBooks" :key="book.id">
         <!-- Book card content -->
         <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"><img :src="book.cover" :alt="book.title" class="book-cover" /></router-link>
-        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"><h3>{{ book.title }}</h3></router-link>
-        <p>{{ book.author }}</p>
+        <div class="book-details">
+        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}" class="book-title"><h3>{{ book.title }}</h3></router-link>
+        <p>Author: {{ book.author }}</p>
+        <p>Word Count: {{ formatWordCount(book.wordcount) }}</p>
+      </div>
         <!-- ... other book details ... -->
       </div>
     </div>
@@ -43,7 +46,7 @@
       this.fetchBooks().then(() => {
         const categoryFromRoute = this.$route.query.category;
         if (categoryFromRoute) {
-          this.applyFilter({ type: 'category', value: categoryFromRoute });
+          this.applyFilter({type: 'categories', value: categoryFromRoute});
         }
       });
     },
@@ -69,49 +72,59 @@
         },
 
       applyFilter(filterData) {
-    const { type, value } = filterData;
-    switch (type) {
-      case 'category':
-        this.filteredBooks = value === 'All' ?
-          this.allBooks :
-          this.allBooks.filter(book => book.categories.includes(value));
-        break;
-      case 'wordCount':
-        this.filteredBooks = this.filterByWordCount(value);
-        break;
-      case 'gender':
-        this.filteredBooks = value === 'All' ?
-          this.allBooks :
-          this.allBooks.filter(book => book.gender.toLowerCase() === value.toLowerCase());
-        break;
-      // ... handle other filters ...
-    }
-  },
+      const { type, value } = filterData;
+      switch (type) {
+        case 'categories':
+          this.filteredBooks = value === 'All' ?
+            this.allBooks :
+            this.allBooks.filter(book => book.categories.includes(value));
+          break;
+        case 'wordCounts':
+          this.filteredBooks = this.filterByWordCount(value);
+          break;
+        case 'gender':
+          this.filteredBooks = value === 'All' ?
+            this.allBooks :
+            this.allBooks.filter(book => book.gender.toLowerCase() === value.toLowerCase());
+          break;
+        // ... handle other filters ...
+      }
+    },
 
-  filterByWordCount(wordCountRange) {
-    const [min, max] = this.parseWordCountRange(wordCountRange);
-    return this.allBooks.filter(book => {
-      const wordCount = parseInt(book.wordcount, 10);
-      return wordCount >= min && wordCount <= max;
-    });
-  },
+    filterByWordCount(wordCountRange) {
+      const [min, max] = this.parseWordCountRange(wordCountRange);
+      return this.allBooks.filter(book => {
+        const wordCount = parseInt(book.wordcount, 10);
+        return wordCount >= min && wordCount <= max;
+      });
+    },
 
-  parseWordCountRange(wordCountRange) {
-    switch (wordCountRange) {
-      case 'Below 30k':
-        return [0, 30000];
-      case '30k - 50k':
-        return [30000, 50000];
-      case '50k - 1million':
-        return [50000, 1000000];
-      case 'Above 1million':
-        return [1000000, Infinity];
-      default:
-        return [0, Infinity];
-    }
+    parseWordCountRange(wordCountRange) {
+      switch (wordCountRange) {
+        case 'Below 30k':
+          return [0, 30000];
+        case '30k - 50k':
+          return [30000, 50000];
+        case '50k - 1million':
+          return [50000, 1000000];
+        case 'Above 1million':
+          return [1000000, Infinity];
+        default:
+          return [0, Infinity];
+      }
+    },
+
+    formatWordCount(wordcount) {
+      if (wordcount >= 1000000) {
+        return (wordcount / 1000000).toFixed(1) + 'M';
+      } else if (wordcount >= 1000) {
+        return (wordcount / 1000).toFixed(1) + 'K';
+      } else {
+        return wordcount.toString();
+      }
+    },
   },
-},
-  }
+    }
   </script>
   
   <style scoped>
@@ -119,9 +132,7 @@
   display: flex;
   justify-content: center; /* Center the category bar */
   flex-wrap: wrap; /* Wrap items to the next line if needed */
-  gap: 1rem; /* Adjust the gap as needed */
-  padding: 1rem 0;
-}
+  }
 
 .category-bar button {
   padding: 0.5rem 1rem; /* Add padding to the buttons */
@@ -144,22 +155,70 @@
 
 /* Styles for the books grid */
 .books-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Creates a responsive grid */
+  gap: 1rem;
+}
+
+.book-card {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center; /* Center the books grid */
-  gap: 2rem; /* Adjust the gap as needed */
+  align-items: flex-start;
+  padding: 1rem;
+  transition: transform 0.2s;
+  max-width:90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
 }
 
 .book-cover {
-    width: 150px; /* Adjust width as needed */
-    display: flex;
-    flex-direction: row; /* Align items in a row */
-    align-items: center; /* Center items vertically */
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 10px; /* Optional: if you want rounded corners */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
+  width: 110px; /* Fixed width for the image */
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5%;
+}
+
+.book-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 1rem;
+  flex: 1;
+  min-width: 0;/* Allow book-details to take up the remaining space */
+}
+
+.book-title {
+  display: block; 
+  max-width:80%;
+  text-decoration: none;
+  color:black;
+}
+
+.book-title:hover{
+  color:orange;
+}
+
+.book-title h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; /* Make sure this is not larger than its container */
+}
+
+p{
+  font-size: 13px;
+  color:grey;
+  font-weight:lighter;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
 
   </style>
   
