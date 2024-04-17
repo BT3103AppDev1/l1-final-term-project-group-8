@@ -4,7 +4,7 @@
   </div>
   <div class="profile-page">
       <div class="profile-picture">
-        <img :src="user.imageUrl" alt="User's profile picture" class="user-image" />
+        <img :src="this.user.imageUrl" alt="User's profile picture" class="user-image" />
         <div class="container">
         <div class="round-box"></div>
           <img @click="uploadImg" src="@/assets/camera-icon.jpg" alt="Camera"  class="camera-icon"/>
@@ -52,13 +52,14 @@
 import firebaseApp from "@/firebase";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore} from 'firebase/firestore';
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection } from "firebase/firestore";
 import avatar from '@/assets/userprofile-avatar.png'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
-const auth = getAuth();
+
 const db = getFirestore(firebaseApp);
+const auth = getAuth();
 const storage = getStorage(firebaseApp);
 
 
@@ -75,6 +76,17 @@ export default {
       error:''
     };
   },
+   created() {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        console.log ("User info", user)
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                this.fetchUserProfile();
+            }
+        });
+    },
   methods: {
     async saveProfile() {
       const currentUser = auth.currentUser;
@@ -100,6 +112,31 @@ export default {
         console.error(this.error);
       }
     },
+
+    async fetchUserProfile() {
+      const db = getFirestore(firebaseApp)
+      const auth = getAuth();
+      const user = auth.currentUser;
+      const userDocInfo = doc(db,'users', user.uid);
+      try {
+            const userDoc = await getDoc(userDocInfo);
+            if ( userDoc.exists()) {
+                const userData = userDoc.data();
+                this.user.name = userData.Username;
+                this.user.gender = userData.Gender;
+                this.user.language = userData.language;
+                if (userData.imageUrl) {
+                  this.user.imageUrl = userData.imageUrl;
+                } else {
+                  this.userimageUrl = avatar;
+                }
+
+            } else {
+            console.log('No such document!');
+        }
+    } catch (error) {
+        console.error('Error getting document:', error);
+    }},
     
     async uploadImg() {
       try {
@@ -112,6 +149,7 @@ export default {
             return;
           }
 
+          const auth = getAuth();
           const currentUser = auth.currentUser;
           if (!currentUser) {
             this.error = "No user signed in";

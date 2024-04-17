@@ -3,15 +3,15 @@
         <div class="top-10-header">Top 10 Books to Read </div>
         <div class="category-sections">
             <div class="category1">
-                <h4 class="header">Romance</h4>
+                <h4 @click="goToRomance" class="header">Romance</h4>
                 <ol >
                     <li v-for="book in romanceBooks" :key="book.id">
-                        {{ book.title }}
+                        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"> {{ book.title }}</router-link>
                     </li>
                 </ol>
             </div>
             <div class="category2">
-                <h4 class = "header">Mystery</h4>
+                <h4 @click="goToMystery"class = "header">Mystery</h4>
                 <ol>
                     <li v-for="book in mysteryBooks" :key="book.id">
                         {{ book.title }}
@@ -23,22 +23,52 @@
 </template>
 
 <script>
+import firebaseApp from "@/firebase";
+import {getFirestore, doc, getDocs, collection} from "firebase/firestore"
 
 export default {
     name: "Top10Books",
-    props: {
-        books: Array
+    data() {
+        return {
+            books:[]
+        }
+    },
+    mounted(){
+      this.fetchBooks();
     },
     computed: {
         romanceBooks() {
-            return this.books.filter(book => book.category.includes("Romance")).slice(0, 10);
+            return this.books.filter(book => book.categories.includes("Romance")).slice(0, 10);
         },
         
         mysteryBooks(){
-            return this.books.filter(book => book.category.includes("Mystery")).slice(0, 10);
+            return this.books.filter(book => book.categories.includes("Mystery")).slice(0, 10);
         }
-    }
-  }
+    },
+    methods: {
+      async fetchBooks() {
+        const db = getFirestore(firebaseApp)
+        const queryBooks = await getDocs(collection(db, "Books"));
+        console.log("fetched",queryBooks.docs)
+        this.books = queryBooks.docs.map(doc => {
+          const docData = doc.data();
+          return { 
+            id: doc.id,
+            title: docData.Title || "Unknown",
+            categories:docData.Category,          
+          }; 
+        });
+    },
+        
+        goToRomance() {
+            this.$router.push({ name: 'Library', query: { category: 'Romance' } });
+        },
+
+        goToMystery() {
+            this.$router.push({ name: 'Library', query: { category: 'Mystery' } });
+        }
+    },
+}
 </script>
 
 <style scoped>
@@ -95,6 +125,7 @@ export default {
 .category1 ol,
 .category2 ol {
   padding-left: 20px;
+  
 }
 
 
@@ -102,6 +133,7 @@ export default {
 .category2 ol li,
 .header{
   cursor: pointer; 
+  margin-top: 4%;
 }
 /* Add hover effect for list items */
 .category1 ol li:hover,

@@ -21,6 +21,12 @@
         {{ wordCount }}
       </button>
     </div>
+    <div class = "filter-group number-of-views-group">
+      <label>Number of Views:</label>
+      <button v-for = "NumberOfViews in NumbersOfViews" :key="NumberOfViews" @click = "applyFilter('Number of Views', NumberOfViews)" class="filter-font">
+        {{ NumberOfViews }}
+      </button>
+    </div>
   </div>
 </template>
 
