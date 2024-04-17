@@ -9,6 +9,7 @@ import Login from '@/components/Login.vue'
 import UserProfile from '@/components/UserProfile.vue'
 import Library from '@/Views/Library.vue'
 import BookDetail from '@/components/BookDetail.vue'
+import Reading from '@/components/Reading.vue'
 
 
 
@@ -68,6 +69,12 @@ const routes = [
         path: '/bookdetail/:id',
         name: 'BookDetail',
         component: BookDetail,
+        props: true,
+      },
+      {
+        path: '/read/:id/:chapter',
+        name: 'ReadingPanel',
+        component: Reading,
         props: true,
       },
       
