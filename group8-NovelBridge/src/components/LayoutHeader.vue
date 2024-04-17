@@ -137,7 +137,7 @@ export default {
         padding:5px;
     }
     .logo img {
-        width: 100px; /* Set this to the desired width */
+        width: 100px;
         height: auto;
     }
     .logo h1 {

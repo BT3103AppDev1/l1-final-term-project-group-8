@@ -20,28 +20,35 @@ const routes = [
       },
       {
         path: '/bookmarked',
-        name: 'BookMarked',
-        component: BookMarked
+        name: 'Bookmarked',
+        component: BookMarked,
+        children: [
+          {
+            path: '',
+            redirect: '/unread'
+          },
+          {
+            path: '/unread',
+            name: 'Unread',
+            component: Unread
+          },
+          {
+            path: '/completed',
+            name: 'Completed',
+            component: Completed
+          },
+          {
+            path: '/ongoing',
+            name: 'Ongoing',
+            component: Ongoing
+          }
+          // other nested routes under /bookmarked...
+        ]
       },
       {
         path: '/library',
         name: 'Library',
         component: Library
-      },
-      {
-        path: '/completed',
-        name: 'Completed',
-        component: Completed
-      },
-      {
-        path: '/ongoing',
-        name: 'Ongoing',
-        component: Ongoing
-      },
-      {
-        path: '/unread',
-        name: 'Unread',
-        component: Unread
       },
       {
         path: '/login',

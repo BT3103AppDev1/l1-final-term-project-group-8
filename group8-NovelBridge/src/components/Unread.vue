@@ -1,5 +1,4 @@
 <template>
-  <Bookmarked/>
     <!-- Display book cards -->
     <section class="book-section">
       <div class="book-list">
@@ -26,7 +25,7 @@ import firebaseApp from "@/firebase";
 import Bookmarked from '@/Views/BookMarked.vue';
 
 export default defineComponent({
-  name: 'Home',
+  name: 'unread',
   components: {
     Bookmarked,
   },
