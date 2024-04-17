@@ -1,5 +1,4 @@
 <template>
-
     <div id="left_pane">
         <!-- for advertizing -->
     </div>

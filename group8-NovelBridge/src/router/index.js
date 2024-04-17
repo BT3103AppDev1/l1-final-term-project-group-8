@@ -8,6 +8,7 @@ import Unread from '@/components/Unread.vue'
 import Login from '@/components/Login.vue'
 import UserProfile from '@/components/UserProfile.vue'
 import Library from '@/Views/Library.vue'
+import BookDetail from '@/components/BookDetail.vue'
 
 
 
@@ -60,8 +61,15 @@ const routes = [
       {
         path:'/library',
         name:'Library',
-        component: Library
-      }
+        component: Library,
+        props: (route) => ({category: route.query.category})
+      },
+      {
+        path: '/bookdetail/:id',
+        name: 'BookDetail',
+        component: BookDetail,
+        props: true,
+      },
       
 ]
 
