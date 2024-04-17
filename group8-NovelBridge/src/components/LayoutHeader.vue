@@ -122,7 +122,7 @@ export default {
         signOut() {
             const auth = getAuth();
             const user = auth.currentUser;
-            signOut(auth,user)
+            signOut(auth)
             this.isLoggedIn = false
             this.$router.push({path:"/"})
         }

@@ -20,7 +20,7 @@
       <button @click="readBook()" class="read-btn">Read</button>
       <button @click="toggleBookmark" class="bookmark-btn">{{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}</button>
       <button @click="toggleFavourite" class="favourite-btn">
-        <div v-if="isFavourite">
+        <div v-if="book.isFavourite">
           <img  src="@/assets/heart-filled.jpg" alt="Favourite icon" class="heart-icon">
         </div>
         <div v-else>
