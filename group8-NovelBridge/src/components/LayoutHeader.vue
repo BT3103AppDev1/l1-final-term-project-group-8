@@ -26,8 +26,8 @@
             v-model="searchQuery"
             placeholder="Search for a book..."
             @keyup.enter="searchBooks" >
-        >
-</div>
+        </div>
+
 
         <div v-if="isLoggedIn" class="logout" @click="signOut">
             <h4>LogOut</h4>
@@ -44,7 +44,7 @@
 
 <script>
 import firebaseApp from "@/firebase";
-import {getFirestore, doc, getDocs, collection} from "firebase/firestore"
+import {getFirestore, doc, getDocs, getDoc, collection} from "firebase/firestore"
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 
 export default {
@@ -107,7 +107,7 @@ export default {
             const userDocInfo = doc(db,'users', userID);
             
             try {
-                const userDoc = await getDoc(userDocInfo);
+                const userDoc = await getDocs(userDocInfo);
                 if ( userDoc.exists()) {
                     const userData = userDoc.data();
                     this.userProfile = userData.imageUrl;
@@ -138,7 +138,7 @@ export default {
         padding:5px;
     }
     .logo img {
-        width: 100px; /* Set this to the desired width */
+        width: 100px;
         height: auto;
     }
     .logo h1 {

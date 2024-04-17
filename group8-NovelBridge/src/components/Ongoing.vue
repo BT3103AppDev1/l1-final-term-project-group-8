@@ -1,10 +1,9 @@
 <template>
-   <Bookmarked/>
       <!-- Display book cards -->
       <section class="book-section">
         <div class="book-list">
           <!-- Iterate over the books array and render book cards -->
-          <div class="book-card" v-for="book in books" :key="book.id">
+          <div class="book-card" v-for="book in ongoingBooks" :key="book.id">
             <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
               <img :src="book.cover" :alt="book.title" class="book-cover" />
             </router-link>
@@ -16,34 +15,67 @@
       </section>
   </template>
 
-  <script>
-  import Bookmarked from '@/Views/BookMarked.vue';
-  import bookCover from '@/assets/bookcover.jpg';
+<script>
+import { defineComponent, ref } from 'vue';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc, collection, query, where, getDocs, documentId } from "firebase/firestore";
+import firebaseApp from "@/firebase";
+import Bookmarked from '@/Views/BookMarked.vue';
   
-  export default {
-    name: 'Home',
+  export default defineComponent({
+    name: 'ongoing',
     components: {
       Bookmarked
     },
-    data() {
+    setup() {
+      const ongoingBooks = ref([]);
+      const fetchOngoingBooks = async(userId) => {
+        const db = getFirestore(firebaseApp);
+        const userDocRef = doc(db,"users", userId);
+        try {
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            const ongoingBookIds = userDocSnap.data().Ongoing || [];
+            const booksCollectionRef = collection(db, "Books");
+            const booksSnapshots = await Promise.all(ongoingBookIds.map(bookId => {
+              return getDoc(doc(booksCollectionRef, bookId));
+            }));
+            ongoingBooks.value = booksSnapshots.map(docSnap => {
+              if (!docSnap.exists()) {
+              console.log('No such book!');
+              return null;
+            }
+            const data = docSnap.data();
+            return {
+              id: docSnap.id,
+              title: data.Title,
+              author: data.Author || 'Unknown',
+              categories: data.Category || [],
+              cover: data.Cover || '',
+              wordCount: data['Word Count'] || 0,
+              gender: data.Gender || 'No gender',
+              views: data.Clicks || 0
+            };
+            }).filter(book => book !== null);
+          } else {
+            console.log("User document not found");
+          }
+        } catch (error) {
+          console.error("Error fetching unread books:", error);
+        }
+      };
+      const auth = getAuth(firebaseApp);
+      onAuthStateChanged(auth, user => {
+        if (user) {
+          fetchOngoingBooks(user.uid);
+        }
+      });
       return {
-        // Define the books array
-        books: [
-          {
-            id: 1,
-            title: 'The Kamogawa Food Detectives-ongo',
-            cover: bookCover,
-          },
-          {
-            id: 2,
-            title: 'Icebreaker-ongo',
-            cover: bookCover,
-          },
-          // Add more books as needed
-        ],
+        ongoingBooks
       };
     },
-  };
+  });
+
   </script>
 
   <style scoped>

@@ -28,7 +28,7 @@
 import firebaseApp from '../firebase.js';
 import { getFirestore } from 'firebase/firestore';
 import { collection, getDocs, doc , deleteDoc } from 'firebase/firestore';
-import 'firebase/storage';
+import { getStorage, ref as storageRef, listAll, getDownloadURL} from 'firebase/storage';
 
 
 export default {
@@ -48,14 +48,24 @@ export default {
     created(){
         this.bookName = this.$route.params.name;
         this.chapter_num = this.$route.params.chapter;
-        const storage = firebase.storage();
-        const storageRef = storage.ref().child('Novels').child(this.bookName);
-        storageRef.listAll().then((result) => {
+        const storage = getStorage(firebaseApp);
+        const novelsRef= storageRef(storage, '/Novels/' + this.bookName);
+
+        listAll(novelsRef).then((result) => {
+            this.files = result.items.filter((item) => item.name.endsWith(".txt"));
+            // Since these are methods, they should be called with 'this.'
+            this.selectChapter();
+            this.getChapterData();
+            });
+        },
+        
+
+        /*storageRef.listAll().then((result) => {
             this.files = result.items.filter((item) => item.name.endsWith(".txt"));
         });
         selectChapter();
         getChapterData();
-    },
+    },*/
 
     methods: {
         selectChapter(){
@@ -68,9 +78,14 @@ export default {
             }
         },
         getChapterData(){
+            const bookDirectoryName = "Sword net painting Chang'an"; // Ensure the directory name matches exactly
+            const chapterFileName = "Chapter 10 Voli Luohan_translated.txt";
             this.chapter_data ='';
-            const file = this.curr_chapter
-            file.getDownloadURL().then((url) => {
+            const storage = getStorage(firebaseApp);
+            const fileRef = storageRef(storage, `Novels/${this.bookName}/${chapterFileName}`);
+            
+            //const file = this.curr_chapter
+            getDownloadURL(fileRef).then((url) => {
                 fetch(url)
                 .then((response) => response.text())
                 .then((text) => {
@@ -97,18 +112,19 @@ export default {
                 }
             }
         },
+        
         ifFirstChapter(){
-            if (chapter_num==1) {
+            if (this.chapter_num == 1) {
                 document.getElementById('gotoprevious').style.backgroundColor = "#808080"
             }
         },
-        /** 
+
         ifLastChapter(){
-            if (chapter == keys[len(keys)]) {
+            if (this.chapter_num == keys[len(keys)]) {
                 document.getElementById('gotonext').style.backgroundColor = "#808080"
             }
         },
-        */
+
         
         goToBookInfo(){
             //code to go back to the view with book info
@@ -125,15 +141,12 @@ export default {
         
     },
     async mounted() {
-        ifFirstChapter()
-        ifLastChapter()
+        this.ifFirstChapter()
+        this.ifLastChapter()
 
 
     }
 }
-    
-
-
 </script>
 
 <style>
