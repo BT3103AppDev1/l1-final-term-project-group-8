@@ -109,8 +109,41 @@ export default {
     toggleBookmark() {
       this.book.isBookmarked = !this.book.isBookmarked;
       const bookId = this.$route.params.id;
-      // Further bookmark logic goes here
+      const userId = firebase.auth().currentUser.uid; 
+      const db = firebase.firestore();
+      
+      const bookmarksRef = db.collection('users').doc(userId);
+      const newBookmarkStatus = !this.book.isBookmarked;
+      
+      bookmarksRef.get().then((doc) => {
+        if (doc.exists) {
+          bookmarksRef.update({
+            [`bookmarks.${bookId}`]: this.book.isBookmarked
+          })
+          .then(() => {
+            console.log('Add to bookmark!');
+          })
+          .catch((error) => {
+            console.error('Error updating bookmark status:', error);
+            this.book.isBookmarked = !this.book.isBookmarked;
+          });
+        } else {
+          bookmarksRef.set({
+            bookmarks: {
+              [bookId]: this.book.isBookmarked
+            }
+          })
+          .then(() => {
+            console.log('User document created with bookmark!');
+          })
+          .catch((error) => {
+            console.error('Error creating user document with bookmark:', error);
+            this.book.isBookmarked = !this.book.isBookmarked;
+          });
+        }
+      });  
     },
+    
     toggleFavourite() {
       this.book.isFavourite = !this.book.isFavourite;
       // Further favourite logic goes here
