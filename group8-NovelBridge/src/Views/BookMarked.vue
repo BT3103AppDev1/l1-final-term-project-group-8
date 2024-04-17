@@ -1,5 +1,5 @@
 <template>
-    <LayoutHeader/>
+    <LayoutHeader @search-input="handleSearch" />
     <div class="status-bar">
         <router-link to="/unread" class="status-link" active-class="active">Unread</router-link>
         <router-link to="/ongoing" class="status-link" active-class="active">Ongoing</router-link>
