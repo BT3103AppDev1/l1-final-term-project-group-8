@@ -26,8 +26,7 @@
             v-model="searchQuery"
             placeholder="Search for a book..."
             @keyup.enter="searchBooks" >
-        >
-</div>
+        </div>
 
         <div v-if="isLoggedIn" class="logout" @click="signOut">
             <h4>LogOut</h4>
@@ -44,7 +43,7 @@
 
 <script>
 import firebaseApp from "@/firebase";
-import {getFirestore, doc, getDocs, collection} from "firebase/firestore"
+import {getFirestore, doc, getDocs, getDoc, collection} from "firebase/firestore"
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 
 export default {

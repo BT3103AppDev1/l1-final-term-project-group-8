@@ -57,6 +57,7 @@ import {getFirestore, doc, getDoc, collection} from "firebase/firestore";
 import LayoutHeader from '@/components/LayoutHeader.vue';
 
 export default {
+  name: "Reading",
   data() {
     return {
       book: {
@@ -151,12 +152,13 @@ export default {
     readBook() {
     // Assuming `chapter` is the first chapter identifier passed when calling this method
     this.$router.push({
-      name: 'ReadingPanel',
+      name: 'Reading',
       params: {
-        name: this.book.name, // Replace this with the actual book name or ID as needed
+        name: this.book.title, // Replace this with the actual book name or ID as needed
         chapter: 1
       }
     });
+    console.log(this.book.title);
   },
     
   }

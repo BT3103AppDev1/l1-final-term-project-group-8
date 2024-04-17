@@ -8,6 +8,7 @@ import Unread from '@/components/Unread.vue'
 import Login from '@/components/Login.vue'
 import UserProfile from '@/components/UserProfile.vue'
 import Library from '@/Views/Library.vue'
+import Reading from '@/components/Reading.vue'
 import BookDetail from '@/components/BookDetail.vue';
 
 
@@ -62,6 +63,12 @@ const routes = [
         path:'/library',
         name:'Library',
         component: Library
+      },
+      {
+        path: '/reading/:name',
+        name: 'Reading',
+        component: Reading,
+        props: true
       },
       {
         path: '/book/:id',
