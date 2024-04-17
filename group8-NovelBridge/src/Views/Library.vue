@@ -6,8 +6,8 @@
     <div class="books-grid">
       <div class="book-card" v-for="book in filteredBooks" :key="book.id">
         <!-- Book card content -->
-        <img :src="book.cover" :alt="book.title" class="book-cover" />
-        <h3>{{ book.title }}</h3>
+        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"><img :src="book.cover" :alt="book.title" class="book-cover" /></router-link>
+        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"><h3>{{ book.title }}</h3></router-link>
         <p>{{ book.author }}</p>
         <!-- ... other book details ... -->
       </div>
@@ -19,6 +19,9 @@
   import LayoutHeader from '@/components/LayoutHeader.vue';
   import BookFilter from '@/components/BookFilter.vue'; // Make sure the path is correct
   import bookCover from '@/assets/bookcover.jpg';
+  import firebaseApp from "@/firebase";
+  import {getFirestore, doc, getDocs, collection} from "firebase/firestore"
+  import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
   
   export default {
     name: "Library",
@@ -26,32 +29,43 @@
       LayoutHeader,
       BookFilter // Register the BookFilter component
     },
+    props: {
+    category: String, // Add this if you need to pass 'category' as a prop
+    },
+
     data() {
-  return {
-    categories: ['All', 'Fantasy', 'Historical Fiction', 'Science Fiction', 'Mystery', 'Thriller', 'Horror', 'Adventure', 'Contemporary'],
-    allBooks: [
-      {
-        id: 1,
-        title: 'Mystery of the Ancients',
-        author: 'Jane Doe',
-        categories: ['Mystery', 'Thriller'],
-        cover: bookCover
-        // ...other properties
-      },
-      {
-        id: 2,
-        title: 'The Lost Spells',
-        author: 'John Smith',
-        categories: ['Fantasy', 'Adventure'],
-        cover: bookCover
-        // ...other properties
-      },
-      // Add more example books here
-    ],
-    filteredBooks: []
-  };
-},
+      return {
+      categories: ['All', 'Fantasy', 'Historical Fiction', 'Science Fiction', 'Mystery', 'Thriller', 'Horror', 'Adventure', 'Contemporary'],
+      allBooks: [],
+      filteredBooks: []
+    }},
+    mounted(){
+      this.fetchBooks().then(() => {
+        const categoryFromRoute = this.$route.query.category;
+        if (categoryFromRoute) {
+          this.applyFilter({ type: 'category', value: categoryFromRoute });
+        }
+      });
+    },
     methods: {
+      async fetchBooks() {
+        const db = getFirestore(firebaseApp)
+        const queryBooks = await getDocs(collection(db, "Books"));
+        //console.log("fetched",queryBooks.docs)
+        this.allBooks = queryBooks.docs.map(doc => {
+          const docData = doc.data();
+          console.log("Data fetched", docData)
+          return { 
+            id: doc.id,
+            title: docData.Title,
+            author:docData.Author,
+            categories:docData.Category, 
+            cover: docData.Cover,       
+          };
+        });
+        this.filteredBooks = this.allBooks;
+        },
+
       applyFilter(filterData) {
         const { type, value } = filterData;
         if (type === 'category') {
@@ -62,10 +76,10 @@
         // Handle other filter types (reader, wordCount) similarly
       },
     },
-    created() {
+    /*created() {
       // Assuming allBooks would be fetched from an API or similar
       this.filteredBooks = this.allBooks;
-    },
+    },*/
   };
   </script>
   
