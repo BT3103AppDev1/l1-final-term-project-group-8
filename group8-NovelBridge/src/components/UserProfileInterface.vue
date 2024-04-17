@@ -1,14 +1,14 @@
 <template>
     <div class="user-profile-overlay">
       <div class="user-profile-menu">
-        <div class="close-btn">&times;</div>
+        <div class="close-btn" @click="goToHomePage">&times;</div>
         <div class="user-profile-header">
             <img :src="this.user.imageUrl" alt="User's profile picture" class="user-image" />
           <h2>{{ this.user.name}}</h2>
           <p>{{ this.user.email }}</p>
         </div>
         <ul class="user-profile-options">
-          <li><router-link to="/editProfile" class="header-link" >Edit Profile</router-link></li>
+          <li><router-link to="/editProfile" class="header-link"  >Edit Profile</router-link></li>
           <router-link to="/favourite" class="status-link" active-class="active">Favourite</router-link>
           <li><router-link to="/bookmarked" class="header-link" >Bookmarked</router-link></li>
           <li><router-link to="/editProfile" class="header-link" >Reading History</router-link></li>
@@ -16,7 +16,7 @@
         </ul>
         <UserProfileMenu @editProfile="showEditProfile = true" />
         <EditProfile v-if="showEditProfile" @close="showEditProfile = false" />
-        <button class="logout-btn">Log out</button>
+        <button @click="signOut" class="logout-btn" >Log out</button>
       </div>
     </div>
   </template>
@@ -24,7 +24,7 @@
   <script>
   import LayoutHeader from '@/components/LayoutHeader.vue';
   import firebaseApp from "@/firebase";
-  import { getAuth, onAuthStateChanged } from 'firebase/auth';
+  import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
   import { getFirestore} from 'firebase/firestore';
   import { doc, setDoc, getDoc, collection } from "firebase/firestore";
   import avatar from '@/assets/userprofile-avatar.png'
@@ -69,6 +69,17 @@
           });
       },
     methods: {
+      goToHomePage() {
+      this.$router.push('/');
+      },
+
+      signOut() {
+            const auth = getAuth();
+            const user = auth.currentUser;
+            signOut(auth)
+            this.$router.push({path:"/"})
+      },
+
       async saveProfile() {
         const currentUser = auth.currentUser;
         if (!currentUser) {
@@ -106,6 +117,7 @@
                   this.user.name = userData.Username;
                   this.user.gender = userData.Gender;
                   this.user.language = userData.language;
+                  this.user.email = userData.email;
                   if (userData.imageUrl) {
                     this.user.imageUrl = userData.imageUrl;
                   } else {
@@ -140,7 +152,6 @@
             const storageRef = ref(storage, `profilePictures/${currentUser.uid}`);
               await uploadBytes(storageRef, file);
               const imageUrl = await getDownloadURL(storageRef);
-  
               this.user.imageUrl = imageUrl;
             };
             fileInput.click();
@@ -156,7 +167,10 @@
   
   <style scoped>
 
-  
+  .user-profile-options .active {
+    color: rgb(249, 175, 79); /* Change color to match your design */
+  }
+
   .user-profile-menu {
     background: white;
     padding: 20px;
@@ -166,6 +180,7 @@
     position: relative;
 
   }
+
   
   .close-btn {
     position: absolute;
@@ -181,6 +196,13 @@
     width: 80px; /* Adjust size as necessary */
     height: 80px;
     border-radius: 50%;
+  }
+
+  .user-image {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    margin-left: 60px; 
   }
   
   .user-profile-header h2,
@@ -202,16 +224,16 @@
   }
   
   .logout-btn {
-    background-color: #f44336;
+    background-color: #f2b774;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 10px 15px;
     width: 100%;
-    border-radius: 5px;
+    border-radius: 7px;
     cursor: pointer;
   }
   
   .logout-btn:hover {
-    background-color: #d32f2f;
+    background-color: #f78636;
   }
   </style>
