@@ -26,7 +26,6 @@
             v-model="searchQuery"
             placeholder="Search for a book..."
             @keyup.enter="searchBooks" >
-        >
 </div>
 
         <div v-if="isLoggedIn" class="logout" @click="signOut">
