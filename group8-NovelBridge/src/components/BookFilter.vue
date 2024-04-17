@@ -1,4 +1,5 @@
 <template>
+  <LayoutHeader />
   <div class="filter-section">
     <!-- Reader Filter Group -->
     <div class="filter-group reader-group">

@@ -72,7 +72,7 @@ const routes = [
         props: true,
       },
       {
-        path: '/read/:id/:chapter',
+        path: '/read/:name/:chapter',
         name: 'ReadingPanel',
         component: Reading,
         props: true,
