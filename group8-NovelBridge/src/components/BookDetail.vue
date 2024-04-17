@@ -32,21 +32,22 @@
     
   </div>
 
-<div class="about-content">
+  <div class="about-content">
   <div class="book-description">
-      <h3>ABOUT</h3><hr>
-      <p>{{ book.description }}</p>
+    <h3>ABOUT</h3><hr>
+    <p>{{ book.description }}</p>
   </div>
 
   <div class="book-content">
-    <h3>CONTENT - {{ book.chapters }} Chapters</h3><hr>
-    <div class="chapters-row">
-      <div v-for="(chapter, index) in book.chapters" :key="index" class="chapter-title">
-        {{ chapter.title }}
-      </div>
-    </div>
+    <h3>CONTENT - {{ book.chapters.length }} Chapters</h3><hr>
+    <ul class="chapters-list">
+  <li v-for="(chapter, index) in book.chapters" :key="index" class="chapter-item">
+    {{ chapter }}
+  </li>
+</ul>
   </div>
 </div>
+
 
 
 </template>
@@ -57,7 +58,6 @@ import {getFirestore, doc, getDoc, collection} from "firebase/firestore";
 import LayoutHeader from '@/components/LayoutHeader.vue';
 
 export default {
-  name: "Reading",
   data() {
     return {
       book: {
@@ -96,7 +96,7 @@ export default {
       this.book.category = bookDetails.Category.join(', ');
       this.book.wordCount = bookDetails["Word Count"]
       this.book.views = bookDetails.Clicks;
-      this.book.chapters = bookDetails.Chapters;
+      this.book.chapters = Array.from({ length: bookDetails.Chapters }, (_, i) => `Chapter ${i + 1}`);
       this.book.cover = bookDetails.Cover;
       this.book.Chapter_Content = bookDetails.Chapter_Content;
 
@@ -152,13 +152,13 @@ export default {
     readBook() {
     // Assuming `chapter` is the first chapter identifier passed when calling this method
     this.$router.push({
-      name: 'Reading',
+      name: 'ReadingPanel',
       params: {
         name: this.book.title, // Replace this with the actual book name or ID as needed
-        chapter: 1
+        chapter: 1,
+        bookId: this.$route.params.id
       }
     });
-    console.log(this.book.title);
   },
     
   }
@@ -180,8 +180,19 @@ export default {
   height: auto;
 }
 
-.book-detail {
-  
+.chapters-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none; /* Removes bullet points */
+  padding: 0; /* Removes default padding */
+  margin: 0; /* Removes default margin */
+  gap: 20px; /* Adjust as necessary for spacing between chapters */
+}
+
+.chapter-item {
+  flex-basis: calc(15% - 10px);; /* Adjust percentage for three items per row and subtract gap */
+  text-align: center; /* Center the chapter titles if desired */
+  padding: 5px 0; /* Adds some padding above and below each chapter title */
 }
 
 .genre-badge {
