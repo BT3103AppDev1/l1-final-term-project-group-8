@@ -1,47 +1,87 @@
 <template>
-    <Bookmarked/>
-      <!-- Display book cards -->
-      <section class="book-section">
-        <div class="book-list">
-          <!-- Iterate over the books array and render book cards -->
-          <div class="book-card" v-for="book in books" :key="book.id">
-            <img :src="book.cover" :alt="book.title" class="book-cover">
-            <h3 class="book-title">{{ book.title }}</h3>
-          </div>
+  <Bookmarked/>
+    <!-- Display book cards -->
+    <section class="book-section">
+      <div class="book-list">
+        <!-- Iterate over the unreadBooks array and render book cards -->
+        <div class="book-card" v-for="book in unreadBooks" :key="book.id">
+          <img :src="book.cover" :alt="book.title" class="book-cover">
+          <h3 class="book-title">{{ book.title }}</h3>
         </div>
-      </section>
-  </template>
+      </div>
+    </section>
+</template>
 
-  <script>
-  import Bookmarked from '@/Views/BookMarked.vue';
-  // Import the book cover image or define it here
-  import bookCover from '@/assets/bookcover.jpg';
-  
-  export default {
-    name: 'Home',
-    components: {
-      Bookmarked
-    },
-    data() {
-      return {
-        // Define the books array
-        books: [
-          {
-            id: 1,
-            title: 'The Kamogawa Food Detectives-unread',
-            cover: bookCover,
-          },
-          {
-            id: 2,
-            title: 'Icebreaker-unread',
-            cover: bookCover,
-          },
-          // Add more books as needed
-        ],
-      };
-    },
-  };
-  </script>
+
+<script>
+import { defineComponent, ref } from 'vue';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc, collection, query, where, getDocs, documentId } from "firebase/firestore";
+import firebaseApp from "@/firebase";
+import Bookmarked from '@/Views/BookMarked.vue';
+
+export default defineComponent({
+  name: 'Home',
+  components: {
+    Bookmarked,
+  },
+  setup() {
+    const unreadBooks = ref([]);
+
+    const fetchUnreadBooks = async (userId) => {
+      const db = getFirestore(firebaseApp);
+      const userDocRef = doc(db, "users", userId);
+
+      try {
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const unreadBookIds = userDocSnap.data().Unread || [];
+          const booksCollectionRef = collection(db, "Books");
+          const booksSnapshots = await Promise.all(unreadBookIds.map(bookId => {
+            return getDoc(doc(booksCollectionRef, bookId));
+          }));
+        
+          unreadBooks.value = booksSnapshots.map(docSnap => {
+            if (!docSnap.exists()) {
+              console.log('No such book!');
+              return null;
+            }
+            const data = docSnap.data();
+            return {
+              id: docSnap.id,
+              title: data.Title,
+              author: data.Author || 'Unknown',
+              categories: data.Category || [],
+              cover: data.Cover || '',
+              wordCount: data['Word Count'] || 0,
+              gender: data.Gender || 'No gender',
+              views: data.Clicks || 0
+            };
+          }).filter(book => book !== null);
+        } else {
+          console.log("User document not found");
+        }
+      } catch (error) {
+        console.error("Error fetching unread books:", error);
+      }
+    };
+
+    const auth = getAuth(firebaseApp);
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        fetchUnreadBooks(user.uid);
+      } else {
+        console.error("No user logged in!");
+      }
+    });
+
+    return {
+      unreadBooks,
+    };
+  },
+});
+</script>
+
 
   <style scoped>
   .main-content {
