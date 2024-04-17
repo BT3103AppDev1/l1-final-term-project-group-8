@@ -59,28 +59,59 @@
             id: doc.id,
             title: docData.Title,
             author:docData.Author,
-            categories:docData.Category, 
-            cover: docData.Cover,       
+            categories:docData.Category,
+            cover:docData.Cover,
+            wordcount: docData['Word Count'],
+            gender: docData.Gender          
           };
         });
         this.filteredBooks = this.allBooks;
         },
 
       applyFilter(filterData) {
-        const { type, value } = filterData;
-        if (type === 'category') {
-          this.filteredBooks = value === 'All' ?
-            this.allBooks :
-            this.allBooks.filter(book => book.categories.includes(value));
-        }
-        // Handle other filter types (reader, wordCount) similarly
-      },
-    },
-    /*created() {
-      // Assuming allBooks would be fetched from an API or similar
-      this.filteredBooks = this.allBooks;
-    },*/
-  };
+    const { type, value } = filterData;
+    switch (type) {
+      case 'category':
+        this.filteredBooks = value === 'All' ?
+          this.allBooks :
+          this.allBooks.filter(book => book.categories.includes(value));
+        break;
+      case 'wordCount':
+        this.filteredBooks = this.filterByWordCount(value);
+        break;
+      case 'gender':
+        this.filteredBooks = value === 'All' ?
+          this.allBooks :
+          this.allBooks.filter(book => book.gender.toLowerCase() === value.toLowerCase());
+        break;
+      // ... handle other filters ...
+    }
+  },
+
+  filterByWordCount(wordCountRange) {
+    const [min, max] = this.parseWordCountRange(wordCountRange);
+    return this.allBooks.filter(book => {
+      const wordCount = parseInt(book.wordcount, 10);
+      return wordCount >= min && wordCount <= max;
+    });
+  },
+
+  parseWordCountRange(wordCountRange) {
+    switch (wordCountRange) {
+      case 'Below 30k':
+        return [0, 30000];
+      case '30k - 50k':
+        return [30000, 50000];
+      case '50k - 1million':
+        return [50000, 1000000];
+      case 'Above 1million':
+        return [1000000, Infinity];
+      default:
+        return [0, Infinity];
+    }
+  },
+},
+  }
   </script>
   
   <style scoped>
