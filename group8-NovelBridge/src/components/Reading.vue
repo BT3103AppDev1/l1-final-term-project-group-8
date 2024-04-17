@@ -33,8 +33,8 @@ import 'firebase/storage';
 
 export default {
     props: {
-        Name : String,
-        chapter_num: String
+        name : String,
+        chapter: Number
     },
     data() {
       return {
