@@ -28,6 +28,7 @@
             @keyup.enter="searchBooks" >
         </div>
 
+
         <div v-if="isLoggedIn" class="logout" @click="signOut">
             <h4>LogOut</h4>
         </div>
@@ -106,7 +107,7 @@ export default {
             const userDocInfo = doc(db,'users', userID);
             
             try {
-                const userDoc = await getDoc(userDocInfo);
+                const userDoc = await getDocs(userDocInfo);
                 if ( userDoc.exists()) {
                     const userData = userDoc.data();
                     this.userProfile = userData.imageUrl;
@@ -137,7 +138,7 @@ export default {
         padding:5px;
     }
     .logo img {
-        width: 100px; /* Set this to the desired width */
+        width: 100px;
         height: auto;
     }
     .logo h1 {

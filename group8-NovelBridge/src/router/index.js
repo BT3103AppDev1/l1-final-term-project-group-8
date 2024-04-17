@@ -8,9 +8,10 @@ import Unread from '@/components/Unread.vue'
 import Login from '@/components/Login.vue'
 import UserProfile from '@/components/UserProfile.vue'
 import Library from '@/Views/Library.vue'
+import BookDetail from '@/components/BookDetail.vue'
 import Reading from '@/components/Reading.vue'
-import BookDetail from '@/components/BookDetail.vue';
-
+import EditProfile from '@/components/EditProfile.vue'
+import Favourite from '@/components/Favourite.vue';
 
 
 const routes = [
@@ -21,28 +22,35 @@ const routes = [
       },
       {
         path: '/bookmarked',
-        name: 'BookMarked',
-        component: BookMarked
+        name: 'Bookmarked',
+        component: BookMarked,
+        children: [
+          {
+            path: '',
+            redirect: '/unread'
+          },
+          {
+            path: '/unread',
+            name: 'Unread',
+            component: Unread
+          },
+          {
+            path: '/completed',
+            name: 'Completed',
+            component: Completed
+          },
+          {
+            path: '/ongoing',
+            name: 'Ongoing',
+            component: Ongoing
+          }
+          // other nested routes under /bookmarked...
+        ]
       },
       {
         path: '/library',
         name: 'Library',
         component: Library
-      },
-      {
-        path: '/completed',
-        name: 'Completed',
-        component: Completed
-      },
-      {
-        path: '/ongoing',
-        name: 'Ongoing',
-        component: Ongoing
-      },
-      {
-        path: '/unread',
-        name: 'Unread',
-        component: Unread
       },
       {
         path: '/login',
@@ -76,7 +84,26 @@ const routes = [
         component: () => import('@/components/BookDetail.vue'),
         props: true
       },
-      
+      {
+        path: '/read/:name/:chapter',
+        name: 'ReadingPanel',
+        component: Reading,
+        props: true,
+      },
+      {
+        path: '/editProfile',
+        name: 'EditProfile',
+        component: EditProfile,
+        props: true,
+      },
+      {
+        path: '/favourite',
+        name: 'Favourite',
+        component: Favourite,
+      },
+
+
+
       
 ]
 

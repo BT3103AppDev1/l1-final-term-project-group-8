@@ -1,5 +1,4 @@
 <template>
-    <Bookmarked/>
       <!-- Display book cards -->
       <section class="book-section">
         <div class="book-list">
