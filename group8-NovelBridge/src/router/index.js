@@ -73,6 +73,12 @@ const routes = [
         component: Library
       },
       {
+        path: '/reading/:name',
+        name: 'Reading',
+        component: Reading,
+        props: true
+      },
+      {
         path: '/book/:id',
         name: 'BookDetail',
         component: () => import('@/components/BookDetail.vue'),
