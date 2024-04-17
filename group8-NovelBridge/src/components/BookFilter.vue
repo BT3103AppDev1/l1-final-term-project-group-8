@@ -2,9 +2,9 @@
   <div class="filter-section">
     <!-- Reader Filter Group -->
     <div class="filter-group reader-group">
-      <label>Reader:</label>
-      <button v-for="reader in readers" :key="reader" @click="applyFilter('reader', reader)" class="filter-font">
-        {{ reader }}
+      <label>Gender:</label>
+      <button v-for="gender in genders" :key="gender" @click="applyFilter('gender', gender)" class="filter-font">
+        {{ gender }}
       </button>
     </div>
     <!-- Category Filter Group -->
@@ -34,7 +34,7 @@
 export default {
   data() {
     return {
-      readers: ['All', 'Female', 'Male'],
+      genders: ['All', 'Female', 'Male'],
       categories: ['All', 'Fantasy', 'Historical Fiction', 'Science Fiction', 'Mystery', 'Romance', 'Thriller', 'Horror', 'Adventure', 'Contemporary'],
       wordCounts: ['All', 'Below 30k', '30k - 50k', '50k - 1million', 'Above 1million'],
     };

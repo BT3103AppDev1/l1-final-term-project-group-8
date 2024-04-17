@@ -14,7 +14,7 @@
                 <h4 @click="goToMystery"class = "header">Mystery</h4>
                 <ol>
                     <li v-for="book in mysteryBooks" :key="book.id">
-                        {{ book.title }}
+                        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"> {{ book.title }}</router-link>
                     </li>
                 </ol>
             </div>
