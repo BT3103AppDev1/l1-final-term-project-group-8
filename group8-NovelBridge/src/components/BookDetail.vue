@@ -17,7 +17,7 @@
 
 
     <div class="actions">
-      <button @click="readBook(book.chapters[0])" class="read-btn">Read</button>
+      <button @click="readBook()" class="read-btn">Read</button>
       <button @click="toggleBookmark" class="bookmark-btn">{{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}</button>
       <button @click="toggleFavourite" class="favourite-btn">
         <div v-if="isFavourite">
@@ -148,13 +148,13 @@ export default {
       this.book.isFavourite = !this.book.isFavourite;
       // Further favourite logic goes here
     },
-    readBook(chapter) {
+    readBook() {
     // Assuming `chapter` is the first chapter identifier passed when calling this method
     this.$router.push({
       name: 'ReadingPanel',
       params: {
         name: this.book.name, // Replace this with the actual book name or ID as needed
-        chapter: chapter
+        chapter: 1
       }
     });
   },
