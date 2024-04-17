@@ -1,10 +1,10 @@
 <template>
-  <LayoutHeader></LayoutHeader>
+  <LayoutHeader></LayoutHeader><br>
   <div class="book-detail">
     <div class="book-container">
       <img :src="book.cover" alt="bookcover" class="book-cover" />
       <div class="book-info">
-        <h2>{{ book.title }}</h2>
+        <h2>{{ book.title }}</h2><br>
         <p>Author: {{ book.author }}</p>
         <span class="genre-badge">{{ book.category}}</span>
       
@@ -92,7 +92,7 @@ export default {
       const bookDetails = queryBook.data()
       this.book.title = bookDetails.Title;
       this.book.author = bookDetails.Author;
-      this.book.category = bookDetails.Category;
+      this.book.category = bookDetails.Category.join(', ');
       this.book.wordCount = bookDetails["Word Count"]
       this.book.views = bookDetails.Clicks;
       this.book.chapters = bookDetails.Chapters;
@@ -170,6 +170,13 @@ export default {
   cursor: pointer;
 }
 
+.read-btn {
+    border: none; 
+    margin-right: 10px;
+    width: 30px;
+    background-color: rgba(244, 222, 184, 0.769)
+}
+
 .bookmark-btn {
 background-color: white;  
 border-color: darkgray;
@@ -189,13 +196,19 @@ color: black; /* Ensure the numbers are black */
 .text-label {
 color: grey; /* Make the text grey */
 }
+
 .heart-icon {
 width: 24px; /* Adjust the size of the heart icon */
 height: 30px;
 margin-right: 5px; /* Space between the icon and the text */
 }
+.favourite-btn {
+  background-color: transparent; 
+  border: none; 
+}
+
 .about-content {
-background: #efe4d6; 
+background: #F4F2EC;
 margin-top: 20px; 
 padding: 15px;
 }
