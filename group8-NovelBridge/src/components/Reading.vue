@@ -32,12 +32,12 @@ import { collection, getDocs, doc , deleteDoc } from 'firebase/firestore';
 
 
 export default {
-    props: ['bookName'],
+    props: ['bookName', 'ChapterName'],
     data() {
         return {
             all_chapters: getChapters(bookName),
-            keys: all_chapters.getKeys(),
-            chapter: keys[0],
+            keys: all_chapters.keys(),
+            chapter: ChapterName,
             chapter_data: all_chapters[chapter]
         }
     }, 
@@ -65,6 +65,16 @@ export default {
                 }
             }
         },
+        ifFirstChapter(){
+            if (chapter == keys[0]) {
+                document.getElementById('gotoprevious').style.backgroundColor = "#808080"
+            }
+        },
+        ifLastChapter(){
+            if (chapter == keys[len(keys)]) {
+                document.getElementById('gotonext').style.backgroundColor = "#808080"
+            }
+        },
         goToBookInfo(){
             //code to go back to the view with book info
         },
@@ -76,10 +86,16 @@ export default {
         },
         decreaseTextSize() {
             document.getElementById("text").style.fontSize = document.getElementById("text").style.fontSize - 1
-        }
+        },
+        
+    },
+    mounted() {
+        ifFirstChapter()
+        ifLastChapter()
     }
-    
 }
+    
+
 
 </script>
 
@@ -92,6 +108,7 @@ export default {
 #reading_pane {
     text-align: center;
     background-color: #F4F2EC;
+    font-size: 16px;
 }
 #gotohome{
     border: none;
@@ -105,6 +122,11 @@ export default {
     padding: 5px 15px;
     font-size: 16px;
 
+}
+.button{
+    text-align: center;
+    padding: 40px;
+    margin: auto;
 }
 
 </style>
