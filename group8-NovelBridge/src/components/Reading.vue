@@ -32,20 +32,23 @@ import { collection, getDocs, doc , deleteDoc } from 'firebase/firestore';
 
 
 export default {
-    props: ['bookName', 'ChapterName'],
+    props: {
+        id: String,
+        chapterName: String
+    },
     data() {
         return {
-            all_chapters: getChapters(bookName),
+            all_chapters: getChapters(id),
             keys: all_chapters.keys(),
             chapter: ChapterName,
             chapter_data: all_chapters[chapter]
         }
     }, 
     methods: {
-        async getChapters(bookN) {
+        async getChapters(id) {
             const db = getFirestore(firebaseApp);
-            const book = await getDocs(collection(db, 'Books',bookN))
-            let chapters = book.data().Chapters 
+            const book = await getDocs(collection(db, 'Books',id))
+            let chapters = book.data().Chapter_Content 
             return chapters
 
         },
