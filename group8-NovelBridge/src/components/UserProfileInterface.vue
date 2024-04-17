@@ -1,6 +1,6 @@
 <template>
-    <div class="user-profile-overlay">
-      <div class="user-profile-menu">
+    <div class="user-profile-overlay" style="right: 0;">
+      <div class="user-profile-menu" >
         <div class="close-btn" @click="goToHomePage">&times;</div>
         <div class="user-profile-header">
             <img :src="this.user.imageUrl" alt="User's profile picture" class="user-image" />
@@ -8,8 +8,8 @@
           <p>{{ this.user.email }}</p>
         </div>
         <ul class="user-profile-options">
-          <li><router-link to="/editProfile" class="header-link"  >Edit Profile</router-link></li>
-          <router-link to="/favourite" class="status-link" active-class="active">Favourite</router-link>
+          <li><router-link to="/editProfile" class="header-link" >Edit Profile</router-link></li>
+          <li><router-link to="/favourite" class="header-link" >Favourite</router-link></li>
           <li><router-link to="/bookmarked" class="header-link" >Bookmarked</router-link></li>
           <li><router-link to="/editProfile" class="header-link" >Reading History</router-link></li>
           <li>Share the website with friends</li>
@@ -167,9 +167,20 @@
   
   <style scoped>
 
-  .user-profile-options .active {
-    color: rgb(249, 175, 79); /* Change color to match your design */
-  }
+    .user-profile-options .active {
+      color: rgb(249, 175, 79); /* Change color to match your design */
+    }
+
+    .header-link:hover {
+      color: rgb(244, 161, 67); /* Color when hovered */
+    }
+    
+    .user-profile-overlay {
+      position: fixed; /* or absolute */
+      right: 0;
+      top: 0; /* or whatever value you need */
+      /* other styles */
+    }
 
   .user-profile-menu {
     background: white;
@@ -202,6 +213,7 @@
     width: 130px;
     height: 130px;
     border-radius: 50%;
+    margin-top: 20px;
     margin-left: 60px; 
   }
   
@@ -219,19 +231,25 @@
   
   .user-profile-options li {
     padding: 10px 0;
-    border-bottom: 1px solid #eee;
     cursor: pointer;
   }
   
   .logout-btn {
-    background-color: #f2b774;
+    background-color: #fba543;
     color: white;
     border: none;
     padding: 10px 15px;
-    width: 100%;
+    margin-left: 42px;
+    width: 70%;
     border-radius: 7px;
     cursor: pointer;
+    font-size: 15px;
   }
+
+  .header-link {
+  text-decoration: none;
+  color: black; 
+}
   
   .logout-btn:hover {
     background-color: #f78636;

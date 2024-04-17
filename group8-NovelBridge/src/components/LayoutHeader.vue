@@ -36,9 +36,11 @@
             <router-link to="/login" class="login-link">Login</router-link>
             <router-link to="/signup" class="login-link">Sign Up</router-link>
         </div>
+        <transition name="slide">
         <div v-if="isLoggedIn"> 
             <router-link to="/userprofile"><img :src="userProfile"alt="User profile img" class="profileImg"></router-link>
         </div>
+        </transition>
     </header>
 </template>
 
@@ -208,6 +210,14 @@ export default {
     
     .logout:hover{
         color:#FF6E05;
+    }
+
+    .slide-enter-active, .slide-leave-active {
+        transition: transform 0.5s;
+    }
+
+    .slide-enter, .slide-leave-to {
+        transform: translateX(100%);
     }
 
 
