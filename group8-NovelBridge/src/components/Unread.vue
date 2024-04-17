@@ -5,8 +5,13 @@
       <div class="book-list">
         <!-- Iterate over the unreadBooks array and render book cards -->
         <div class="book-card" v-for="book in unreadBooks" :key="book.id">
-          <img :src="book.cover" :alt="book.title" class="book-cover">
-          <h3 class="book-title">{{ book.title }}</h3>
+          <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
+            <img :src="book.cover" :alt="book.title" class="book-cover" />
+          </router-link>
+          <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
+            {{ book.title }}
+          </router-link>
+
         </div>
       </div>
     </section>
