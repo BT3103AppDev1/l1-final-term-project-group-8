@@ -85,7 +85,7 @@ const routes = [
         props: true
       },
       {
-        path: '/read/:name/:chapter',
+        path: '/read/:name/:bookId/:chapter',
         name: 'ReadingPanel',
         component: Reading,
         props: true,

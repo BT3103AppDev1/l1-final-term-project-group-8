@@ -26,10 +26,9 @@
 <script>
 
 import firebaseApp from '../firebase.js';
-import { getFirestore } from 'firebase/firestore';
-import { collection, getDocs, doc , deleteDoc } from 'firebase/firestore';
-import { getStorage, ref as storageRef, listAll, getDownloadURL} from 'firebase/storage';
-
+import { getFirestore, collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { getStorage, ref as storageRef, listAll, getDownloadURL } from 'firebase/storage';
+import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 
 export default {
     props: {
@@ -41,13 +40,22 @@ export default {
         curr_chapter: '',
         bookName: '',
         chapters_list: [],
-        chapter_num: 0,
+        chapter_num: 1,
         chapter_data: ''
       }
     },
     created(){
+        if (this.$route.params.name) {
         this.bookName = this.$route.params.name;
-        this.chapter_num = this.$route.params.chapter;
+        console.log(this.bookName);
+        console.log("tryout");
+        this.bookId = this.$route.params.bookId;
+        // continue with Firebase logic...
+        } else {
+        console.error('Route parameters are missing');
+        }
+        //this.userId = firebase.auth().currentUser.uid; 
+        this.chapter_num = 1//this.$route.params.chapter;
         const storage = getStorage(firebaseApp);
         const novelsRef= storageRef(storage, '/Novels/' + this.bookName);
 
@@ -78,24 +86,33 @@ export default {
             }
         },
         getChapterData(){
-            const bookDirectoryName = "Sword net painting Chang'an"; // Ensure the directory name matches exactly
-            const chapterFileName = "Chapter 10 Voli Luohan_translated.txt";
-            this.chapter_data ='';
+            this.chapter_data = '';
             const storage = getStorage(firebaseApp);
-            const fileRef = storageRef(storage, `Novels/${this.bookName}/${chapterFileName}`);
-            
-            //const file = this.curr_chapter
-            getDownloadURL(fileRef).then((url) => {
-                fetch(url)
-                .then((response) => response.text())
-                .then((text) => {
-                    this.chapter_data = text;
-                })
-                .catch((error) => {
-                    console.error("Error fetching file content:", error);
-                });
+            const chaptersRef = storageRef(storage, `Novels/${this.bookName}`);
+            listAll(chaptersRef).then((result) => {
+            const chapterFileRef = result.items.find((itemRef) => {
+            return itemRef.name.includes(`Chapter ${this.chapter_num}`);
             });
-        },
+            if (chapterFileRef) {
+        // If the chapter file is found, get its download URL and fetch its content
+        getDownloadURL(chapterFileRef).then((url) => {
+          fetch(url)
+          .then((response) => response.text())
+          .then((text) => {
+            this.chapter_data = text;
+          })
+          .catch((error) => {
+            console.error("Error fetching file content:", error);
+          });
+        });
+      } else {
+        console.error(`No file found for Chapter ${this.chapter_num}`);
+      }
+    }).catch((error) => {
+      console.error("Error listing chapter files:", error);
+    });
+  },
+
         goToNextChapter(){
             for (let i=0;i<len(keys)-1;i++){
                 if (chapter == keys[i]) {
@@ -112,7 +129,7 @@ export default {
                 }
             }
         },
-        
+        /** 
         ifFirstChapter(){
             if (this.chapter_num == 1) {
                 document.getElementById('gotoprevious').style.backgroundColor = "#808080"
@@ -124,6 +141,7 @@ export default {
                 document.getElementById('gotonext').style.backgroundColor = "#808080"
             }
         },
+        */
 
         
         goToBookInfo(){
