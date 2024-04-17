@@ -28,29 +28,58 @@
 import firebaseApp from '../firebase.js';
 import { getFirestore } from 'firebase/firestore';
 import { collection, getDocs, doc , deleteDoc } from 'firebase/firestore';
-
+import 'firebase/storage';
 
 
 export default {
     props: {
-        id: String,
-        chapterName: String
+        name : String,
+        chapter: Number
     },
     data() {
-        return {
-            all_chapters: getChapters(id),
-            keys: all_chapters.keys(),
-            chapter: ChapterName,
-            chapter_data: all_chapters[chapter]
-        }
-    }, 
-    methods: {
-        async getChapters(id) {
-            const db = getFirestore(firebaseApp);
-            const book = await getDocs(collection(db, 'Books',id))
-            let chapters = book.data().Chapter_Content 
-            return chapters
+      return {
+        curr_chapter: '',
+        bookName: '',
+        chapters_list: [],
+        chapter_num: 0,
+        chapter_data: ''
+      }
+    },
+    created(){
+        this.bookName = this.$route.params.name;
+        this.chapter_num = this.$route.params.chapter;
+        const storage = firebase.storage();
+        const storageRef = storage.ref().child('Novels').child(this.bookName);
+        storageRef.listAll().then((result) => {
+            this.files = result.items.filter((item) => item.name.endsWith(".txt"));
+        });
+        selectChapter();
+        getChapterData();
+    },
 
+    methods: {
+        selectChapter(){
+            for (i in this.chapters_list) {
+                const ch = 'Chapter ' + this.chapter.toString();
+                if (i.endsWith(ch)) {
+                    this.curr_chapter = i
+                    break;
+                }
+            }
+        },
+        getChapterData(){
+            this.chapter_data ='';
+            const file = this.curr_chapter
+            file.getDownloadURL().then((url) => {
+                fetch(url)
+                .then((response) => response.text())
+                .then((text) => {
+                    this.chapter_data = text;
+                })
+                .catch((error) => {
+                    console.error("Error fetching file content:", error);
+                });
+            });
         },
         goToNextChapter(){
             for (let i=0;i<len(keys)-1;i++){
@@ -69,15 +98,18 @@ export default {
             }
         },
         ifFirstChapter(){
-            if (chapter == keys[0]) {
+            if (chapter_num==1) {
                 document.getElementById('gotoprevious').style.backgroundColor = "#808080"
             }
         },
+        /** 
         ifLastChapter(){
             if (chapter == keys[len(keys)]) {
                 document.getElementById('gotonext').style.backgroundColor = "#808080"
             }
         },
+        */
+        
         goToBookInfo(){
             //code to go back to the view with book info
         },
@@ -92,9 +124,11 @@ export default {
         },
         
     },
-    mounted() {
+    async mounted() {
         ifFirstChapter()
         ifLastChapter()
+
+
     }
 }
     

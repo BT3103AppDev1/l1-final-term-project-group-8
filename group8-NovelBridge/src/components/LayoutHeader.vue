@@ -20,9 +20,15 @@
             @click.prevent = "promptSignUp"
             >Bookmarked</a>
         </div>
-        <div class = "search-bar">
-            <input type="text" placeholder="Search for a book...">
-        </div>
+        <div class="search-bar">
+        <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Search for a book..."
+            @keyup.enter="searchBooks" >
+        >
+</div>
+
         <div v-if="isLoggedIn" class="logout" @click="signOut">
             <h4>LogOut</h4>
         </div>
@@ -38,15 +44,16 @@
 
 <script>
 import firebaseApp from "@/firebase";
-import {getFirestore, doc, getDoc} from "firebase/firestore"
-import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+import {getFirestore, doc, getDocs, collection} from "firebase/firestore"
+import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 
 export default {
     name: "LayoutHeader",
     data() {
         return {
             isLoggedIn: false, 
-            userProfile: ''
+            userProfile: '',
+            searchQuery: '',
         }
     },
     created() {
@@ -62,6 +69,32 @@ export default {
         });
     },
     methods: {
+        async searchBooks() {
+    const trimmedQuery = this.searchQuery.trim().toLowerCase();
+    if (trimmedQuery) {
+      // Perform a database search instead of using this.allBooks
+      const db = getFirestore(firebaseApp);
+      const booksCollectionRef = collection(db, "Books");
+      const querySnapshot = await getDocs(booksCollectionRef);
+      let matchedBook = null;
+
+      querySnapshot.forEach((doc) => {
+        const bookData = doc.data();
+        if (bookData.Title && bookData.Title.toLowerCase().includes(trimmedQuery)) {
+          matchedBook = { id: doc.id, ...bookData };
+        }
+      });
+
+      // If a book is found, navigate to its details page
+      if (matchedBook) {
+        this.$router.push({ name: 'BookDetail', params: { id: matchedBook.id } });
+      } else {
+        // Handle the case where no book is found
+        alert('No book found with that title.');
+      }
+    }
+  },
+
         promptSignUp() {
             if (confirm('You must be signed up to bookmark. Would you like to sign up now?')) {
                 this.$router.push('/signup');
