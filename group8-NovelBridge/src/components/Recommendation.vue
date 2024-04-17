@@ -5,7 +5,7 @@
       <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
         <img :src="book.cover" :alt="book.title" class="book-cover" />
       </router-link>
-      <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
+      <router-link :to="{ name: 'BookDetail', params: { id: book.id }}" class="book-name">
         {{ book.title }}
       </router-link>
       <div class="book-author">{{ book.author }}</div>
@@ -31,7 +31,7 @@ export default {
 <style scoped>
 .recommendation-section {
   margin-top: 1%;
-  margin-left: 2%;
+  margin-left: 5%;
   font-size: 19px;
   font-weight: bolder;
   /* Rest of your styling */
@@ -52,6 +52,21 @@ export default {
   margin: 0.5rem;
   flex: 1 0 21%; /* Adjusted for 4 items per row, accounting for margins */
   /* Additional styling */
+}
+
+.book-name {
+  text-decoration: none;
+  color:black;
+}
+
+.book-name:hover{
+  text-decoration: underline;
+}
+
+.book-author {
+  font-size: 13px;
+  color:grey;
+  font-weight:lighter;
 }
 
 .book-cover {

@@ -3,21 +3,24 @@
     <!-- Reader Filter Group -->
     <div class="filter-group reader-group">
       <label>Gender:</label>
-      <button v-for="gender in genders" :key="gender" @click="applyFilter('gender', gender)" class="filter-font">
+      <button v-for="gender in genders" :key="gender" :class="{ 'active': activeGender === gender}"
+      @click="setActiveGender(gender)" class="filter-font">
         {{ gender }}
       </button>
     </div>
     <!-- Category Filter Group -->
     <div class="filter-group category-group">
       <label>Category:</label>
-      <button v-for="category in categories" :key="category" @click="applyFilter('category', category)" class="filter-font">
+      <button v-for="category in categories" :key="category" :class="{ 'active': activeCategory === category}" 
+      @click="setActiveCategory(category)" class="filter-font">
         {{ category }}
       </button>
     </div>
     <!-- Word Count Filter Group -->
     <div class="filter-group word-count-group">
       <label>Word count:</label>
-      <button v-for="wordCount in wordCounts" :key="wordCount" @click="applyFilter('wordCount', wordCount)" class="filter-font">
+      <button v-for="wordCount in wordCounts" :key="wordCount" :class="{ 'active': activeWordCounts === wordCount}"  
+      @click="setActiveWordCounts(wordCount)" class="filter-font">
         {{ wordCount }}
       </button>
     </div>
@@ -35,14 +38,32 @@ export default {
   data() {
     return {
       genders: ['All', 'Female', 'Male'],
+      activeGender: 'All',
       categories: ['All', 'Fantasy', 'Historical Fiction', 'Science Fiction', 'Mystery', 'Romance', 'Thriller', 'Horror', 'Adventure', 'Contemporary'],
+      activeCategory: 'All',
       wordCounts: ['All', 'Below 30k', '30k - 50k', '50k - 1million', 'Above 1million'],
+      activeWordCounts: 'All',
     };
   },
   methods: {
     applyFilter(type, value) {
       // Emit an event with the filter type and value
       this.$emit('apply-filter', { type, value });
+    },
+
+    setActiveGender(gender) {
+      this.activeGender = gender;
+      this.applyFilter('gender', gender );
+    },
+
+    setActiveCategory(category) {
+      this.activeCategory = category;
+      this.applyFilter('categories', category );
+    },
+
+    setActiveWordCounts(wordCount) {
+      this.activeWordCounts = wordCount;
+      this.applyFilter('wordCounts', wordCount);
     },
   },
 };
@@ -81,10 +102,15 @@ export default {
   text-transform: none; /* No text transform */
 }
 
-.filter-group button:hover,
+.filter-group button:hover{
+  color: orange; /* Darker text on hover/active */
+}
+
 .filter-group button.active {
-  background-color: #e9ecef; /* Slightly different background on hover/active */
-  color: #495057; /* Darker text on hover/active */
+  color: orange;
+  background-color: rgb(248, 227, 195);
+  border-radius:20px;
+
 }
 
 /* Style for active class if it's managed separately */

@@ -6,7 +6,7 @@
                 <h4 @click="goToRomance" class="header">Romance</h4>
                 <ol >
                     <li v-for="book in romanceBooks" :key="book.id">
-                        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"> {{ book.title }}</router-link>
+                        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}" class="book-title"> {{ book.title }}</router-link>
                     </li>
                 </ol>
             </div>
@@ -14,7 +14,7 @@
                 <h4 @click="goToMystery"class = "header">Mystery</h4>
                 <ol>
                     <li v-for="book in mysteryBooks" :key="book.id">
-                        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"> {{ book.title }}</router-link>
+                        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}" class="book-title"> {{ book.title }}</router-link>
                     </li>
                 </ol>
             </div>
@@ -120,6 +120,7 @@ export default {
   font-size: 18px;
   margin-bottom: 8px;
   text-decoration: underline;
+  font-weight:bold;
 }
 
 .category1 ol,
@@ -139,6 +140,12 @@ export default {
 .category1 ol li:hover,
 .category2 ol li:hover {
     text-decoration:underline;
+}
+
+.book-title{
+    text-decoration: none;
+    color:black;
+
 }
 
 </style>
