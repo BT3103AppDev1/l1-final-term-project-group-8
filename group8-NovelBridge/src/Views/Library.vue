@@ -6,8 +6,8 @@
     <div class="books-grid">
       <div class="book-card" v-for="book in filteredBooks" :key="book.id">
         <!-- Book card content -->
-        <img :src="book.cover" :alt="book.title" class="book-cover" />
-        <h3>{{ book.title }}</h3>
+        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"><img :src="book.cover" :alt="book.title" class="book-cover" /></router-link>
+        <router-link :to="{ name: 'BookDetail', params: { id: book.id }}"><h3>{{ book.title }}</h3></router-link>
         <p>{{ book.author }}</p>
         <!-- ... other book details ... -->
       </div>
@@ -29,27 +29,38 @@
       LayoutHeader,
       BookFilter // Register the BookFilter component
     },
+    props: {
+    category: String, // Add this if you need to pass 'category' as a prop
+    },
+
     data() {
-  return {
-    categories: ['All', 'Fantasy', 'Historical Fiction', 'Science Fiction', 'Mystery', 'Thriller', 'Horror', 'Adventure', 'Contemporary'],
-    allBooks: [],
-    filteredBooks: []
+      return {
+      categories: ['All', 'Fantasy', 'Historical Fiction', 'Science Fiction', 'Mystery', 'Thriller', 'Horror', 'Adventure', 'Contemporary'],
+      allBooks: [],
+      filteredBooks: []
     }},
     mounted(){
-      this.fetchBooks();
+      this.fetchBooks().then(() => {
+        const categoryFromRoute = this.$route.query.category;
+        if (categoryFromRoute) {
+          this.applyFilter({ type: 'category', value: categoryFromRoute });
+        }
+      });
     },
     methods: {
       async fetchBooks() {
         const db = getFirestore(firebaseApp)
-        const queryBooks = await getDocs(collection(db, "Book"));
+        const queryBooks = await getDocs(collection(db, "Books"));
         //console.log("fetched",queryBooks.docs)
         this.allBooks = queryBooks.docs.map(doc => {
           const docData = doc.data();
+          console.log("Data fetched", docData)
           return { 
-            id: docData.ID,
-            title: doc.id,
+            id: doc.id,
+            title: docData.Title,
             author:docData.Author,
-            categories:docData.Category,          
+            categories:docData.Category, 
+            cover: docData.Cover,       
           };
         });
         this.filteredBooks = this.allBooks;

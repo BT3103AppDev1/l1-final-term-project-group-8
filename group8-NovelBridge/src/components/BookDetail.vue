@@ -1,14 +1,14 @@
 <template>
     <div class="book-detail">
       <div class="book-container">
-        <img :src="bookcover" alt="book.title + ' cover'" class="book-cover" />
+        <img :src="book.cover" alt="bookcover" class="book-cover" />
         <div class="book-info">
           <h2>{{ book.title }}</h2>
           <p>Author: {{ book.author }}</p>
-          <span class="genre-badge">{{ book.genre }}</span>
+          <span class="genre-badge">{{ book.category}}</span>
         
         <div class="book-stats">
-          <span class="page-count"><span class="highlighted-number">{{ book.pages }}</span> <span class="text-label">pages</span></span> |
+          <span class="page-count"><span class="highlighted-number">{{ book.wordCount }}</span> <span class="text-label">words</span></span> |
           <span><span class="highlighted-number">{{ book.views }}K</span> <span class="text-label">views</span></span>
         </div>
       </div>
@@ -19,7 +19,12 @@
         <button @click="readBook" class="read-btn">Read</button>
         <button @click="toggleBookmark" class="bookmark-btn">{{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}</button>
         <button @click="toggleFavourite" class="favourite-btn">
-          <img :src="book.isFavourite ? '@/assets/heart-filled.jpg' : '@/assets/heart-unfilled.jpg'" alt="Favourite icon" class="heart-icon" />
+          <div v-if="isFavourite">
+            <img  src="@/assets/heart-filled.jpg" alt="Favourite icon" class="heart-icon">
+          </div>
+          <div v-else>
+            <img  src="@/assets/heart-unfilled.jpg" alt="Favourite icon" class="heart-icon">
+          </div>
         </button>
       </div>
 
@@ -33,7 +38,7 @@
     </div>
 
     <div class="book-content">
-      <h3>CONTENT - {{ book.chapters.length }} Chapters</h3><hr>
+      <h3>CONTENT - {{ book.chapters }} Chapters</h3><hr>
       <div class="chapters-row">
         <div v-for="(chapter, index) in book.chapters" :key="index" class="chapter-title">
           {{ chapter.title }}
@@ -46,16 +51,56 @@
   </template>
   
   <script>
+  import firebaseApp from "@/firebase";
+  import {getFirestore, doc, getDoc, collection} from "firebase/firestore"
+
   export default {
-    props: {
-      book: {
-        type: Object,
-        required: true
+    data() {
+      return {
+        book: {
+          title: '',
+          author: '',
+          category: '',
+          wordCount: 0,
+          views: 0,
+          isBookmarked: false,
+          isFavourite: false,
+          description: '',
+          chapters: [],
+          cover: '',
+        }
       }
     },
+    props: {
+      id: String
+    },
+    async mounted() {
+      const db = getFirestore(firebaseApp);
+      const bookId = this.$route.params.id;
+      console.log(bookId);
+      const docInfo = doc(db, "Books", bookId);
+      const queryBook = await getDoc(docInfo)
+      
+      if(queryBook.exists()) {
+        const bookDetails = queryBook.data()
+        this.book.title = bookDetails.Title;
+        this.book.author = bookDetails.Author;
+        this.book.category = bookDetails.Category;
+        this.book.wordCount = bookDetails["Word Count"]
+        this.book.views = bookDetails.Clicks;
+        this.book.chapters = bookDetails.Chapters;
+        this.book.cover = bookDetails.Cover;
+
+        }
+      else {
+        console.error("Error in fetching books")
+      }
+      },
+
     methods: {
       toggleBookmark() {
         this.book.isBookmarked = !this.book.isBookmarked;
+        const bookId = this.$route.params.id;
         // Further bookmark logic goes here
       },
       toggleFavourite() {
