@@ -56,11 +56,14 @@
 import firebaseApp from "@/firebase";
 import {getFirestore, doc, getDoc, collection} from "firebase/firestore";
 import LayoutHeader from '@/components/LayoutHeader.vue';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 
 export default {
   data() {
     return {
       book: {
+        id: '',
         title: '',
         author: '',
         category: '',
@@ -82,9 +85,21 @@ export default {
   props: {
     id: String
   },
+  created(){
+    const auth = getAuth(firebaseApp);
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        this.userID = user.uid;
+        console.log(user.uid);
+      } else {
+        console.error("No user logged in!");
+      }
+    });
+  },
   async mounted() {
     const db = getFirestore(firebaseApp);
     const bookId = this.$route.params.id;
+    this.book.id = bookId
     console.log(bookId);
     const docInfo = doc(db, "Books", bookId);
     const queryBook = await getDoc(docInfo)
@@ -104,7 +119,53 @@ export default {
     else {
       console.error("Error in fetching books")
     }
-    },
+    const userInfo = doc(db, "users", this.userID);
+    const userDoc = await getDoc(userInfo);
+    
+    if(userDoc.exists()) {
+      const userData = userDoc.data();
+      const unread = userData.Unread;
+      const ongoing = userData.Ongoing;
+      const completed = userData.Completed;
+      const fav = userData.Favourite;
+      if (this.book.isBookmarked = false) {
+        for (let k = 0; i <length(unread); k++ ){
+          if (unread[k] == this.book.id) {
+            this.book.isBookmarked = true;
+            break
+          }
+        }
+      }
+      if (this.book.isBookmarked = false) {
+        for (let k = 0; i <length(ongoing); k++ ){
+          if (ongoing[k] == this.book.id) {
+            this.book.isBookmarked = true;
+            break
+          }
+        }
+      }
+      if (this.book.isBookmarked = false) {
+        for (let k = 0; i <length(completed); k++ ){
+          if (completed[k] == this.book.id) {
+            this.book.isBookmarked = true;
+            break
+          }
+        }
+      }
+      if (this.book.isFavourite = false) {
+        for (let k = 0; i <length(fav); k++ ){
+          if (fav[k] == this.book.id) {
+            this.book.isFavourite = true;
+            break
+          }
+        }
+      }
+    }
+    else {
+      console.error("Error in fetching books")
+    }
+
+  },
 
   methods: {
     toggleBookmark() {
