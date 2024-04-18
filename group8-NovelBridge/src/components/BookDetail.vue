@@ -210,20 +210,48 @@ export default {
       this.book.isFavourite = !this.book.isFavourite;
       // Further favourite logic goes here
     },
-    readBook() {
-    // Assuming `chapter` is the first chapter identifier passed when calling this method
-    this.$router.push({
-      name: 'ReadingPanel',
-      params: {
-        name: this.book.title, // Replace this with the actual book name or ID as needed
-        chapter: 1,
-        bookId: this.$route.params.id
-      }
-    });
-  },
+
+    async readBook() {
+      const db = getFirestore(firebaseApp);
+      const bookId = this.$route.params.id;
+      const userId = this.userID;
+      const userInfo = doc(db, "users", userId);
+      const userDoc = await getDoc(userInfo);
+      let chapterToStart = 1; //default
+      if(userDoc.exists()) {
+  const userData = userDoc.data();
+  const progress = userData.Progress;
+  console.log(bookId);
+
+  if (progress && progress.length > 0) {
+    // Get the first element of the progress array, which is the object containing the progress
+    const progressObject = progress[0];
+
+    // Use the bookId to access the chapter number from the progressObject
+    const bookProgress = progressObject[bookId];
+    console.log("book");
+    console.log(progressObject);
+    console.log(bookProgress);
+
+    if (bookProgress) {
+      chapterToStart = bookProgress;
+      console.log(chapterToStart);
+    }
+  }
+} else {
+  console.error("Error in fetching user progress");
+}
+      this.$router.push({
+    name: 'ReadingPanel',
+    params: {
+      name: this.book.title,
+      chapter: chapterToStart,
+      bookId: this.book.id
+    }
+  });
     
   }
-};
+}}
 </script>
 
 

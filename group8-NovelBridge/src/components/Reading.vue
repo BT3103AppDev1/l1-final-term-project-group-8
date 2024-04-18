@@ -40,7 +40,7 @@ export default {
         curr_chapter: '',
         bookName: '',
         chapters_list: [],
-        chapter_num: 1,
+        chapter_num: 0,
         chapter_data: ''
       }
     },
@@ -55,9 +55,10 @@ export default {
         console.error('Route parameters are missing');
         }
         //this.userId = firebase.auth().currentUser.uid; 
-        this.chapter_num = 1//this.$route.params.chapter;
+        this.chapter_num = this.$route.params.chapter;//this.$route.params.chapter;
         const storage = getStorage(firebaseApp);
         const novelsRef= storageRef(storage, '/Novels/' + this.bookName);
+        console.log(this.chapter_num);
 
         listAll(novelsRef).then((result) => {
             this.files = result.items.filter((item) => item.name.endsWith(".txt"));
