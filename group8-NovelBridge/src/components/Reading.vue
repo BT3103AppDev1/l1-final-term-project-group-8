@@ -109,6 +109,27 @@ export default {
                 }
             });
         },
+        async goToPreviousChapter() {
+            if (this.chapter_num > 1) {
+                this.chapter_num = parseInt(this.chapter_num, 10) - 1; // Decrease the chapter number
+                console.log(`Moving to chapter: ${this.chapter_num}`);
+                await this.getChapterData(); // Fetch the new chapter data
+                await this.updateUserProgress(); // Update the user's progress
+
+      // Update the URL without navigating
+            this.$router.replace({
+                name: 'ReadingPanel',
+                params: {
+                name: this.bookName,
+                chapter: this.chapter_num,
+                bookId: this.bookId,
+                userId: this.$route.params.userId // Include the userId if necessary
+                }
+            });
+    } else {
+      console.error("This is the first chapter, cannot go to the previous one.");
+    }
+  },
 
         async updateUserProgress() {
             const db = getFirestore(firebaseApp);
