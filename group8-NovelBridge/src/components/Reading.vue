@@ -1,17 +1,26 @@
 <template>
-    <LayoutHeader/>
-    <div id="reading-page">
+    <LayoutHeader></LayoutHeader>
+    <div id="left_pane">
+        <!-- for advertizing -->
+    </div>
+
     <div id="reading_pane">
+        <br>
         <button id="gotohome" @click="goToHome">< {{bookName}}</button>
-        <h1>Chapter {{ chapter }}:</h1>
+        <br>
+        <h1 id="title">Chapter {{ chapter }}</h1>
+        <br>
         <div id="text">
             {{ chapter_data }}
         </div>
+        <br>
         <div id="footer_pane">
         <!-- for the previous and next button -->
-        <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Previous</button>
-        <button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
+            <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Prev</button>
+            <button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
+
         </div>
+        <br><br>
     </div>
 
     <div id="right_pane">
@@ -21,16 +30,18 @@
 </template>
 
 <script>
-
+import LayoutHeader from '@/components/LayoutHeader.vue';
 import firebaseApp from '../firebase.js';
 import LayoutHeader from '@/components/LayoutHeader.vue';
 import { getFirestore, collection, getDocs, doc, deleteDoc,getDoc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref as storageRef, listAll, getDownloadURL } from 'firebase/storage';
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 
+
 export default {
     components: {
-        LayoutHeader
+        LayoutHeader,
+        // ... any other components
     },
     props: {
         name : String,
@@ -169,74 +180,55 @@ export default {
 </script>
 
 <style>
-#reading-page{
-  display: flex;
-  justify-content: space-between;
-}
-
-#left_pane {
-  width: 15%;
-}
-
-#right_pane {
-  display: flex;
-  flex-direction:column;
-  justify-content: center; /* Aligns vertically in the center */
-  align-items: center; /* Aligns horizontally in the center */
-  width: 15%;
-  height: 100vh;
+#left_pane,#rightpane{
+    width: 15%;
+    float: left;
 }
 
 #reading_pane {
-  padding:20px;
-  margin:auto;
-  width: 70%; /* Adjust width as necessary */
-  background-color: #F4F2EC; /* Match the color to the image provided */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* To add slight shadow around the reading pane */
+    float: left;
+    background-color: #F4F2EC;
+    font-size: 16px;
+    margin-left: 50px;
+    margin-right: 50px;
 }
-
-#reading_pane h1{
-  margin-left:25px;
-  font-size: 25px;
-  
+#footer_pane {
+    text-align: center;
 }
-
 #gotohome{
-  display: block;
-  margin: 0.5em 0;
-  padding: 0.5em;
-  background-color: transparent;
-  border: none;
-  font-size: 17px;
-  color: black;
-  font-weight:bolder;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    border: none;
+    background-color: #F4F2EC;
+    padding-left: 5px;
+    font-size: 16px;
+}
+#gotonext,#gotoprevious {
+    background-color: #E8CC81;
+    padding-left: 5px;
+    font-size: 16px;
+    padding: 5px;
+    margin-right: 30px;
+    border-radius: 50px;
+    width:150px;
+    border-width: 0;
 }
 #text {
-  text-align: left;
-  padding: 1.5em;
-  font-size: 1em;
- /* Match the color scheme */
+    text-align: center;
+    padding: 5px 15px;
+    font-size: 16px;
+    margin-right: 80px;
+    margin-left: 100px;
+
+}
+.button{
+    padding: 40px;
+    margin: auto;
+    font-size: 16px;
+    
+}
+#title {
+    margin-left: 80px;
+    font-weight: bold;
 }
 
-button {
-  background-color: #E8CC81; /* Or another color based on the image */
-  border: none;
-  font-weight:bolder;
-  padding: 0.5em 1em;
-  margin: 0.5em 0;
-  cursor: pointer;
-  border-radius:10px;
-}
 
-button:hover {
-  background-color: #f78636; /* A darker shade for hover state */
-}
-
-#footer_pane {
-  display:flex;
-  justify-content: space-around;
-  padding: 1em 0;
-  
-}
 </style>

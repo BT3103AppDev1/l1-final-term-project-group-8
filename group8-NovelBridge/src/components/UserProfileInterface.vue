@@ -11,7 +11,7 @@
           <li><router-link to="/editProfile" class="header-link" >Edit Profile</router-link></li>
           <li><router-link to="/favourite" class="header-link" >Favourite</router-link></li>
           <li><router-link to="/bookmarked" class="header-link" >Bookmarked</router-link></li>
-          <li><router-link to="/editProfile" class="header-link" >Reading History</router-link></li>
+          <li><router-link to="/readingHistory" class="header-link" >Reading History</router-link></li>
           <li>Share the website with friends</li>
         </ul>
         <UserProfileMenu @editProfile="showEditProfile = true" />
