@@ -18,7 +18,10 @@
 
     <div class="actions">
       <button @click="readBook()" class="read-btn">Read</button>
-      <button @click="toggleBookmark" class="bookmark-btn">{{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}</button>
+      <button @click="toggleBookmark" class="bookmark-btn">
+    {{ isBookmarked ? 'Added' : 'Add to Bookmark' }}
+      </button>
+
       <button @click="toggleFavourite" class="favourite-btn">
         <div v-if="book.isFavourite">
           <img  src="@/assets/heart-filled.jpg" alt="Favourite icon" class="heart-icon">
@@ -54,30 +57,12 @@
 
 <script>
 import firebaseApp from "@/firebase";
-import {getFirestore, doc, getDoc, collection, updateDoc} from "firebase/firestore";
+import {getFirestore, doc, getDoc, collection, updateDoc,arrayUnion, arrayRemove } from "firebase/firestore";
 import LayoutHeader from '@/components/LayoutHeader.vue';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 export default {
-  data() {
-    return {
-      book: {
-        id: '',
-        title: '',
-        author: '',
-        category: '',
-        wordCount: 0,
-        views: 0,
-        isBookmarked: false,
-        isFavourite: false,
-        description: '',
-        chapters: [],
-        cover: '',
-        Chapter_Content: [],
-      }
-    }
-  },
   components: {
     LayoutHeader,
     // ... any other components
@@ -85,8 +70,17 @@ export default {
   props: {
     id: String
   },
-  created(){
+  created() {
+  // Immediately invoked async function inside the created hook
+  (async () => {
     const auth = getAuth(firebaseApp);
+    if (auth.currentUser) {
+      this.userID = auth.currentUser.uid;
+      // Assuming checkIfBookmarked is a method that checks bookmark status
+      this.isBookmarked = await this.checkIfBookmarked(this.book.id);
+    } else {
+      console.error("No user logged in!");
+    }
     onAuthStateChanged(auth, user => {
       if (user) {
         this.userID = user.uid;
@@ -95,116 +89,129 @@ export default {
         console.error("No user logged in!");
       }
     });
-  },
-  async mounted() {
+  })();
+},
+
+async mounted() {
     const db = getFirestore(firebaseApp);
     const bookId = this.$route.params.id;
-    this.book.id = bookId
-    console.log(bookId);
-    const docInfo = doc(db, "Books", bookId);
-    const queryBook = await getDoc(docInfo)
-    
-    if(queryBook.exists()) {
-      const bookDetails = queryBook.data()
-      this.book.title = bookDetails.Title;
-      this.book.author = bookDetails.Author;
-      this.book.category = bookDetails.Category.join(', ');
-      this.book.wordCount = bookDetails["Word Count"]
-      this.book.views = bookDetails.Clicks;
-      this.book.chapters = Array.from({ length: bookDetails.Chapters }, (_, i) => `Chapter ${i + 1}`);
-      this.book.cover = bookDetails.Cover;
-      this.book.Chapter_Content = bookDetails.Chapter_Content;
+    this.book.id = bookId;
 
-      }
-    else {
-      console.error("Error in fetching books")
-    }
-    const userInfo = doc(db, "users", this.userID);
-    const userDoc = await getDoc(userInfo);
-    
-    if(userDoc.exists()) {
-      const userData = userDoc.data();
-      const unread = userData.Unread;
-      const ongoing = userData.Ongoing;
-      const completed = userData.Completed;
-      const fav = userData.Favourite;
-      if (this.book.isBookmarked = false) {
-        for (let k = 0; i <length(unread); k++ ){
-          if (unread[k] == this.book.id) {
-            this.book.isBookmarked = true;
-            break
-          }
-        }
-      }
-      if (this.book.isBookmarked = false) {
-        for (let k = 0; i <length(ongoing); k++ ){
-          if (ongoing[k] == this.book.id) {
-            this.book.isBookmarked = true;
-            break
-          }
-        }
-      }
-      if (this.book.isBookmarked = false) {
-        for (let k = 0; i <length(completed); k++ ){
-          if (completed[k] == this.book.id) {
-            this.book.isBookmarked = true;
-            break
-          }
-        }
-      }
-      if (this.book.isFavourite = false) {
-        for (let k = 0; i <length(fav); k++ ){
-          if (fav[k] == this.book.id) {
-            this.book.isFavourite = true;
-            break
-          }
-        }
-      }
-    }
-    else {
-      console.error("Error in fetching books")
+    // Fetch book details
+    const bookDocRef = doc(db, "Books", bookId);
+    const bookDocSnap = await getDoc(bookDocRef);
+
+    if (bookDocSnap.exists()) {
+        const bookDetails = bookDocSnap.data();
+        this.book.title = bookDetails.Title;
+        this.book.author = bookDetails.Author;
+        this.book.category = bookDetails.Category.join(', ');
+        this.book.wordCount = bookDetails["Word Count"];
+        this.book.views = bookDetails.Clicks;
+        this.book.cover = bookDetails.Cover;
+        this.book.description = bookDetails.Description;
+        this.book.chapters = Array.from({ length: bookDetails.Chapters }, (_, i) => `Chapter ${i + 1}`);
+    } else {
+        console.error("Error fetching book details.");
     }
 
-  },
+    // Fetch user data and check bookmark status
+    if (this.userID) {
+        const userDocRef = doc(db, "users", this.userID);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            const { Unread, Ongoing, Completed, Favourite } = userData;
+            this.book.isBookmarked = [Unread, Ongoing, Completed].some(list => list.includes(bookId));
+            this.book.isFavourite = Favourite.includes(bookId);
+        } else {
+            console.error("Error fetching user details.");
+        }
+    }
+},
+
+data() {
+    return {
+        book: {
+            id: '',
+            title: '',
+            author: '',
+            category: '',
+            wordCount: 0,
+            views: 0,
+            isBookmarked: false,  // Corrected typo here
+            isFavourite: false,
+            description: '',
+            chapters: [],
+            cover: '',
+        }
+    }
+},
+
 
   methods: {
-    toggleBookmark() {
-      this.book.isBookmarked = !this.book.isBookmarked;
-      const bookId = this.$route.params.id;
-      const userId = firebase.auth().currentUser.uid; 
-      const db = firebase.firestore();
-      
-      const bookmarksRef = db.collection('users').doc(userId);
-      const newBookmarkStatus = !this.book.isBookmarked;
-      
-      bookmarksRef.get().then((doc) => {
-        if (doc.exists) {
-          bookmarksRef.update({
-            [`bookmarks.${bookId}`]: this.book.isBookmarked
-          })
-          .then(() => {
-            console.log('Add to bookmark!');
-          })
-          .catch((error) => {
-            console.error('Error updating bookmark status:', error);
-            this.book.isBookmarked = !this.book.isBookmarked;
-          });
+    async checkIfBookmarked(bookId) {
+        const db = getFirestore(firebaseApp);
+        const userDocRef = doc(db, "users", this.userID);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            const { Completed, Ongoing, Unread } = userData;
+            return Completed.includes(bookId) || Ongoing.includes(bookId) || Unread.includes(bookId);
         } else {
-          bookmarksRef.set({
-            bookmarks: {
-              [bookId]: this.book.isBookmarked
-            }
-          })
-          .then(() => {
-            console.log('User document created with bookmark!');
-          })
-          .catch((error) => {
-            console.error('Error creating user document with bookmark:', error);
-            this.book.isBookmarked = !this.book.isBookmarked;
-          });
-        }
-      });  
-    },
+            console.error('User document does not exist');
+            return false;
+    }
+  },
+
+
+  async toggleBookmark() {
+  console.log('toggleBookmark called');
+  const db = getFirestore(firebaseApp);
+  const bookId = this.$route.params.id;
+  const userId = this.userID;
+  const userDocRef = doc(db, "users", userId);
+  const userDocSnap = await getDoc(userDocRef);
+    const userData = userDocSnap.data();
+    let { Unread, Ongoing, Completed, Progress } = userData;
+
+    // Check if the book is already bookmarked
+    this.isBookmarked = Completed.includes(bookId) ||
+                         Ongoing.includes(bookId) ||
+                         Unread.includes(bookId);
+    console.log(this.isBookmarked)
+    if (!this.isBookmarked) {
+      console.log('enter the loop')
+      // If not bookmarked, determine where to add
+      const bookProgress = Progress[bookId] || 0;
+      const updates = {};
+
+      if (bookProgress === 0) {
+        updates.Unread = arrayUnion(bookId);
+      } else {
+        updates.Ongoing = arrayUnion(bookId);
+      }
+
+      // Perform the update
+      await updateDoc(userDocRef, updates);
+      this.isBookmarked = true;
+    } else {
+      // If bookmarked, remove from all arrays
+      await updateDoc(userDocRef, {
+        Unread: arrayRemove(bookId),
+        Ongoing: arrayRemove(bookId),
+        Completed: arrayRemove(bookId)
+      });
+      console.log('removed');
+      this.isBookmarked = false;
+    }
+    console.log(this.isBookmarked);
+    this.isBookmarked = await this.checkIfBookmarked(bookId);
+},
+
+
+
     
     toggleFavourite() {
       this.book.isFavourite = !this.book.isFavourite;
