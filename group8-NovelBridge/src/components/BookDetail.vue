@@ -19,8 +19,9 @@
     <div class="actions">
       <button @click="readBook()" class="read-btn">Read</button>
       <button @click="toggleBookmark" class="bookmark-btn">
-    {{ isBookmarked ? 'Added' : 'Add to Bookmark' }}
-      </button>
+  {{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}
+</button>
+
 
       <button @click="toggleFavourite" class="favourite-btn">
         <div v-if="book.isFavourite">
@@ -80,7 +81,7 @@ export default {
     if (auth.currentUser) {
       this.userID = auth.currentUser.uid;
       // Assuming checkIfBookmarked is a method that checks bookmark status
-      this.isBookmarked = await this.checkIfBookmarked(this.book.id);
+      this.book.isBookmarked = await this.checkIfBookmarked(this.book.id);
     } else {
       console.error("No user logged in!");
     }
@@ -155,18 +156,19 @@ data() {
 
   methods: {
     async checkIfBookmarked(bookId) {
-        const db = getFirestore(firebaseApp);
-        const userDocRef = doc(db, "users", this.userID);
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-            const userData = userDocSnap.data();
-            const { Completed, Ongoing, Unread } = userData;
-            return Completed.includes(bookId) || Ongoing.includes(bookId) || Unread.includes(bookId);
-        } else {
-            console.error('User document does not exist');
-            return false;
-    }
-  },
+  const db = getFirestore(firebaseApp);
+  const userDocRef = doc(db, "users", this.userID);
+  const userDocSnap = await getDoc(userDocRef);
+  if (userDocSnap.exists()) {
+    const userData = userDocSnap.data();
+    const { Completed, Ongoing, Unread } = userData;
+    return Completed.includes(bookId) || Ongoing.includes(bookId) || Unread.includes(bookId);
+  } else {
+    console.error('User document does not exist');
+    return false;
+  }
+},
+
 
   async startReadingChapter(chapterNumber) {
   const db = getFirestore(firebaseApp);
@@ -209,37 +211,32 @@ data() {
   }
 },
 
-
-  async toggleBookmark() {
+async toggleBookmark() {
   console.log('toggleBookmark called');
   const db = getFirestore(firebaseApp);
-  const bookId = this.$route.params.id;
+  const bookId = this.book.id; // Assuming this.book.id is already set
   const userId = this.userID;
   const userDocRef = doc(db, "users", userId);
   const userDocSnap = await getDoc(userDocRef);
+
+  if (userDocSnap.exists()) {
     const userData = userDocSnap.data();
     let { Unread, Ongoing, Completed, Progress } = userData;
 
     // Check if the book is already bookmarked
-    this.isBookmarked = Completed.includes(bookId) ||
-                         Ongoing.includes(bookId) ||
-                         Unread.includes(bookId);
-    console.log(this.isBookmarked)
-    if (!this.isBookmarked) {
-      console.log('enter the loop')
+    this.book.isBookmarked = Completed.includes(bookId) ||
+                             Ongoing.includes(bookId) ||
+                             Unread.includes(bookId);
+    console.log(this.book.isBookmarked);
+
+    if (!this.book.isBookmarked) {
       // If not bookmarked, determine where to add
       const bookProgress = Progress[bookId] || 0;
-      const updates = {};
-
-      if (bookProgress === 0) {
-        updates.Unread = arrayUnion(bookId);
-      } else {
-        updates.Ongoing = arrayUnion(bookId);
-      }
+      const updates = bookProgress === 0 ? { Unread: arrayUnion(bookId) } : { Ongoing: arrayUnion(bookId) };
 
       // Perform the update
       await updateDoc(userDocRef, updates);
-      this.isBookmarked = true;
+      this.book.isBookmarked = true;
     } else {
       // If bookmarked, remove from all arrays
       await updateDoc(userDocRef, {
@@ -248,74 +245,17 @@ data() {
         Completed: arrayRemove(bookId)
       });
       console.log('removed');
-      this.isBookmarked = false;
+      this.book.isBookmarked = false;
     }
-    console.log(this.isBookmarked);
-    this.isBookmarked = await this.checkIfBookmarked(bookId);
-},
-
-
-
-    
-    toggleFavourite() {
-      this.book.isFavourite = !this.book.isFavourite;
-      // Further favourite logic goes here
-    },
-
-    async readBook() {
-  const db = getFirestore(firebaseApp);
-  const bookId = this.$route.params.id;
-  const userId = this.userID;
-  const userDocRef = doc(db, "users", userId);
-  const userDocSnap = await getDoc(userDocRef);
-
-  if (userDocSnap.exists()) {
-    const userData = userDocSnap.data();
-    let { Unread, Ongoing, Progress } = userData;
-
-    // Determine if the book was previously unread
-    const wasUnread = Unread.includes(bookId);
-
-    if (wasUnread) {
-      // Remove from Unread if it was previously marked as such
-      await updateDoc(userDocRef, {
-        Unread: arrayRemove(bookId)
-      });
-      console.log(`Book ID ${bookId} removed from Unread.`);
-    }
-
-    // Determine the chapter to start reading from
-    let chapterToStart = Progress[bookId] || 1;  // Default to start reading from the first chapter if not found in Progress
-
-    // Update or initialize progress for this book
-    const newProgress = {...Progress, [bookId]: chapterToStart};
-    await updateDoc(userDocRef, {
-      Progress: newProgress
-    });
-    console.log(`Progress updated to start at chapter ${chapterToStart} for bookId ${bookId}.`);
-
-    // Add to Ongoing if not already completed and it's not already in Ongoing
-    if (!Ongoing.includes(bookId)) {
-      await updateDoc(userDocRef, {
-        Ongoing: arrayUnion(bookId)
-      });
-      console.log(`Book ID ${bookId} added to Ongoing.`);
-    }
-
-    // Navigate to the ReadingPanel with the starting chapter
-    this.$router.push({
-      name: 'ReadingPanel',
-      params: {
-        name: this.book.title,
-        chapter: chapterToStart,
-        bookId: this.book.id,
-        userId: this.userID,
-      }
-    });
+    // Refresh the bookmark status
+    this.book.isBookmarked = await this.checkIfBookmarked(bookId);
   } else {
-    console.error("Error in fetching user data");
+    console.error('User document does not exist');
   }
 },
+
+
+
 
   },
 }
