@@ -176,9 +176,10 @@
     }
     
     .user-profile-overlay {
-      position: fixed; /* or absolute */
+      display: flex;
+      justify-content: center;
       right: 0;
-      top: 0; /* or whatever value you need */
+      top: 0;/* or whatever value you need */
       /* other styles */
     }
 
@@ -188,8 +189,7 @@
     width: 300px; /* Adjust width as necessary */
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: relative;
-
+    position:relative
   }
 
   

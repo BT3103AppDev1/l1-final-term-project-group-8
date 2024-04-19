@@ -109,7 +109,7 @@ export default {
             const userDocInfo = doc(db,'users', userID);
             
             try {
-                const userDoc = await getDocs(userDocInfo);
+                const userDoc = await getDoc(userDocInfo);
                 if ( userDoc.exists()) {
                     const userData = userDoc.data();
                     this.userProfile = userData.imageUrl;

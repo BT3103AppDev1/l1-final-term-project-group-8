@@ -1,4 +1,5 @@
 <template>
+    <LayoutHeader></LayoutHeader>
     <div class="background">
       <img src="@/assets/UserProfile-background.png">
     </div>
@@ -55,6 +56,7 @@
   import { doc, setDoc, getDoc, collection } from "firebase/firestore";
   import avatar from '@/assets/userprofile-avatar.png'
   import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+  import LayoutHeader from '@/components/LayoutHeader.vue';
   
   
   
@@ -65,6 +67,9 @@
   
   export default {
     name:"EditProfile",
+    components: {
+      LayoutHeader
+    },
     data() {
       return {
         user: {
