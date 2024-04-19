@@ -68,6 +68,13 @@ export default {
         },
 
     methods: {
+
+  goToHome() {
+    this.$router.push({
+      name: 'BookDetail', 
+      params: { id: this.bookId } 
+    });
+  },
         getChapterData(){
             this.chapter_data = '';
             const storage = getStorage(firebaseApp);
