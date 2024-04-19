@@ -162,146 +162,103 @@ export default {
       }
     }
     else {
-      console.error("Error in fetching user data")
+      console.error("Error in fetching books")
     }
 
   },
 
   methods: {
-    async toggleBookmark() {
+    toggleBookmark() {
       this.book.isBookmarked = !this.book.isBookmarked;
-      const db = getFirestore(firebaseApp);
-      const userInfo = doc(db, "users", userId);
-      const userDoc = await getDoc(userInfo);
-      if (userDoc.exists) {
-        const unread = userData.Unread;
-        const ongoing = userData.Ongoing;
-        const completed = userData.Completed;
-        const progress = userData.Progress[0]
-        if (this.book.isBookmarked) {
-          if (this.book.id in progress.keys()){
-            ongoing.push(this.book.id);
-            await updateDoc(userDoc, {
-              Ongoing: ongoing
-            })
-            .then(() => { console.log("Bookmark added in Ongoing")})
-            .catch(() => { console.log("Error adding Bookmark to ongoing")})
-          }
-          else {
-            unread.push(this.book.id);
-            await updateDoc(userDoc, {
-              Unread: unread
-            })
-            .then(() => { console.log("Bookmark added in Unread")})
-            .catch(() => { console.log("Error adding Bookmark to Unread")})
-          }
+      const bookId = this.$route.params.id;
+      const userId = firebase.auth().currentUser.uid; 
+      const db = firebase.firestore();
+      
+      const bookmarksRef = db.collection('users').doc(userId);
+      const newBookmarkStatus = !this.book.isBookmarked;
+      
+      bookmarksRef.get().then((doc) => {
+        if (doc.exists) {
+          bookmarksRef.update({
+            [`bookmarks.${bookId}`]: this.book.isBookmarked
+          })
+          .then(() => {
+            console.log('Add to bookmark!');
+          })
+          .catch((error) => {
+            console.error('Error updating bookmark status:', error);
+            this.book.isBookmarked = !this.book.isBookmarked;
+          });
+        } else {
+          bookmarksRef.set({
+            bookmarks: {
+              [bookId]: this.book.isBookmarked
+            }
+          })
+          .then(() => {
+            console.log('User document created with bookmark!');
+          })
+          .catch((error) => {
+            console.error('Error creating user document with bookmark:', error);
+            this.book.isBookmarked = !this.book.isBookmarked;
+          });
         }
-        else {
-          if (this.book.id in unread){
-            const new_unread = []
-            unread.array.forEach(element => { (element != this.book.id) ? new_unread.push(element) : console.log(element)});
-            await updateDoc(userDoc, {
-              Unread: new_unread
-            })
-            .then(() => { console.log("Bookmark removed from Unread")})
-            .catch(() => { console.log("Error removing bookmark from Unread")})
-          }
-          else if (this.book.id in ongoing){
-            const new_ongoing = []
-            ongoing.array.forEach(element => { (element != this.book.id) ? new_ongoing.push(element) : console.log(element)});
-            await updateDoc(userDoc, {
-              Ongoing: new_ongoing
-            })
-            .then(() => { console.log("Fav removed from Ongoing")})
-            .catch(() => { console.log("Error removing bookmark from Ongoing")})
-          }
-          else if (this.book.id in completed){
-            const new_completed = []
-            completed.array.forEach(element => { (element != this.book.id) ? new_completed.push(element) : console.log(element)});
-            await updateDoc(userDoc, {
-              Completed: new_completed
-            })
-            .then(() => { console.log("Fav removed from Completed")})
-            .catch(() => { console.log("Error removing bookmark from Completed")})
-          }
-        }
-      }
-      else {
-        console.log("Error in fetching user data")
-      }
+      });  
     },
     
-    async toggleFavourite() {
+    toggleFavourite() {
       this.book.isFavourite = !this.book.isFavourite;
-      const db = getFirestore(firebaseApp);
-      const userInfo = doc(db, "users", userId);
-      const userDoc = await getDoc(userInfo);
-      if (userDoc.exists) {
-        const fav = userDoc.data().Favourite;
-        if (this.book.isFavourite) {
-          fav.push(this.book.id);
-          await updateDoc(userDoc, {
-            Favourite: fav
-          })
-          .then(() => { console.log("Fav added")})
-          .catch(() => { console.log("Error")})
-        }
-        else {
-          const new_fav = []
-          fav.array.forEach(element => { (element != this.book.id) ? new_fav.push(element) : console.log(element)});
-          await updateDoc(userDoc, {
-            Favourite: new_fav
-          })
-          .then(() => { console.log("Fav removed")})
-          .catch(() => { console.log("Error")})
-        }
-      }
-      else {
-        console.log("Error in fetching user data")
-      }
+      // Further favourite logic goes here
     },
 
     async readBook() {
-      const db = getFirestore(firebaseApp);
-      const bookId = this.$route.params.id;
-      const userId = this.userID;
-      const userInfo = doc(db, "users", userId);
-      const userDoc = await getDoc(userInfo);
-      let chapterToStart = 1; //default
-      if(userDoc.exists()) {
-        const userData = userDoc.data();
-        const progress = userData.Progress;
-        console.log(bookId);
+  const db = getFirestore(firebaseApp);
+  const bookId = this.$route.params.id;
+  const userId = this.userID;
+  const userDocRef = doc(db, "users", userId);
+  const userDoc = await getDoc(userDocRef);
 
-        if (progress && progress.length > 0) {
-          // Get the first element of the progress array, which is the object containing the progress
-          const progressObject = progress[0];
+  let chapterToStart = 1; // Default to start reading from the first chapter
 
-          // Use the bookId to access the chapter number from the progressObject
-          const bookProgress = progressObject[bookId];
-          console.log("book");
-          console.log(progressObject);
-          console.log(bookProgress);
+  if(userDoc.exists()) {
+    const userData = userDoc.data();
+    let progress = userData.Progress;
 
-          if (bookProgress) {
-            chapterToStart = bookProgress;
-            console.log(chapterToStart);
-          }
-        }
-      } else {
-        console.error("Error in fetching user data");
-      }
-      this.$router.push({
-        name: 'ReadingPanel',
-        params: {
-        name: this.book.title,
-        chapter: chapterToStart,
-        bookId: this.book.id
-        }
+    // Create a new object for the progress if it doesn't already exist
+    const progressToUpdate = progress && progress.length > 0 ? progress[0] : {};
+
+    // Check if the bookId is already in the progress object
+    const bookProgress = progressToUpdate[bookId];
+
+    if (!bookProgress) {
+      // If not, set the progress to start at chapter 1
+      progressToUpdate[bookId] = chapterToStart;
+
+      // Update the user document with the new progress
+      await updateDoc(userDocRef, {
+        Progress: [progressToUpdate]
       });
-    
+
+      console.log(`Progress updated to start at chapter 1 for bookId ${bookId}.`);
+    } else {
+      // If the bookId is already in progress, set chapterToStart to the last read chapter
+      chapterToStart = bookProgress;
     }
+  } else {
+    console.error("Error in fetching user data");
   }
+
+  // Navigate to the ReadingPanel with the starting chapter
+  this.$router.push({
+    name: 'ReadingPanel',
+    params: {
+      name: this.book.title,
+      chapter: chapterToStart,
+      bookId: this.book.id
+    }
+  });
+},
+  },
 }
 </script>
 
