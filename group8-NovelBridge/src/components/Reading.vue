@@ -11,9 +11,9 @@
         </div>
         <div id="footer pane">
         <!-- for the previous and next button -->
-            <button id="gotoprevious" @click="goToPreviousChapter">Previous</button>
+        <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Previous</button>
+<button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
 
-            <button id="gotonext" @click="goToNextChapter">Next</button>
     </div>
     </div>
 
@@ -26,7 +26,7 @@
 <script>
 
 import firebaseApp from '../firebase.js';
-import { getFirestore, collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, deleteDoc,getDoc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref as storageRef, listAll, getDownloadURL } from 'firebase/storage';
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 
@@ -63,29 +63,11 @@ export default {
         listAll(novelsRef).then((result) => {
             this.files = result.items.filter((item) => item.name.endsWith(".txt"));
             // Since these are methods, they should be called with 'this.'
-            this.selectChapter();
             this.getChapterData();
             });
         },
-        
-
-        /*storageRef.listAll().then((result) => {
-            this.files = result.items.filter((item) => item.name.endsWith(".txt"));
-        });
-        selectChapter();
-        getChapterData();
-    },*/
 
     methods: {
-        selectChapter(){
-            for (i in this.chapters_list) {
-                const ch = 'Chapter ' + this.chapter.toString();
-                if (i.endsWith(ch)) {
-                    this.curr_chapter = i
-                    break;
-                }
-            }
-        },
         getChapterData(){
             this.chapter_data = '';
             const storage = getStorage(firebaseApp);
@@ -113,55 +95,44 @@ export default {
             console.error("Error listing chapter files:", error);
             });
         },
-        /** 
-        goToNextChapter(){
-            for (let i=0;i<len(keys)-1;i++){
-                if (chapter == keys[i]) {
-                    chapter = keys[i+1]
-                    chapter_data = all_chapters[chapter]
+        async goToNextChapter() {
+            this.chapter_num = parseInt(this.chapter_num, 10) + 1;
+            console.log(this.chapter_num);
+            await this.getChapterData();
+            await this.updateUserProgress();
+            this.$router.push({
+                name: 'ReadingPanel', // The name of the route as defined in your Vue Router
+                params: {
+                name: this.bookName,
+                chapter: this.chapter_num,
+                bookId: this.bookId
                 }
-            }
+            });
         },
-        goToPreviousChapter(){
-            for (let i=1;i<len(keys);i++){
-                if (chapter == keys[i]) {
-                    chapter = keys[i-1]
-                    chapter_data = all_chapters[chapter]
+
+        async updateUserProgress() {
+            const db = getFirestore(firebaseApp);
+            const userId = this.$route.params.userId;
+            console.log(userId);
+            const userDocRef = doc(db, "users", userId);
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+                let progress = userDoc.data().Progress || [];
+                let progressToUpdate = {};
+                if (progress.length > 0) {
+                    progressToUpdate = progress[0];
                 }
-            }
-        },
-        
-        ifFirstChapter(){
-            if (this.chapter_num == 1) {
-                document.getElementById('gotoprevious').style.backgroundColor = "#808080"
+                progressToUpdate[this.bookId] = this.chapter_num;
+                await updateDoc(userDocRef, {
+                    Progress : [progressToUpdate]
+                });
+            } else {
+                console.error("User document does not exist");
             }
         },
 
-        ifLastChapter(){
-            if (this.chapter_num == keys[len(keys)]) {
-                document.getElementById('gotonext').style.backgroundColor = "#808080"
-            }
-        },
-        */
-
-        
-        goToBookInfo(){
-            //code to go back to the view with book info
-        },
-        translate(original, newL){
-            //code to translate chapter data
-        },
-        increaseTextSize() {
-            document.getElementById("text").style.fontSize = document.getElementById("text").style.fontSize + 1
-        },
-        decreaseTextSize() {
-            document.getElementById("text").style.fontSize = document.getElementById("text").style.fontSize - 1
-        },
-        
     },
     async mounted() {
-        this.ifFirstChapter()
-        this.ifLastChapter()
 
 
     }

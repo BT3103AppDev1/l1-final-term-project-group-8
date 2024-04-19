@@ -254,7 +254,8 @@ export default {
     params: {
       name: this.book.title,
       chapter: chapterToStart,
-      bookId: this.book.id
+      bookId: this.book.id,
+      userId: this.userID,
     }
   });
 },
