@@ -8,25 +8,25 @@
         <p>Author: {{ book.author }}</p>
         <span class="genre-badge">{{ book.category}}</span>
       
-      <div class="book-stats">
-        <span class="page-count"><span class="highlighted-number">{{ book.wordCount }}</span> <span class="text-label">words</span></span> |
-        <span><span class="highlighted-number">{{ book.views }}K</span> <span class="text-label">views</span></span>
+        <div class="book-stats">
+          <span class="page-count"><span class="highlighted-number">{{ book.wordCount }}</span> <span class="text-label">words</span></span> |
+          <span><span class="highlighted-number">{{ book.views }}K</span> <span class="text-label">views</span></span>
+        </div>
       </div>
-    </div>
     </div>
 
 
     <div class="actions">
       <button @click="readBook()" class="read-btn">Read</button>
       <button @click="toggleBookmark" class="bookmark-btn">
-  {{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}
-</button>
-<button @click="toggleFavourite" class="favourite-btn">
-  <img v-if="book.isFavourite" src="@/assets/heart-filled.jpg" 
-  alt="Favourite icon" class="heart-icon">
-  <img v-else src="@/assets/heart-unfilled.jpg" 
-  alt="Favourite icon" class="heart-icon">
-</button>
+        {{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}
+      </button>
+      <button @click="toggleFavourite" class="favourite-btn">
+        <img v-if="book.isFavourite" src="@/assets/heart-filled.jpg" 
+          alt="Favourite icon" class="heart-icon">
+        <img v-else src="@/assets/heart-unfilled.jpg" 
+         alt="Favourite icon" class="heart-icon">
+        </button>
 
     </div>
 
@@ -34,26 +34,23 @@
   </div>
 
   <div class="about-content">
-  <div class="book-description">
-    <h3>ABOUT</h3><hr>
-    <p>{{ book.description }}</p>
+    <div class="book-description">
+      <h3>ABOUT</h3><hr>
+      <p>{{ book.description }}</p>
+    </div>
+
+    <div class="book-content">
+      <h3>CONTENT - {{ book.chapters.length }} Chapters</h3><hr>
+
+      <ul class="chapters-list">
+        <li v-for="(chapter, index) in book.chapters" :key="index" @click="startReadingChapter(index + 1)" class="chapter-item">
+          {{ chapter }}
+        </li>
+      </ul>
+
+
+    </div>
   </div>
-
-  <div class="book-content">
-    <h3>CONTENT - {{ book.chapters.length }} Chapters</h3><hr>
-
-    <ul class="chapters-list">
-  <li v-for="(chapter, index) in book.chapters" :key="index" @click="startReadingChapter(index + 1)" class="chapter-item">
-    {{ chapter }}
-  </li>
-</ul>
-
-
-  </div>
-</div>
-
-
-
 </template>
 
 <script>
@@ -73,27 +70,27 @@ export default {
   },
   created() {
   // Immediately invoked async function inside the created hook
-  (async () => {
-    const auth = getAuth(firebaseApp);
-    if (auth.currentUser) {
-      this.userID = auth.currentUser.uid;
-      // Assuming checkIfBookmarked is a method that checks bookmark status
-      this.book.isBookmarked = await this.checkIfBookmarked(this.book.id);
-    } else {
-      console.error("No user logged in!");
-    }
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        this.userID = user.uid;
-        console.log(user.uid);
+    (async () => {
+      const auth = getAuth(firebaseApp);
+      if (auth.currentUser) {
+        this.userID = auth.currentUser.uid;
+        // Assuming checkIfBookmarked is a method that checks bookmark status
+        this.book.isBookmarked = await this.checkIfBookmarked(this.book.id);
       } else {
         console.error("No user logged in!");
       }
-    });
-  })();
-},
+      onAuthStateChanged(auth, user => {
+        if (user) {
+          this.userID = user.uid;
+          console.log(user.uid);
+        } else {
+          console.error("No user logged in!");
+        }
+      });
+    })();
+  },
 
-async mounted() {
+  async mounted() {
     const db = getFirestore(firebaseApp);
     const bookId = this.$route.params.id;
     this.book.id = bookId;
@@ -130,9 +127,9 @@ async mounted() {
             console.error("Error fetching user details.");
         }
     }
-},
+  },
 
-data() {
+  data() {
     return {
         book: {
             id: '',
@@ -148,198 +145,156 @@ data() {
             cover: '',
         }
     }
-},
+  },
 
 
   methods: {
     async checkIfBookmarked(bookId) {
-  const db = getFirestore(firebaseApp);
-  const userDocRef = doc(db, "users", this.userID);
-  const userDocSnap = await getDoc(userDocRef);
-  if (userDocSnap.exists()) {
-    const userData = userDocSnap.data();
-    const { Completed, Ongoing, Unread } = userData;
-    return Completed.includes(bookId) || Ongoing.includes(bookId) || Unread.includes(bookId);
-  } else {
-    console.error('User document does not exist');
-    return false;
-  }
-},
-  async checkIfFavourite(bookId) {
-    const db = getFirestore(firebaseApp);
-  const userDocRef = doc(db, "users", this.userID);
-  const userDocSnap = await getDoc(userDocRef);
-  if (userDocSnap.exists()) {
-    const userData = userDocSnap.data();
-    const {Favourite} = userData;
-    return Favourite.includes(bookId);
-  } else {
-    console.error('User document does not exist');
-    return false;
-  }
-},
-
-
-  async startReadingChapter(chapterNumber) {
-  const db = getFirestore(firebaseApp);
-  const bookId = this.$route.params.id;
-  const userId = this.userID;
-  const userDocRef = doc(db, "users", userId);
-  const userDocSnap = await getDoc(userDocRef);
-
-  if (userDocSnap.exists()) {
-    const userData = userDocSnap.data();
-    let { Unread, Ongoing, Progress } = userData;
-
-    // Update Progress with the selected chapter
-    const newProgress = {...Progress, [bookId]: chapterNumber};
-    await updateDoc(userDocRef, {
-      Progress: newProgress
-    });
-    console.log(`Progress updated to chapter ${chapterNumber} for bookId ${bookId}.`);
-
-    // Add to Ongoing if not already included
-    if (!Ongoing.includes(bookId) && Unread.includes(bookId)) {
-      await updateDoc(userDocRef, {
-        Ongoing: arrayUnion(bookId), Unread: arrayRemove(bookId)
-      });
-      console.log(`Book ID ${bookId} added to Ongoing.`);
-    }
-
-    // Navigate to the ReadingPanel with the selected chapter
-    this.$router.push({
-      name: 'ReadingPanel',
-      params: {
-        name: this.book.title,
-        chapter: chapterNumber,
-        bookId: this.book.id,
-        userId: this.userID,
+      const db = getFirestore(firebaseApp);
+      const userDocRef = doc(db, "users", this.userID);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        const { Completed, Ongoing, Unread } = userData;
+        return Completed.includes(bookId) || Ongoing.includes(bookId) || Unread.includes(bookId);
+      } else {
+        console.error('User document does not exist');
+        return false;
       }
-    });
-  } else {
-    console.error("Error in fetching user data");
-  }
-},
-
-async toggleBookmark() {
-  console.log('toggleBookmark called');
-  const db = getFirestore(firebaseApp);
-  const bookId = this.book.id; // Assuming this.book.id is already set
-  const userId = this.userID;
-  const userDocRef = doc(db, "users", userId);
-  const userDocSnap = await getDoc(userDocRef);
-
-  if (userDocSnap.exists()) {
-    const userData = userDocSnap.data();
-    let { Unread, Ongoing, Completed, Progress } = userData;
-
-    // Check if the book is already bookmarked
-    this.book.isBookmarked = Completed.includes(bookId) ||
-                             Ongoing.includes(bookId) ||
-                             Unread.includes(bookId);
-    console.log(this.book.isBookmarked);
-
-    if (!this.book.isBookmarked) {
-      // If not bookmarked, determine where to add
-      const bookProgress = Progress[bookId] || 0;
-      const updates = bookProgress === 0 ? { Unread: arrayUnion(bookId) } : { Ongoing: arrayUnion(bookId) };
-
-      // Perform the update
-      await updateDoc(userDocRef, updates);
-      this.book.isBookmarked = true;
-    } else {
-      // If bookmarked, remove from all arrays
-      await updateDoc(userDocRef, {
-        Unread: arrayRemove(bookId),
-        Ongoing: arrayRemove(bookId),
-        Completed: arrayRemove(bookId)
-      });
-      console.log('removed');
-      this.book.isBookmarked = false;
-    }
-    // Refresh the bookmark status
-    this.book.isBookmarked = await this.checkIfBookmarked(bookId);
-  } else {
-    console.error('User document does not exist');
-  }
-},
-
-async toggleFavourite() {
-  console.log('toggleFavourite called');
-  const db = getFirestore(firebaseApp);
-  const bookId = this.book.id; // Assuming this.book.id is already set
-  const userId = this.userID;
-  const userDocRef = doc(db, "users", userId);
-  const userDocSnap = await getDoc(userDocRef);
-
-  if (userDocSnap.exists()) {
-    const userData = userDocSnap.data();
-    let { Favourite } = userData;
-
-    // Toggle the favourite status
-    if (!Favourite.includes(bookId)) {
-      // If it's not already a favourite, add it to the favourites
-      await updateDoc(userDocRef, {
-        Favourite: arrayUnion(bookId)
-      });
-      this.book.isFavourite = true;
-    } else {
-      // If it is already a favourite, remove it from the favourites
-      await updateDoc(userDocRef, {
-        Favourite: arrayRemove(bookId)
-      });
-      this.book.isFavourite = false;
-    }
-    console.log(this.book.isFavourite ? 'added to favourites' : 'removed from favourites');
-  } else {
-    console.error('User document does not exist');
-  }
-},
-async readBook() {
-  const db = getFirestore(firebaseApp);
-  const bookId = this.book.id; // Assuming this.book.id is already set
-  const userId = this.userID;
-  const userDocRef = doc(db, "users", userId);
-  const userDocSnap = await getDoc(userDocRef);
-
-  if (userDocSnap.exists()) {
-    const userData = userDocSnap.data();
-    let { Unread, Ongoing, Progress } = userData;
-
-    // Determine the chapter to start reading from
-    let chapterToStart = Progress && Progress[bookId] ? Progress[bookId] : 1;
-
-    // Update Progress with the starting chapter
-    const newProgress = { ...Progress, [bookId]: chapterToStart };
-    await updateDoc(userDocRef, {
-      Progress: newProgress
-    });
-    console.log(`Progress updated to start at chapter ${chapterToStart} for bookId ${bookId}.`);
-
-    // Add to Ongoing if not already included
-    if (!Ongoing.includes(bookId) && Unread.includes(bookId)) {
-      await updateDoc(userDocRef, {
-        Ongoing: arrayUnion(bookId), Unread: arrayRemove(bookId)
-      });
-      console.log(`Book ID ${bookId} added to Ongoing.`);
-    }
-
-    // Navigate to the ReadingPanel with the starting chapter
-    this.$router.push({
-      name: 'ReadingPanel',
-      params: {
-        name: this.book.title,
-        chapter: chapterToStart,
-        bookId: this.book.id,
-        userId: this.userID
+    },
+    
+    async checkIfFavourite(bookId) {
+      const db = getFirestore(firebaseApp);
+      const userDocRef = doc(db, "users", this.userID);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        const {Favourite} = userData;
+        return Favourite.includes(bookId);
+      } else {
+        console.error('User document does not exist');
+        return false;
       }
-    });
-  } else {
-    console.error("Error in fetching user data");
-  }
-},
+    },
 
-  },
+
+    async startReadingChapter(chapterNumber) {
+      const db = getFirestore(firebaseApp);
+      const bookId = this.$route.params.id;
+      const userId = this.userID;
+      const userDocRef = doc(db, "users", userId);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        let { Unread, Ongoing, Progress } = userData;
+
+        // Update Progress with the selected chapter
+        const newProgress = {...Progress, [bookId]: chapterNumber};
+        await updateDoc(userDocRef, {
+          Progress: newProgress
+        });
+        console.log(`Progress updated to chapter ${chapterNumber} for bookId ${bookId}.`);
+
+        // Add to Ongoing if not already included
+        if (!Ongoing.includes(bookId)) {
+          await updateDoc(userDocRef, {
+            Ongoing: arrayUnion(bookId)
+          });
+          console.log(`Book ID ${bookId} added to Ongoing.`);
+        }
+
+        // Navigate to the ReadingPanel with the selected chapter
+        this.$router.push({
+          name: 'ReadingPanel',
+          params: {
+            name: this.book.title,
+            chapter: chapterNumber,
+            bookId: this.book.id,
+            userId: this.userID,
+          }
+        });
+      } else {
+        console.error("Error in fetching user data");
+      }
+      
+    },
+
+    async toggleBookmark() {
+      console.log('toggleBookmark called');
+      const db = getFirestore(firebaseApp);
+      const bookId = this.book.id; // Assuming this.book.id is already set
+      const userId = this.userID;
+      const userDocRef = doc(db, "users", userId);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        let { Unread, Ongoing, Completed, Progress } = userData;
+
+        // Check if the book is already bookmarked
+        this.book.isBookmarked = Completed.includes(bookId) ||
+                                Ongoing.includes(bookId) ||
+                                Unread.includes(bookId);
+        console.log(this.book.isBookmarked);
+
+        if (!this.book.isBookmarked) {
+          // If not bookmarked, determine where to add
+          const bookProgress = Progress[bookId] || 0;
+          const updates = bookProgress === 0 ? { Unread: arrayUnion(bookId) } : { Ongoing: arrayUnion(bookId) };
+
+          // Perform the update
+          await updateDoc(userDocRef, updates);
+          this.book.isBookmarked = true;
+        } else {
+          // If bookmarked, remove from all arrays
+          await updateDoc(userDocRef, {
+            Unread: arrayRemove(bookId),
+            Ongoing: arrayRemove(bookId),
+            Completed: arrayRemove(bookId)
+          });
+          console.log('removed');
+          this.book.isBookmarked = false;
+        }
+        // Refresh the bookmark status
+        this.book.isBookmarked = await this.checkIfBookmarked(bookId);
+      } else {
+        console.error('User document does not exist');
+      }
+    },
+
+    async toggleFavourite() {
+      console.log('toggleFavourite called');
+      const db = getFirestore(firebaseApp);
+      const bookId = this.book.id; // Assuming this.book.id is already set
+      const userId = this.userID;
+      const userDocRef = doc(db, "users", userId);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        let { Favourite } = userData;
+
+        // Toggle the favourite status
+        if (!Favourite.includes(bookId)) {
+          // If it's not already a favourite, add it to the favourites
+          await updateDoc(userDocRef, {
+            Favourite: arrayUnion(bookId)
+          });
+          this.book.isFavourite = true;
+        } else {
+          // If it is already a favourite, remove it from the favourites
+          await updateDoc(userDocRef, {
+            Favourite: arrayRemove(bookId)
+          });
+          this.book.isFavourite = false;
+        }
+        console.log(this.book.isFavourite ? 'added to favourites' : 'removed from favourites');
+      } else {
+        console.error('User document does not exist');
+      }
+    },
+  }
 }
 </script>
 
