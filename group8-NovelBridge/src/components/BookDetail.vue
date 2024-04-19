@@ -140,7 +140,7 @@ data() {
             category: '',
             wordCount: 0,
             views: 0,
-            isBookmarked: false,  // Corrected typo here
+            isBookmarked: false,
             isFavourite: false,
             description: '',
             chapters: [],
@@ -223,49 +223,56 @@ data() {
   const bookId = this.$route.params.id;
   const userId = this.userID;
   const userDocRef = doc(db, "users", userId);
-  const userDoc = await getDoc(userDocRef);
+  const userDocSnap = await getDoc(userDocRef);
 
-  let chapterToStart = 1; // Default to start reading from the first chapter
+  if (userDocSnap.exists()) {
+    const userData = userDocSnap.data();
+    let { Unread, Ongoing, Progress } = userData;
 
-  if(userDoc.exists()) {
-    const userData = userDoc.data();
-    let progress = userData.Progress;
+    // Determine if the book was previously unread
+    const wasUnread = Unread.includes(bookId);
 
-    // Create a new object for the progress if it doesn't already exist
-    const progressToUpdate = progress && progress.length > 0 ? progress[0] : {};
-
-    // Check if the bookId is already in the progress object
-    const bookProgress = progressToUpdate[bookId];
-
-    if (!bookProgress) {
-      // If not, set the progress to start at chapter 1
-      progressToUpdate[bookId] = chapterToStart;
-
-      // Update the user document with the new progress
+    if (wasUnread) {
+      // Remove from Unread if it was previously marked as such
       await updateDoc(userDocRef, {
-        Progress: [progressToUpdate]
+        Unread: arrayRemove(bookId)
       });
-
-      console.log(`Progress updated to start at chapter 1 for bookId ${bookId}.`);
-    } else {
-      // If the bookId is already in progress, set chapterToStart to the last read chapter
-      chapterToStart = bookProgress;
+      console.log(`Book ID ${bookId} removed from Unread.`);
     }
+
+    // Determine the chapter to start reading from
+    let chapterToStart = Progress[bookId] || 1;  // Default to start reading from the first chapter if not found in Progress
+
+    // Update or initialize progress for this book
+    const newProgress = {...Progress, [bookId]: chapterToStart};
+    await updateDoc(userDocRef, {
+      Progress: newProgress
+    });
+    console.log(`Progress updated to start at chapter ${chapterToStart} for bookId ${bookId}.`);
+
+    // Add to Ongoing if not already completed and it's not already in Ongoing
+    if (!Ongoing.includes(bookId)) {
+      await updateDoc(userDocRef, {
+        Ongoing: arrayUnion(bookId)
+      });
+      console.log(`Book ID ${bookId} added to Ongoing.`);
+    }
+
+    // Navigate to the ReadingPanel with the starting chapter
+    this.$router.push({
+      name: 'ReadingPanel',
+      params: {
+        name: this.book.title,
+        chapter: chapterToStart,
+        bookId: this.book.id,
+        userId: this.userID,
+      }
+    });
   } else {
     console.error("Error in fetching user data");
   }
-
-  // Navigate to the ReadingPanel with the starting chapter
-  this.$router.push({
-    name: 'ReadingPanel',
-    params: {
-      name: this.book.title,
-      chapter: chapterToStart,
-      bookId: this.book.id,
-      userId: this.userID,
-    }
-  });
 },
+
   },
 }
 </script>
