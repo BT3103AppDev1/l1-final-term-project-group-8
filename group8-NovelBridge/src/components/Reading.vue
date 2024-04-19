@@ -1,12 +1,13 @@
 <template>
-    <LayoutHeader></LayoutHeader>
+    <LayoutHeader/>
+    <div class="reading-page">
     <div id="left_pane">
         <!-- for advertizing -->
     </div>
 
     <div id="reading_pane">
         <br>
-        <button id="gotohome" @click="goToHome">< {{bookName}}</button>
+        <div id="gotohome" @click="goToHome">< {{bookName}} </div>
         <br>
         <h1 id="title">Chapter {{ chapter }}</h1>
         <br>
@@ -18,19 +19,36 @@
         <!-- for the previous and next button -->
             <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Prev</button>
             <button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
-
         </div>
         <br><br>
     </div>
 
     <div id="right_pane">
-        <img src="@/assets/bookicon.png" alt="User profile img" class="profileImg">
+        <div class="icon-container">
+            <img src="@/assets/bookicon.png" alt="chapter icon" class="icon2">
+            <h5>Chapters</h5>
+        </div>
+        <div class="icon-container">
+            <img src="@/assets/A.png" alt="font size icon" class="icon">
+            <h5>Font size</h5>
+        </div>
+        <div class="icon-container">
+            <img src="@/assets/Bookmark.png" alt="bookmark icon" class="icon">
+            <h5>Bookmark</h5>
+        </div>
+        <div class="icon-container">
+            <img src="@/assets/Favorite.png" alt="bookmark icon" class="icon2">
+            <h5>Favorite</h5>
+        </div>
+        <div class="icon-container">
+            <img src="@/assets/world.png" alt="bookmark icon" class="icon2">
+            <h5>Language</h5>
+        </div>
     </div>
     </div>
 </template>
 
 <script>
-import LayoutHeader from '@/components/LayoutHeader.vue';
 import firebaseApp from '../firebase.js';
 import LayoutHeader from '@/components/LayoutHeader.vue';
 import { getFirestore, collection, getDocs, doc, deleteDoc,getDoc, updateDoc } from 'firebase/firestore';
@@ -180,26 +198,26 @@ export default {
 </script>
 
 <style>
-#left_pane,#rightpane{
-    width: 15%;
-    float: left;
+.reading-page{
+  display: flex;
+  justify-content: center;
 }
 
 #reading_pane {
-    float: left;
     background-color: #F4F2EC;
     font-size: 16px;
-    margin-left: 50px;
-    margin-right: 50px;
+    margin:auto;
+    width:75%;
 }
 #footer_pane {
     text-align: center;
 }
 #gotohome{
-    border: none;
+    cursor: pointer;
     background-color: #F4F2EC;
-    padding-left: 5px;
-    font-size: 16px;
+    padding-left:8px;
+    font-size: 18px;
+    font-weight:bolder;
 }
 #gotonext,#gotoprevious {
     background-color: #E8CC81;
@@ -210,6 +228,7 @@ export default {
     border-radius: 50px;
     width:150px;
     border-width: 0;
+    cursor: pointer;
 }
 #text {
     text-align: center;
@@ -219,6 +238,7 @@ export default {
     margin-left: 100px;
 
 }
+
 .button{
     padding: 40px;
     margin: auto;
@@ -228,6 +248,49 @@ export default {
 #title {
     margin-left: 80px;
     font-weight: bold;
+}
+
+#right_pane {
+  position:fixed;
+  display:flex;
+  flex-direction:column;
+  justify-content: space-around;
+  gap:15px;
+  align-items:center;
+  margin-left:85%; /* Aligns vertically in the center */
+}
+
+.icon-container {
+  cursor: pointer;  
+  display: flex;
+  flex-direction:column;
+  align-items: center; /* Center icon vertically */
+  justify-content: center; /* Center icon horizontally */
+  height:50px; /* Divide by the number of icons */
+  width: 100%;
+  border-radius: 10px;
+  background-color: #E8CC8E/* Ensure wrappers fill the width of the container */
+}
+
+.icon-container h5{
+    padding:3px;
+    padding-top: 0px;
+}
+
+.icon{
+  padding:10px;
+  padding-bottom: 0px;
+  height:auto; /* or any size you prefer */
+  width: 40px; /* maintains the aspect ratio */
+  object-fit: contain
+}
+
+.icon2{
+  padding:7px;
+  padding-bottom: 0px;
+  height:auto; /* or any size you prefer */
+  width: 40px; /* maintains the aspect ratio */
+  object-fit: contain
 }
 
 
