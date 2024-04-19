@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-
+import 'firebase/auth';
+import 'firebase/firestore';
 const firebaseConfig = {
     apiKey: "AIzaSyAEAiiQiW8vn5o7dx_ab4iD7s4FVWhnPNY",
     authDomain: "novel-bridge.firebaseapp.com",
@@ -12,5 +13,4 @@ const firebaseConfig = {
   
   // Initialize Firebase
   const firebaseApp = initializeApp(firebaseConfig);
-  
   export default firebaseApp;
