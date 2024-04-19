@@ -43,11 +43,14 @@
 
   <div class="book-content">
     <h3>CONTENT - {{ book.chapters.length }} Chapters</h3><hr>
+
     <ul class="chapters-list">
-  <li v-for="(chapter, index) in book.chapters" :key="index" class="chapter-item">
+  <li v-for="(chapter, index) in book.chapters" :key="index" @click="startReadingChapter(index + 1)" class="chapter-item">
     {{ chapter }}
   </li>
 </ul>
+
+
   </div>
 </div>
 
@@ -164,6 +167,47 @@ data() {
             return false;
     }
   },
+
+  async startReadingChapter(chapterNumber) {
+  const db = getFirestore(firebaseApp);
+  const bookId = this.$route.params.id;
+  const userId = this.userID;
+  const userDocRef = doc(db, "users", userId);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (userDocSnap.exists()) {
+    const userData = userDocSnap.data();
+    let { Unread, Ongoing, Progress } = userData;
+
+    // Update Progress with the selected chapter
+    const newProgress = {...Progress, [bookId]: chapterNumber};
+    await updateDoc(userDocRef, {
+      Progress: newProgress
+    });
+    console.log(`Progress updated to chapter ${chapterNumber} for bookId ${bookId}.`);
+
+    // Add to Ongoing if not already included
+    if (!Ongoing.includes(bookId)) {
+      await updateDoc(userDocRef, {
+        Ongoing: arrayUnion(bookId)
+      });
+      console.log(`Book ID ${bookId} added to Ongoing.`);
+    }
+
+    // Navigate to the ReadingPanel with the selected chapter
+    this.$router.push({
+      name: 'ReadingPanel',
+      params: {
+        name: this.book.title,
+        chapter: chapterNumber,
+        bookId: this.book.id,
+        userId: this.userID,
+      }
+    });
+  } else {
+    console.error("Error in fetching user data");
+  }
+},
 
 
   async toggleBookmark() {
@@ -381,6 +425,16 @@ display: flex; /* Establishes a flex container */
 flex-wrap: wrap; /* Allows items to wrap onto the next line */
 gap: 90px; /* Provides space between items */
 justify-content: flex-start; /* Aligns items to the start of the container */
+}
+
+.chapter-item {
+  cursor: pointer;
+  padding: 5px 0; /* Existing styles */
+  /* Additional hover styles */
+}
+
+.chapter-item:hover {
+  background-color: #f0f0f0; /* A light grey background on hover */
 }
 
 </style>
