@@ -199,9 +199,9 @@ data() {
     console.log(`Progress updated to chapter ${chapterNumber} for bookId ${bookId}.`);
 
     // Add to Ongoing if not already included
-    if (!Ongoing.includes(bookId)) {
+    if (!Ongoing.includes(bookId) && Unread.includes(bookId)) {
       await updateDoc(userDocRef, {
-        Ongoing: arrayUnion(bookId)
+        Ongoing: arrayUnion(bookId), Unread: arrayRemove(bookId)
       });
       console.log(`Book ID ${bookId} added to Ongoing.`);
     }
@@ -317,9 +317,9 @@ async readBook() {
     console.log(`Progress updated to start at chapter ${chapterToStart} for bookId ${bookId}.`);
 
     // Add to Ongoing if not already included
-    if (!Ongoing.includes(bookId)) {
+    if (!Ongoing.includes(bookId) && Unread.includes(bookId)) {
       await updateDoc(userDocRef, {
-        Ongoing: arrayUnion(bookId)
+        Ongoing: arrayUnion(bookId), Unread: arrayRemove(bookId)
       });
       console.log(`Book ID ${bookId} added to Ongoing.`);
     }
