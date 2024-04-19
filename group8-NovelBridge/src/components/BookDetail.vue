@@ -21,16 +21,13 @@
       <button @click="toggleBookmark" class="bookmark-btn">
   {{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}
 </button>
+<button @click="toggleFavourite" class="favourite-btn">
+  <img v-if="book.isFavourite" src="@/assets/heart-filled.jpg" 
+  alt="Favourite icon" class="heart-icon">
+  <img v-else src="@/assets/heart-unfilled.jpg" 
+  alt="Favourite icon" class="heart-icon">
+</button>
 
-
-      <button @click="toggleFavourite" class="favourite-btn">
-        <div v-if="book.isFavourite">
-          <img  src="@/assets/heart-filled.jpg" alt="Favourite icon" class="heart-icon">
-        </div>
-        <div v-else>
-          <img  src="@/assets/heart-unfilled.jpg" alt="Favourite icon" class="heart-icon">
-        </div>
-      </button>
     </div>
 
     
@@ -168,6 +165,19 @@ data() {
     return false;
   }
 },
+  async checkIfFavourite(bookId) {
+    const db = getFirestore(firebaseApp);
+  const userDocRef = doc(db, "users", this.userID);
+  const userDocSnap = await getDoc(userDocRef);
+  if (userDocSnap.exists()) {
+    const userData = userDocSnap.data();
+    const {Favourite} = userData;
+    return Favourite.includes(bookId);
+  } else {
+    console.error('User document does not exist');
+    return false;
+  }
+},
 
 
   async startReadingChapter(chapterNumber) {
@@ -254,10 +264,39 @@ async toggleBookmark() {
   }
 },
 
+async toggleFavourite() {
+  console.log('toggleFavourite called');
+  const db = getFirestore(firebaseApp);
+  const bookId = this.book.id; // Assuming this.book.id is already set
+  const userId = this.userID;
+  const userDocRef = doc(db, "users", userId);
+  const userDocSnap = await getDoc(userDocRef);
 
+  if (userDocSnap.exists()) {
+    const userData = userDocSnap.data();
+    let { Favourite } = userData;
 
+    // Toggle the favourite status
+    if (!Favourite.includes(bookId)) {
+      // If it's not already a favourite, add it to the favourites
+      await updateDoc(userDocRef, {
+        Favourite: arrayUnion(bookId)
+      });
+      this.book.isFavourite = true;
+    } else {
+      // If it is already a favourite, remove it from the favourites
+      await updateDoc(userDocRef, {
+        Favourite: arrayRemove(bookId)
+      });
+      this.book.isFavourite = false;
+    }
+    console.log(this.book.isFavourite ? 'added to favourites' : 'removed from favourites');
+  } else {
+    console.error('User document does not exist');
+  }
+},
 
-  },
+}
 }
 </script>
 
