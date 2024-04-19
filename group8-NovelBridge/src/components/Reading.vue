@@ -1,20 +1,26 @@
 <template>
+    <LayoutHeader></LayoutHeader>
     <div id="left_pane">
         <!-- for advertizing -->
     </div>
 
-    <div id="reading pane">
+    <div id="reading_pane">
+        <br>
         <button id="gotohome" @click="goToHome">< {{bookName}}</button>
-        <h1>{{ chapter }}</h1>
+        <br>
+        <h1 id="title">Chapter {{ chapter }}</h1>
+        <br>
         <div id="text">
             {{ chapter_data }}
         </div>
-        <div id="footer pane">
+        <br>
+        <div id="footer_pane">
         <!-- for the previous and next button -->
-        <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Previous</button>
-<button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
+            <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Prev</button>
+            <button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
 
-    </div>
+        </div>
+        <br><br>
     </div>
 
     <div id="right_pane">
@@ -24,13 +30,18 @@
 </template>
 
 <script>
-
+import LayoutHeader from '@/components/LayoutHeader.vue';
 import firebaseApp from '../firebase.js';
 import { getFirestore, collection, getDocs, doc, deleteDoc,getDoc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref as storageRef, listAll, getDownloadURL } from 'firebase/storage';
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 
+
 export default {
+    components: {
+        LayoutHeader,
+        // ... any other components
+    },
     props: {
         name : String,
         chapter: Number
@@ -168,33 +179,54 @@ export default {
 </script>
 
 <style>
-#left_pane,#rightpane,#reading_pane {
+#left_pane,#rightpane{
     width: 15%;
-    height: 80%;
     float: left;
 }
 #reading_pane {
-    text-align: center;
+    float: left;
     background-color: #F4F2EC;
     font-size: 16px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+#footer_pane {
+    text-align: center;
 }
 #gotohome{
     border: none;
     background-color: #F4F2EC;
     padding-left: 5px;
-    text-align: center;
-    font-size: 8px;
+    font-size: 16px;
+}
+#gotonext,#gotoprevious {
+    background-color: #E8CC81;
+    padding-left: 5px;
+    font-size: 16px;
+    padding: 5px;
+    margin-right: 30px;
+    border-radius: 50px;
+    width:150px;
+    border-width: 0;
 }
 #text {
     text-align: center;
     padding: 5px 15px;
     font-size: 16px;
+    margin-right: 80px;
+    margin-left: 100px;
 
 }
 .button{
-    text-align: center;
     padding: 40px;
     margin: auto;
+    font-size: 16px;
+    
 }
+#title {
+    margin-left: 80px;
+    font-weight: bold;
+}
+
 
 </style>

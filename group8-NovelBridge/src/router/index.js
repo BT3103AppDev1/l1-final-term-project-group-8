@@ -12,8 +12,7 @@ import BookDetail from '@/components/BookDetail.vue'
 import Reading from '@/components/Reading.vue'
 import EditProfile from '@/components/EditProfile.vue'
 import Favourite from '@/components/Favourite.vue';
-
-
+import readingHistory from '@/components/ReadingHistory.vue'
 const routes = [
     {
         path: '/',
@@ -46,6 +45,11 @@ const routes = [
           }
           // other nested routes under /bookmarked...
         ]
+      },
+      {
+        path:'/readingHistory',
+        name: 'readingHistory',
+        component: readingHistory
       },
       {
         path: '/library',
