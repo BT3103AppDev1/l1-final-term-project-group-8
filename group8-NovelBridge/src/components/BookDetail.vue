@@ -177,6 +177,45 @@ export default {
       }
     },
 
+    async readBook() {
+    const db = getFirestore(firebaseApp);
+    const bookId = this.book.id; // Assuming this.book.id is already set
+    const userId = this.userID;
+    const userDocRef = doc(db, "users", userId);
+    const userDocSnap = await getDoc(userDocRef);
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data();
+      let { Unread, Ongoing, Progress } = userData;
+      // Determine the chapter to start reading from
+      let chapterToStart = Progress && Progress[bookId] ? Progress[bookId] : 1;
+      // Update Progress with the starting chapter
+      const newProgress = { ...Progress, [bookId]: chapterToStart };
+      await updateDoc(userDocRef, {
+        Progress: newProgress
+      });
+      console.log(`Progress updated to start at chapter ${chapterToStart} for bookId ${bookId}.`);
+      // Add to Ongoing if not already included
+      if (!Ongoing.includes(bookId) && Unread.includes(bookId)) {
+        await updateDoc(userDocRef, {
+          Ongoing: arrayUnion(bookId), Unread: arrayRemove(bookId)
+        });
+        console.log(`Book ID ${bookId} added to Ongoing.`);
+      }
+      this.$router.push({
+          name: 'ReadingPanel',
+          params: {
+            name: this.book.title,
+            chapter: chapterToStart,
+            bookId: this.book.id,
+            userId: this.userID
+          }
+        });
+      } else {
+        console.error("Error in fetching user data");
+      }
+      
+    },
+  
 
     async startReadingChapter(chapterNumber) {
       const db = getFirestore(firebaseApp);
