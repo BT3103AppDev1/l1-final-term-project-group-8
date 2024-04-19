@@ -12,7 +12,9 @@
         <h1 id="title">Chapter {{ chapter }}</h1>
         <br>
         <div id="text">
+            <p v-bind:style="{ fontSize: this.fontSize + 'px' }">
             {{ chapter_data }}
+            </p>
         </div>
         <br>
         <div id="footer_pane">
@@ -24,23 +26,28 @@
     </div>
 
     <div id="right_pane">
-        <div class="icon-container">
+        <div class="icon-container" @click="goToHome">
             <img src="@/assets/bookicon.png" alt="chapter icon" class="icon2">
             <h5>Chapters</h5>
         </div>
-        <div class="icon-container">
+        <div class="icon-container" @click="increaseFontSize">
             <img src="@/assets/A.png" alt="font size icon" class="icon">
-            <h5>Font size</h5>
+            <h5>Font ++</h5>
         </div>
-        <div class="icon-container">
+        <div class="icon-container" @click="decreaseFontSize">
+            <img src="@/assets/A.png" alt="font size icon" class="icon">
+            <h5>Font --</h5>
+        </div>
+        <div class="icon-container" @click="toggleBookmark">
             <img src="@/assets/Bookmark.png" alt="bookmark icon" class="icon">
-            <h5>Bookmark</h5>
+            <h5>{{ this.isBookmarked ? 'Bookmarked' : 'Bookmark' }}</h5>
         </div>
-        <div class="icon-container">
-            <img src="@/assets/Favorite.png" alt="bookmark icon" class="icon2">
-            <h5>Favorite</h5>
+        <div class="icon-container" @click="toggleFavourite">
+            <img v-if="this.isFavourite" src="@/assets/heart-filled.jpg" alt="bookmark icon" class="icon2">
+            <img v-else src="@/assets/heart-unfilled.jpg" alt="bookmark icon" class="icon2">
+            <h5>Favourite</h5>
         </div>
-        <div class="icon-container">
+        <div class="icon-container" @click="changeLanguage">
             <img src="@/assets/world.png" alt="bookmark icon" class="icon2">
             <h5>Language</h5>
         </div>
@@ -51,7 +58,7 @@
 <script>
 import firebaseApp from '../firebase.js';
 import LayoutHeader from '@/components/LayoutHeader.vue';
-import { getFirestore, collection, getDocs, doc, deleteDoc,getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, deleteDoc,getDoc, updateDoc,arrayUnion, arrayRemove } from 'firebase/firestore';
 import { getStorage, ref as storageRef, listAll, getDownloadURL } from 'firebase/storage';
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 
@@ -63,7 +70,7 @@ export default {
     },
     props: {
         name : String,
-        chapter: Number
+        chapter: String
     },
     data() {
       return {
@@ -71,7 +78,13 @@ export default {
         bookName: '',
         chapters_list: [],
         chapter_num: 0,
-        chapter_data: ''
+        chapter_data: '',
+        isBookmarked: false,
+        isFavourite: false,
+        bookId: '',
+        userid:'',
+        fontSize: 16
+
       }
     },
     created(){
@@ -80,6 +93,8 @@ export default {
             console.log(this.bookName);
             console.log("tryout");
             this.bookId = this.$route.params.bookId;
+            this.userId = this.$route.params.userId;
+            
         // continue with Firebase logic...
         } else {
         console.error('Route parameters are missing');
@@ -94,17 +109,17 @@ export default {
             this.files = result.items.filter((item) => item.name.endsWith(".txt"));
             // Since these are methods, they should be called with 'this.'
             this.getChapterData();
-            });
-        },
+        });
+    },
 
     methods: {
 
-  goToHome() {
-    this.$router.push({
-      name: 'BookDetail', 
-      params: { id: this.bookId } 
-    });
-  },
+        goToHome() {
+            this.$router.push({
+            name: 'BookDetail', 
+            params: { id: this.bookId } 
+            });
+        },
         getChapterData(){
             this.chapter_data = '';
             const storage = getStorage(firebaseApp);
@@ -132,6 +147,11 @@ export default {
             console.error("Error listing chapter files:", error);
             });
         },
+        changeLanguage() {
+            this.$router.push({
+            name: 'EditProfile', 
+            });
+        },
         async goToNextChapter() {
             this.chapter_num = parseInt(this.chapter_num, 10) + 1;
             console.log(this.chapter_num);
@@ -153,20 +173,20 @@ export default {
                 await this.getChapterData(); // Fetch the new chapter data
                 await this.updateUserProgress(); // Update the user's progress
 
-      // Update the URL without navigating
-            this.$router.replace({
-                name: 'ReadingPanel',
-                params: {
-                name: this.bookName,
-                chapter: this.chapter_num,
-                bookId: this.bookId,
-                userId: this.$route.params.userId // Include the userId if necessary
-                }
+                // Update the URL without navigating
+                this.$router.replace({
+                    name: 'ReadingPanel',
+                    params: {
+                    name: this.bookName,
+                    chapter: this.chapter_num,
+                    bookId: this.bookId,
+                    userId: this.$route.params.userId // Include the userId if necessary
+                    }
             });
-    } else {
-      console.error("This is the first chapter, cannot go to the previous one.");
-    }
-  },
+            } else {
+            console.error("This is the first chapter, cannot go to the previous one.");
+            }
+        },
 
         async updateUserProgress() {
             const db = getFirestore(firebaseApp);
@@ -188,10 +208,115 @@ export default {
                 console.error("User document does not exist");
             }
         },
+        
+        async toggleFavourite() {
+            console.log('toggleFavourite called');
+            const db = getFirestore(firebaseApp);
+            const bookId = this.bookId; 
+            const userId = this.userId;
+            const userDocRef = doc(db, "users", userId);
+            const userDocSnap = await getDoc(userDocRef);
+            console.log('1')
 
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                console.log('2')
+                let { Favourite } = userData;
+                console.log('3')
+                console.log(Favourite)
+                
+                // Toggle the favourite status
+                if (!Favourite.includes(bookId)) {
+                    console.log('3.5')
+                // If it's not already a favourite, add it to the favourites
+                    await updateDoc(userDocRef, {
+                        Favourite: arrayUnion(bookId)
+                        
+                    });
+                    this.isFavourite = true;
+                    console.log('4')
+                } else {
+                // If it is already a favourite, remove it from the favourites
+                    await updateDoc(userDocRef, {
+                        Favourite: arrayRemove(bookId)
+                    });
+                    this.isFavourite = false;
+                    console.log('5')
+                }
+                console.log(this.isFavourite ? 'added to favourites' : 'removed from favourites');
+            } else {
+                console.error('User document does not exist');
+            }
+        },
+
+        async toggleBookmark() {
+            console.log('toggleBookmark called');
+            const db = getFirestore(firebaseApp);
+            const bookId = this.bookId; // Assuming this.book.id is already set
+            const userId = this.userId;
+            const userDocRef = doc(db, "users", userId);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                let { Unread, Ongoing, Completed, Progress } = userData;
+
+                // Check if the book is already bookmarked
+                this.isBookmarked = Completed.includes(bookId) ||
+                                        Ongoing.includes(bookId) ||
+                                        Unread.includes(bookId);
+                console.log(this.isBookmarked);
+
+                if (!this.isBookmarked) {
+                    // If not bookmarked, determine where to add
+                    const bookProgress = Progress[bookId] || 0;
+                    const updates = bookProgress === 0 ? { Unread: arrayUnion(bookId) } : { Ongoing: arrayUnion(bookId) };
+
+                    // Perform the update
+                    await updateDoc(userDocRef, updates);
+                    this.isBookmarked = true;
+                } else {
+                // If bookmarked, remove from all arrays
+                    await updateDoc(userDocRef, {
+                        Unread: arrayRemove(bookId),
+                        Ongoing: arrayRemove(bookId),
+                        Completed: arrayRemove(bookId)
+                    });
+                    console.log('removed');
+                    this.isBookmarked = false;
+                    }
+            } else {
+                console.error('User document does not exist');
+            }
+        },
+
+        increaseFontSize() {
+            this.fontSize = this.fontSize+1;
+        },
+
+        decreaseFontSize() {
+            this.fontSize = this.fontSize-1;
+        }
     },
-    async mounted() {
 
+    async mounted() {
+        console.log(this.userId)
+        const db = getFirestore(firebaseApp);
+        if (this.userId) {
+                const userDocRef = doc(db, "users", this.userId);
+                const userDocSnap = await getDoc(userDocRef);
+                console.log(this.isFavourite)
+
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    const { Unread, Ongoing, Completed, Favourite } = userData;
+                    this.isBookmarked = [Unread, Ongoing, Completed].some(list => list.includes(this.bookId));
+                    this.isFavourite = Favourite.includes(this.bookId);
+                } else {
+                    console.error("Error fetching user details.");
+                }
+                console.log(this.isFavourite)
+        }
 
     }
 }
@@ -251,6 +376,7 @@ export default {
 }
 
 #right_pane {
+  margin-top: 40px;
   position:fixed;
   display:flex;
   flex-direction:column;
@@ -261,13 +387,15 @@ export default {
 }
 
 .icon-container {
+  padding: 3px;
+  margin-top:15px;
   cursor: pointer;  
   display: flex;
   flex-direction:column;
   align-items: center; /* Center icon vertically */
   justify-content: center; /* Center icon horizontally */
-  height:50px; /* Divide by the number of icons */
-  width: 100%;
+  height:100%; /* Divide by the number of icons */
+  width: 90px;
   border-radius: 10px;
   background-color: #E8CC8E/* Ensure wrappers fill the width of the container */
 }
