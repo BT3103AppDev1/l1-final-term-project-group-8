@@ -1,36 +1,37 @@
 <template>
-    <div id="left_pane">
-        <!-- for advertizing -->
-    </div>
-
-    <div id="reading pane">
+    <LayoutHeader/>
+    <div id="reading-page">
+    <div id="reading_pane">
         <button id="gotohome" @click="goToHome">< {{bookName}}</button>
-        <h1>{{ chapter }}</h1>
+        <h1>Chapter {{ chapter }}:</h1>
         <div id="text">
             {{ chapter_data }}
         </div>
-        <div id="footer pane">
+        <div id="footer_pane">
         <!-- for the previous and next button -->
         <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Previous</button>
-<button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
-
-    </div>
+        <button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
+        </div>
     </div>
 
     <div id="right_pane">
-        <!-- for utility buttons -->
+        <img src="@/assets/bookicon.png" alt="User profile img" class="profileImg">
     </div>
-
+    </div>
 </template>
 
 <script>
 
 import firebaseApp from '../firebase.js';
+import LayoutHeader from '@/components/LayoutHeader.vue';
 import { getFirestore, collection, getDocs, doc, deleteDoc,getDoc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref as storageRef, listAll, getDownloadURL } from 'firebase/storage';
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 
 export default {
+    components: {
+        LayoutHeader
+    },
     props: {
         name : String,
         chapter: Number
@@ -168,33 +169,74 @@ export default {
 </script>
 
 <style>
-#left_pane,#rightpane,#reading_pane {
-    width: 15%;
-    height: 80%;
-    float: left;
+#reading-page{
+  display: flex;
+  justify-content: space-between;
 }
+
+#left_pane {
+  width: 15%;
+}
+
+#right_pane {
+  display: flex;
+  flex-direction:column;
+  justify-content: center; /* Aligns vertically in the center */
+  align-items: center; /* Aligns horizontally in the center */
+  width: 15%;
+  height: 100vh;
+}
+
 #reading_pane {
-    text-align: center;
-    background-color: #F4F2EC;
-    font-size: 16px;
+  padding:20px;
+  margin:auto;
+  width: 70%; /* Adjust width as necessary */
+  background-color: #F4F2EC; /* Match the color to the image provided */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* To add slight shadow around the reading pane */
 }
+
+#reading_pane h1{
+  margin-left:25px;
+  font-size: 25px;
+  
+}
+
 #gotohome{
-    border: none;
-    background-color: #F4F2EC;
-    padding-left: 5px;
-    text-align: center;
-    font-size: 8px;
+  display: block;
+  margin: 0.5em 0;
+  padding: 0.5em;
+  background-color: transparent;
+  border: none;
+  font-size: 17px;
+  color: black;
+  font-weight:bolder;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 #text {
-    text-align: center;
-    padding: 5px 15px;
-    font-size: 16px;
-
-}
-.button{
-    text-align: center;
-    padding: 40px;
-    margin: auto;
+  text-align: left;
+  padding: 1.5em;
+  font-size: 1em;
+ /* Match the color scheme */
 }
 
+button {
+  background-color: #E8CC81; /* Or another color based on the image */
+  border: none;
+  font-weight:bolder;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  cursor: pointer;
+  border-radius:10px;
+}
+
+button:hover {
+  background-color: #f78636; /* A darker shade for hover state */
+}
+
+#footer_pane {
+  display:flex;
+  justify-content: space-around;
+  padding: 1em 0;
+  
+}
 </style>
