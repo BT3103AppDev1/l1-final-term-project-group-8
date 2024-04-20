@@ -14,6 +14,7 @@ import EditProfile from '@/components/EditProfile.vue'
 import Favourite from '@/components/Favourite.vue';
 import readingHistory from '@/components/ReadingHistory.vue'
 import UserProfileO from '@/components/UserProfileOnMainpage.vue'
+import LoginFromBookMarked from '@/components/LoginFromBookMarked.vue'
 
 const routes = [
     {
@@ -25,6 +26,7 @@ const routes = [
         path: '/bookmarked',
         name: 'Bookmarked',
         component: BookMarked,
+        props:true,
         children: [
           {
             path: '',
@@ -46,7 +48,7 @@ const routes = [
             component: Ongoing
           }
           // other nested routes under /bookmarked...
-        ]
+        ],
       },
       {
         path:'/readingHistory',
@@ -112,10 +114,11 @@ const routes = [
         name: 'Favourite',
         component: Favourite,
       },
-
-
-
-      
+      {
+        path: '/loginfrombookmarked',
+        name: 'LoginFromBookmarked',
+        component: LoginFromBookMarked,
+      }
 ]
 
 const router = createRouter({
