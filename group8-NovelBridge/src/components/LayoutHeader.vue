@@ -36,16 +36,19 @@
             <router-link to="/login" class="login-link">Login</router-link>
             <router-link to="/signup" class="login-link">Sign Up</router-link>
         </div>
-        <div v-if="isLoggedIn"> 
-            <router-link to="/userprofile"><img :src="userProfile"alt="User profile img" class="profileImg"></router-link>
-        </div>
+
+        <transition name="slide">
+            <div v-if="isLoggedIn"> 
+                <router-link to="/userprofileO"><img :src="userProfile" alt="User profile img" class="profileImg"></router-link>
+            </div>
+        </transition>
     </header>
 </template>
 
 <script>
 import firebaseApp from "@/firebase";
 import {getFirestore, doc, getDocs, getDoc, collection} from "firebase/firestore"
-import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 
 export default {
     name: "LayoutHeader",
@@ -107,7 +110,7 @@ export default {
             const userDocInfo = doc(db,'users', userID);
             
             try {
-                const userDoc = await getDocs(userDocInfo);
+                const userDoc = await getDoc(userDocInfo);
                 if ( userDoc.exists()) {
                     const userData = userDoc.data();
                     this.userProfile = userData.imageUrl;
@@ -122,7 +125,7 @@ export default {
         signOut() {
             const auth = getAuth();
             const user = auth.currentUser;
-            signOut(auth,user)
+            signOut(auth)
             this.isLoggedIn = false
             this.$router.push({path:"/"})
         }
@@ -208,6 +211,14 @@ export default {
     
     .logout:hover{
         color:#FF6E05;
+    }
+
+    .slide-enter-active, .slide-leave-active {
+        transition: transform 0.5s;
+    }
+
+    .slide-enter, .slide-leave-to {
+        transform: translateX(100%);
     }
 
 

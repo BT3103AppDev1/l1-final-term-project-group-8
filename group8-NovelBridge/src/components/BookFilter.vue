@@ -27,8 +27,9 @@
     </div>
     <div class = "filter-group number-of-views-group">
       <label>Number of Views:</label>
-      <button v-for = "NumberOfViews in NumbersOfViews" :key="NumberOfViews" @click = "applyFilter('Number of Views', NumberOfViews)" class="filter-font">
-        {{ NumberOfViews }}
+      <button v-for="numberOfViews in numbersOfViews" :key="numberOfViews" :class="{ 'active': activeNumberOfViews === numberOfViews}"
+      @click="setActiveNumberOfViews(numberOfViews)" class="filter-font">
+        {{ numberOfViews }}
       </button>
     </div>
   </div>
@@ -44,6 +45,8 @@ export default {
       activeCategory: 'All',
       wordCounts: ['All', 'Below 30k', '30k - 50k', '50k - 1million', 'Above 1million'],
       activeWordCounts: 'All',
+      numbersOfViews: ['All', 'Below 1000', '1000 - 5000', '5000 - 10000', 'Above 10000'],
+      activeNumberOfViews: 'All'
     };
   },
   methods: {
@@ -66,6 +69,13 @@ export default {
       this.activeWordCounts = wordCount;
       this.applyFilter('wordCounts', wordCount);
     },
+
+    setActiveNumberOfViews(numberOfViews) {
+      this.activeNumberOfViews = numberOfViews;
+      this.applyFilter('numberOfViews', numberOfViews);
+    }
+
+
   },
 };
 </script>
