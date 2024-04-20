@@ -14,7 +14,7 @@
             <div id="text">
                 <p v-for="(paragraph, index) in paragraphs" :key="index" v-bind:style="{ fontSize: this.fontSize + 'px' }">
                     {{ paragraph }}
-                </p>
+                </p >
             </div>
             <br>
             <div id="footer_pane">
@@ -26,28 +26,28 @@
 
     <div id="right_pane">
         <div class="icon-container" @click="goToHome">
-            <img src="@/assets/bookicon.png" alt="chapter icon" class="icon2">
+            < img src="@/assets/bookicon.png" alt="chapter icon" class="icon2">
             <h5>Chapters</h5>
         </div>
         <div class="icon-container" @click="increaseFontSize">
-            <img src="@/assets/A.png" alt="font size icon" class="icon">
+            < img src="@/assets/A.png" alt="font size icon" class="icon">
             <h5>Font ++</h5>
         </div>
         <div class="icon-container" @click="decreaseFontSize">
-            <img src="@/assets/A.png" alt="font size icon" class="icon">
+            < img src="@/assets/A.png" alt="font size icon" class="icon">
             <h5>Font --</h5>
         </div>
         <div class="icon-container" @click="toggleBookmark">
-            <img src="@/assets/Bookmark.png" alt="bookmark icon" class="icon">
+            < img src="@/assets/Bookmark.png" alt="bookmark icon" class="icon">
             <h5>{{ this.isBookmarked ? 'Bookmarked' : 'Bookmark' }}</h5>
         </div>
         <div class="icon-container" @click="toggleFavourite">
-            <img v-if="this.isFavourite" src="@/assets/heart-filled.jpg" alt="bookmark icon" class="icon2">
-            <img v-else src="@/assets/heart-unfilled.jpg" alt="bookmark icon" class="icon2">
+            < img v-if="this.isFavourite" src="@/assets/heart-filled.jpg" alt="bookmark icon" class="icon2">
+            < img v-else src="@/assets/heart-unfilled.jpg" alt="bookmark icon" class="icon2">
             <h5>Favourite</h5>
         </div>
         <div class="icon-container" @click="changeLanguage">
-            <img src="@/assets/world.png" alt="bookmark icon" class="icon2">
+            < img src="@/assets/world.png" alt="bookmark icon" class="icon2">
             <h5>Language</h5>
         </div>
     </div>
@@ -60,8 +60,7 @@ import LayoutHeader from '@/components/LayoutHeader.vue';
 import { getFirestore, collection, getDocs, doc, deleteDoc,getDoc, updateDoc,arrayUnion, arrayRemove } from 'firebase/firestore';
 import { getStorage, ref as storageRef, listAll, getDownloadURL } from 'firebase/storage';
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
-
-
+import axios from 'axios';
 export default {
     components: {
         LayoutHeader,
@@ -80,6 +79,7 @@ export default {
         chapter_data: '',
         isBookmarked: false,
         isFavourite: false,
+        translatedText: '',
         bookId: '',
         userid:'',
         fontSize: 16
@@ -124,33 +124,68 @@ export default {
             params: { id: this.bookId } 
             });
         },
-        getChapterData(){
-            this.chapter_data = '';
-            const storage = getStorage(firebaseApp);
-            const chaptersRef = storageRef(storage, `Novels/${this.bookName}`);
-            listAll(chaptersRef).then((result) => {
-            const chapterFileRef = result.items.find((itemRef) => {
-            return itemRef.name.includes(`Chapter ${this.chapter_num}`);
-            });
-            if (chapterFileRef) {
-                // If the chapter file is found, get its download URL and fetch its content
-                getDownloadURL(chapterFileRef).then((url) => {
-                fetch(url)
-                .then((response) => response.text())
-                .then((text) => {
-                    this.chapter_data = text;
-                })
-                .catch((error) => {
-                    console.error("Error fetching file content:", error);
-                });
-                });
-            } else {
-                console.error(`No file found for Chapter ${this.chapter_num}`);
-            }
-            }).catch((error) => {
-            console.error("Error listing chapter files:", error);
-            });
-        },
+    
+        async getChapterData() {
+  this.chapter_data = '';
+  const storage = getStorage(firebaseApp);
+  const chaptersRef = storageRef(storage, `Novels/${this.bookName}`);
+  
+  try {
+    const db = getFirestore(firebaseApp);
+    const userDocRef = doc(db, "users", this.userId); // Assuming you have this.userId set correctly
+    const userDocSnap = await getDoc(userDocRef);
+    
+    let userLanguage = 'en'; // Default language
+    if (userDocSnap.exists()) {
+      userLanguage = userDocSnap.data().language || 'en'; // or whatever field you have for language preference
+    } else {
+      console.log("User document not found, proceeding with default language.");
+    }
+    
+    const result = await listAll(chaptersRef);
+    const chapterFileRef = result.items.find(itemRef => itemRef.name.includes(`Chapter ${this.chapter_num}`));
+    
+    if (chapterFileRef) {
+      const url = await getDownloadURL(chapterFileRef);
+      const response = await fetch(url);
+      let text = await response.text();
+      console.log(userLanguage);
+      // Check user's preferred language
+      if (userLanguage && userLanguage !== 'en') {
+        await this.translateText(text, userLanguage);
+      } else {
+        this.chapter_data = text;
+      }
+      
+      this.chapter_data = text;
+    } else {
+      console.error(`No file found for Chapter ${this.chapter_num}`);
+    }
+  } catch (error) {
+    console.error("Error fetching chapter data:", error);
+  }
+},
+
+translateText(text, userLanguage) {
+      const apiKey = import.meta.env.VITE_API_KEY;
+      const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+
+      // Make a POST request to the API
+      axios.post(url, {
+        q: text,
+        target: userLanguage,
+      })
+      .then(response => {
+        this.chapter_data = response.data.data.translations[0].translatedText;
+      })
+      .catch(error => {
+        console.error('Error translating text:', error);
+      });
+    },
+
+
+
+
         changeLanguage() {
             this.$router.push({
             name: 'EditProfile', 

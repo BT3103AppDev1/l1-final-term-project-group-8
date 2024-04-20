@@ -1,9 +1,9 @@
 <template>
     <header class="header-layout">
-        <div class ="logo">
-            <img src="https://i.imgur.com/wSokIet.png" title="source: imgur.com"/>
+        <router-link to="/" class="logo">
+            <img src="https://i.imgur.com/wSokIet.png" alt="Novel Bridge Logo" title="source: imgur.com"/>
             <h1>Novel Bridge</h1>
-        </div>
+        </router-link>
         <div class="status-bar">
             <router-link to="/" class="header-link" >Home</router-link>
             <router-link to="/library" class ="header-link" active-class="active"> Library </router-link>
@@ -140,6 +140,10 @@ export default {
         background: #FFE9CE;
         padding:5px;
     }
+
+    .logo {
+        text-decoration: none; /* Removes underline from links */
+    }
     .logo img {
         width: 100px;
         height: auto;
@@ -147,7 +151,15 @@ export default {
     .logo h1 {
         font-size:20px;
         font-weight: bold;
-        margin:0
+        margin:0;
+        color:black;
+        color: inherit;
+    }
+    .logo:link,
+    .logo:visited,
+    .logo:hover,
+    .logo:active {
+        color: inherit; /* This will maintain the color of the text regardless of link state */
     }
     
     .status-bar{
