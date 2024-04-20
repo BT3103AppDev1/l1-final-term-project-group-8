@@ -1,19 +1,18 @@
 <template>
-    <div class="login-background">
-      <video autoplay loop class="video" src="https://i.imgur.com/5AzLsSi.mp4">
-      </video>
-    </div>
-    <div class="signup-container">
+  <div class="login-background">
+    <video autoplay loop class="video" src="https://i.imgur.com/5AzLsSi.mp4"></video>
+  </div>
+  <div class="signup-container">
     <router-link to="/" class="backhome-link">> Back to Novel Bridge</router-link>
     <form class="signup-form" @submit.prevent="submitForm">
-      <div class = "msg">
+      <div class="msg">
         <div class="account-exist">
           <h1>Don't have an account?</h1>
           <router-link to="/signup" class="link">Sign Up</router-link>
         </div>
-        <div class ="welcome">
-        <h1>Welcome to Novel Bridge</h1>
-        <p>Login</p>
+        <div class="welcome">
+          <h1>Welcome to Novel Bridge</h1>
+          <p>Login</p>
         </div>
       </div>
       <div class="form-group">
@@ -24,7 +23,7 @@
         <label for="password">Enter your password</label>
         <input type="password" id="password" v-model="user.password" placeholder="Password" required>
       </div>
-      <div class="error-message">{{error}}</div>
+      <div class="error-message">{{ error }}</div>
       <button type="submit">Login</button>
     </form>
   </div>
@@ -32,49 +31,53 @@
 
 <script>
 import firebaseApp from "@/firebase";
-import { getAuth, signInWithEmailAndPassword} from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 const auth = getAuth();
+const user = auth.currentUser;
 
-export default{
-  name: 'Login',
-  data() {
-    return {
-      user: {
-        email: '',
-        password: '',
-      },
-      error:''
-    };
-  },
-  methods: {
-    async submitForm() {
-      const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if(!emailFormat.test(this.user.email)) {
-        this.error = "Please re-enter email";
-        return
-      }
-      try{
-        await signInWithEmailAndPassword(auth, this.user.email, this.user.password)
-        this.$router.push({path:"/"})
-        console.log("user log in")
-      } catch (error) {
-        if (error.code === "auth/user-not-found") {
-          this.error = "Account does not exist. Please sign up";
-          return;
+export default {
+    name: 'Login',
+    data() {
+        return {
+            user: {
+                email: '',
+                password: '',
+            },
+            error: '',
+            isLoggedIn: false, // Track if user is logged in
+        };
+    },
+    created() {
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, (user) => {
+            this.isLoggedIn = !!user;
+        });
+    },
+    methods: {
+        async submitForm() {
+            const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailFormat.test(this.user.email)) {
+                this.error = "Please re-enter email";
+                return;
+            }
+            try {
+                await signInWithEmailAndPassword(auth, this.user.email, this.user.password);
+                this.$router.push({ path: "/" });
+                console.log("user log in");
+            } catch (error) {
+                if (error.code === "auth/user-not-found") {
+                    this.error = "Account does not exist. Please sign up";
+                } else if (error.code === "auth/wrong-password") {
+                    this.error = "Incorrect password. Please try again.";
+                } else {
+                    this.error = "An error occurred. Please try again later.";
+                }
+            }
         }
-        if (error.code === "auth/wrong-password") {
-          this.error = "Incorrect password. Please try again.";
-          return
-        } else {
-          this.error = "An error occurred. Please try again later.";
-        }
-      }
     }
-  }
 }
 </script>
-
 <style scoped>
 .signup-container {
   display:flex;
