@@ -26,28 +26,28 @@
 
     <div id="right_pane">
         <div class="icon-container" @click="goToHome">
-            < img src="@/assets/bookicon.png" alt="chapter icon" class="icon2">
+            <img src="@/assets/bookicon.png" alt="chapter icon" class="icon2">
             <h5>Chapters</h5>
         </div>
         <div class="icon-container" @click="increaseFontSize">
-            < img src="@/assets/A.png" alt="font size icon" class="icon">
+            <img src="@/assets/A.png" alt="font size icon" class="icon">
             <h5>Font ++</h5>
         </div>
         <div class="icon-container" @click="decreaseFontSize">
-            < img src="@/assets/A.png" alt="font size icon" class="icon">
+            <img src="@/assets/A.png" alt="font size icon" class="icon">
             <h5>Font --</h5>
         </div>
         <div class="icon-container" @click="toggleBookmark">
-            < img src="@/assets/Bookmark.png" alt="bookmark icon" class="icon">
+            <img src="@/assets/Bookmark.png" alt="bookmark icon" class="icon">
             <h5>{{ this.isBookmarked ? 'Bookmarked' : 'Bookmark' }}</h5>
         </div>
         <div class="icon-container" @click="toggleFavourite">
-            < img v-if="this.isFavourite" src="@/assets/heart-filled.jpg" alt="bookmark icon" class="icon2">
-            < img v-else src="@/assets/heart-unfilled.jpg" alt="bookmark icon" class="icon2">
+            <img v-if="this.isFavourite" src="@/assets/heart-filled.jpg" alt="bookmark icon" class="icon2">
+            <img v-else src="@/assets/heart-unfilled.jpg" alt="bookmark icon" class="icon2">
             <h5>Favourite</h5>
         </div>
         <div class="icon-container" @click="changeLanguage">
-            < img src="@/assets/world.png" alt="bookmark icon" class="icon2">
+            <img src="@/assets/world.png" alt="bookmark icon" class="icon2">
             <h5>Language</h5>
         </div>
     </div>
