@@ -8,7 +8,7 @@
            <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
              <img :src="book.cover" :alt="book.title" class="book-cover" />
            </router-link>
-           <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
+           <router-link :to="{ name: 'BookDetail', params: { id: book.id }}" class="book-name">
              {{ book.title }}
            </router-link>
          </div>
@@ -126,10 +126,15 @@ import LayoutHeader from './LayoutHeader.vue';
    height: 150px;
    margin-bottom: 10px; /* Add margin below the cover */
  }
- 
- .book-title {
-   color: black; /* Set text color to black */
-   margin: 0; /* Reset margin */
- }
- </style>
+
+  .book-name {
+    text-decoration: none;
+    color: black; 
+  }
+
+  .book-name:hover {
+    text-decoration: underline;
+  }
+
+</style>
 

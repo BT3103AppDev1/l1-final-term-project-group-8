@@ -7,7 +7,7 @@
 
     <div id="reading_pane">
         <br>
-        <div id="gotohome" @click="goToHome">< {{bookName}} </div>
+        <div id="gotohome" @click="goToHome"> {{bookName}} </div>
         <br>
         <h1 id="title">Chapter {{ chapter }}</h1>
         <br>
@@ -354,6 +354,7 @@ export default {
     width:150px;
     border-width: 0;
     cursor: pointer;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 #text {
     text-align: center;
