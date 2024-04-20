@@ -47,7 +47,7 @@
 <script>
 import firebaseApp from "@/firebase";
 import {getFirestore, doc, getDocs, getDoc, collection} from "firebase/firestore"
-import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 
 export default {
     name: "LayoutHeader",

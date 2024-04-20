@@ -27,7 +27,6 @@
         <img v-else src="@/assets/heart-unfilled.jpg" 
          alt="Favourite icon" class="heart-icon">
         </button>
-
     </div>
 
     
@@ -77,7 +76,7 @@ export default {
         // Assuming checkIfBookmarked is a method that checks bookmark status
         this.book.isBookmarked = await this.checkIfBookmarked(this.book.id);
       } else {
-        console.error("No user logged in!");
+        console.error("No user logged in!")
       }
       onAuthStateChanged(auth, user => {
         if (user) {
@@ -85,6 +84,7 @@ export default {
           console.log(user.uid);
         } else {
           console.error("No user logged in!");
+          
         }
       });
     })();
@@ -260,10 +260,19 @@ export default {
     },
 
     async toggleBookmark() {
+
       console.log('toggleBookmark called');
       const db = getFirestore(firebaseApp);
       const bookId = this.book.id; // Assuming this.book.id is already set
       const userId = this.userID;
+      console.log(userId);
+      if (!userId) {
+        this.$router.push({ 
+          name: 'Bookmarked',
+        })
+        console.log("directed to bookmarked")
+      } 
+      else {
       const userDocRef = doc(db, "users", userId);
       const userDocSnap = await getDoc(userDocRef);
 
@@ -300,6 +309,7 @@ export default {
       } else {
         console.error('User document does not exist');
       }
+    }
     },
 
     async toggleFavourite() {
@@ -307,6 +317,12 @@ export default {
       const db = getFirestore(firebaseApp);
       const bookId = this.book.id; // Assuming this.book.id is already set
       const userId = this.userID;
+      if (!userId) {
+        this.$router.push({ 
+          name: 'Bookmarked',
+        })
+        console.log("directed to bookmarked")
+      } 
       const userDocRef = doc(db, "users", userId);
       const userDocSnap = await getDoc(userDocRef);
 
