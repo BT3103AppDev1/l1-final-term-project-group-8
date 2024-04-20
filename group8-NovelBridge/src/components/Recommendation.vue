@@ -45,6 +45,7 @@ export default {
   max-width: 960px; /* Adjusted for 4 items per row */
   margin: auto; /* Center the book list */
   /* Additional styling */
+  
 }
 
 .book-item {
@@ -52,11 +53,20 @@ export default {
   margin: 0.5rem;
   flex: 1 0 21%; /* Adjusted for 4 items per row, accounting for margins */
   /* Additional styling */
+  transition: transform 0.3s ease
+}
+
+.book-item:hover {
+  transform: translateY(-5px); /* Slight lift effect on hover */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Soft shadow for depth */
 }
 
 .book-name {
   text-decoration: none;
   color:black;
+  font-weight: bold;
+
+  
 }
 
 .book-name:hover{
