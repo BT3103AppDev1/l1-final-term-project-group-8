@@ -13,6 +13,7 @@ import Reading from '@/components/Reading.vue'
 import EditProfile from '@/components/EditProfile.vue'
 import Favourite from '@/components/Favourite.vue';
 import readingHistory from '@/components/ReadingHistory.vue'
+import UserProfileO from '@/components/UserProfileOnMainpage.vue'
 import LoginFromBookMarked from '@/components/LoginFromBookMarked.vue'
 
 const routes = [
@@ -73,6 +74,11 @@ const routes = [
         path: '/userprofile',
         name: 'UserProfile',
         component: UserProfile
+      },
+      {
+        path: '/userprofileO',
+        name: 'UserProfileO',
+        component: UserProfileO
       },
       {
         path:'/library',

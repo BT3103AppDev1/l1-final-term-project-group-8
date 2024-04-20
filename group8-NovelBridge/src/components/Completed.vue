@@ -7,7 +7,7 @@
             <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
               <img :src="book.cover" :alt="book.title" class="book-cover" />
             </router-link>
-            <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
+            <router-link :to="{ name: 'BookDetail', params: { id: book.id }}" class="book-title">
               {{ book.title }}
             </router-link>
           </div>
@@ -101,9 +101,15 @@ export default defineComponent({
     flex-direction: column;
   }
   
-  .title {
-    color: black; /* Set the title color to black */
+  .book-title {
+    color: black; 
+    text-decoration: none;
   }
+
+  .book-title:hover {
+    text-decoration: underline;
+  }
+
   
   .book-list {
     display: flex;

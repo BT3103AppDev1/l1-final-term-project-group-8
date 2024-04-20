@@ -36,10 +36,11 @@
             <router-link to="/login" class="login-link">Login</router-link>
             <router-link to="/signup" class="login-link">Sign Up</router-link>
         </div>
+
         <transition name="slide">
-        <div v-if="isLoggedIn"> 
-            <router-link to="/userprofile"><img :src="userProfile"alt="User profile img" class="profileImg"></router-link>
-        </div>
+            <div v-if="isLoggedIn"> 
+                <router-link to="/userprofileO"><img :src="userProfile" alt="User profile img" class="profileImg"></router-link>
+            </div>
         </transition>
     </header>
 </template>

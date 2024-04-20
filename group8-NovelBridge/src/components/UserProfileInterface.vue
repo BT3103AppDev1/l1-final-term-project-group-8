@@ -1,5 +1,5 @@
 <template>
-    <div class="user-profile-overlay" style="right: 0;">
+    <div class="user-profile-overlay">
       <div class="user-profile-menu" >
         <div class="close-btn" @click="goToHomePage">&times;</div>
         <div class="user-profile-header">
@@ -213,7 +213,7 @@
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    margin-top: 20px;
+    margin-top: 50px;
     margin-left: 60px; 
   }
   
@@ -236,9 +236,11 @@
   
   .logout-btn {
     background-color: #fba543;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     color: white;
     border: none;
     padding: 10px 15px;
+    margin-top: 20px;
     margin-left: 42px;
     width: 70%;
     border-radius: 7px;

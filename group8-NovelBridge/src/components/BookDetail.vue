@@ -21,6 +21,7 @@
       <button @click="toggleBookmark" class="bookmark-btn">
         {{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}
       </button>
+
       <button @click="toggleFavourite" class="favourite-btn">
         <img v-if="book.isFavourite" src="@/assets/heart-filled.jpg" 
           alt="Favourite icon" class="heart-icon">
@@ -408,13 +409,15 @@ export default {
     border: none; 
     margin-right: 10px;
     width: 30px;
-    background-color: rgba(244, 222, 184, 0.769)
+    background-color: rgba(244, 222, 184, 0.769);
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .bookmark-btn {
-background-color: white;  
-border-color: darkgray;
-margin-right: 10px;
+  background-color: white;  
+  border-color: darkgray;
+  margin-right: 10px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 
@@ -423,18 +426,18 @@ margin-right: 10px;
 }
 
 .highlighted-number {
-font-size: 25px; /* Adjust the font size as needed */
-color: black; /* Ensure the numbers are black */
+  font-size: 25px; /* Adjust the font size as needed */
+  color: black; /* Ensure the numbers are black */
 }
 
 .text-label {
-color: grey; /* Make the text grey */
+  color: grey; /* Make the text grey */
 }
 
 .heart-icon {
-width: 24px; /* Adjust the size of the heart icon */
-height: 30px;
-margin-right: 5px; /* Space between the icon and the text */
+  margin-top: 5px;
+  width: 24px; /* Adjust the size of the heart icon */
+  height: 35px;
 }
 .favourite-btn {
   background-color: transparent; 
