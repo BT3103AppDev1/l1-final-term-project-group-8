@@ -11,7 +11,7 @@
                 </ol>
             </div>
             <div class="category2">
-                <h4 @click="goToMystery"class = "header">Mystery</h4>
+                <h4 @click="goToMystery" class = "header">Mystery</h4>
                 <ol>
                     <li v-for="book in mysteryBooks" :key="book.id">
                         <router-link :to="{ name: 'BookDetail', params: { id: book.id }}" class="book-title"> {{ book.title }}</router-link>

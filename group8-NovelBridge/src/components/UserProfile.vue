@@ -1,5 +1,4 @@
 <template>
-  <LayoutHeader />
   <div class="menu">
     <UserProfileInterface />
   </div>

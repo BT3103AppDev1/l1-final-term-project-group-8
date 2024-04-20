@@ -1,4 +1,5 @@
 <template>
+    <LayoutHeader></LayoutHeader>
     <div class="background">
       <img src="@/assets/UserProfile-background.png">
     </div>
@@ -18,18 +19,25 @@
   
           <div class="gender-selection">
             <label class="form-label">Gender:</label>
+            <span style="margin-right: 4px;"></span>
             <input type="radio" id="male" value="Male" v-model="user.gender">
+            <span style="margin-right: 5px;"></span>
             <label for="male">Male</label>
+            <span style="margin-right: 5px;"></span>
             <input type="radio" id="female" value="Female" v-model="user.gender">
+            <span style="margin-right: 5px;"></span>
             <label for="female">Female</label>
+            <span style="margin-right: 5px;"></span>
             <input type="radio" id="other" value="Other" v-model="user.gender">
+            <span style="margin-right: 5px;"></span>
             <label for="other">Prefer not to say</label><br><br>
           </div>
           
+          <div class="language-group">
           <label class="form-label">
             Preferred Language:
           </label>
-            <select v-model="user.language">
+            <select v-model="user.language" class="custom-select">
               <option>English</option>
               <option>中文</option>
               <option>日本語 </option>
@@ -42,6 +50,7 @@
               <option>한국어</option>
               <!-- ... other languages ... -->
             </select>
+            </div>
           <br><br><button class = "savebtn" type="submit" @click.prevent="saveProfile">Save</button>
         </div>
         <div>{{ error }}</div>
@@ -55,6 +64,7 @@
   import { doc, setDoc, getDoc, collection } from "firebase/firestore";
   import avatar from '@/assets/userprofile-avatar.png'
   import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+  import LayoutHeader from '@/components/LayoutHeader.vue';
   
   
   
@@ -65,6 +75,9 @@
   
   export default {
     name:"EditProfile",
+    components: {
+      LayoutHeader
+    },
     data() {
       return {
         user: {
@@ -190,8 +203,7 @@
       justify-content: center;
       align-items: center;
       height:100vh;
-      width:100%;
-      
+      width:100%;  
     }
     .profile-picture {
       display:flex;
@@ -238,19 +250,44 @@
       margin-top:3%;
       width: 300px;
     }
+
+    
     .form-container{
       margin-top:3%;
   
     }
-    .profile-form {
-      margin-top:10%;
-      margin-bottom:10%;
-    }
-  
-    input{
-      margin-left:2%;
-    }
+    
     .savebtn{
       margin-left:40%;
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+      font-size: 1em;
     }
+
+    input[type="radio"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px; 
+      height: 10px; 
+      border: 2px solid rgb(245, 205, 145); 
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    input[type="radio"]:checked {
+      background-color: rgb(240, 215, 176); 
+    }
+
+    .custom-select {
+      appearance: none;
+      padding: 5px 20px 5px 5px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%23ff7f00' d='M4 0l4 4H0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 5px center;
+      background-size: 8px;
+    }
+    
+
+
   </style>

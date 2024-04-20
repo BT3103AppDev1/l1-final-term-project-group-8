@@ -33,7 +33,7 @@
       BookFilter // Register the BookFilter component
     },
     props: {
-    category: String, // Add this if you need to pass 'category' as a prop
+      category: String, // Add this if you need to pass 'category' as a prop
     },
 
     data() {
@@ -65,7 +65,8 @@
             categories:docData.Category,
             cover:docData.Cover,
             wordcount: docData['Word Count'],
-            gender: docData.Gender          
+            gender: docData.Gender,
+            views: docData['Number of Views']         
           };
         });
         this.filteredBooks = this.allBooks;
@@ -87,6 +88,9 @@
             this.allBooks :
             this.allBooks.filter(book => book.gender.toLowerCase() === value.toLowerCase());
           break;
+        case 'numberOfViews': 
+            this.filteredBooks = this.filterByNumberOfViews(value);
+            break;
         // ... handle other filters ...
       }
     },
@@ -123,8 +127,36 @@
         return wordcount.toString();
       }
     },
+
+    filterByNumberOfViews(viewRange) {
+      const [min, max] = this.parseViewRange(viewRange);
+      return this.allBooks.filter(book => {
+        const views = parseInt(book.views, 10);
+        return views >= min && views <= max;
+      });
+    },
+
+    parseViewRange(viewRange) {
+      switch (viewRange) {
+        case 'Below 1000':
+          return [0, 1000];
+        case '1000 - 5000':
+          return [1000, 5000];
+        case '5000 - 10000':
+          return [5000, 10000];
+        case 'Above 10000':
+          return [10000, Infinity];
+        default:
+          return [0, Infinity];
+      }
+    },
   },
-    }
+
+    
+}
+
+    
+
   </script>
   
   <style scoped>

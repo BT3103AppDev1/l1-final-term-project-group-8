@@ -1,9 +1,12 @@
 <template>
     <LayoutHeader @search-input="handleSearch" />
-    <div class="status-bar">
+    <div v-if = "isLoggedIn" class="status-bar">
         <router-link to="/unread" class="status-link" active-class="active">Unread</router-link>
         <router-link to="/ongoing" class="status-link" active-class="active">Ongoing</router-link>
         <router-link to="/completed" class="status-link" active-class="active">Completed</router-link>
+    </div>
+    <div v-else>
+      <LoginFromBookMarked/>
     </div>
     <div>
         <router-view/>
@@ -12,12 +15,34 @@
   
   <script>
   import LayoutHeader from '@/components/LayoutHeader.vue'
+  import firebaseApp from "@/firebase";
+  import {getFirestore, doc, getDocs, getDoc, collection} from "firebase/firestore"
+  import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
+  import LoginFromBookMarked from '@/components/LoginFromBookMarked.vue';
+
 
   export default {
     name: "BookMarked",
     components: {
-        LayoutHeader
+        LayoutHeader, LoginFromBookMarked
     },
+    data() {
+      return {
+        isLoggedIn: false
+      }
+    },
+
+    created() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      console.log ("User info", user)
+      // Listen for authentication state changes
+      onAuthStateChanged(auth, (user) => {
+          if (user) {
+              this.isLoggedIn = !!user;
+            }
+        });
+    }
   }
   </script>
   

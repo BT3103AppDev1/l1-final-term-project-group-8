@@ -12,6 +12,9 @@ import BookDetail from '@/components/BookDetail.vue'
 import Reading from '@/components/Reading.vue'
 import EditProfile from '@/components/EditProfile.vue'
 import Favourite from '@/components/Favourite.vue';
+import readingHistory from '@/components/ReadingHistory.vue'
+import UserProfileO from '@/components/UserProfileOnMainpage.vue'
+import LoginFromBookMarked from '@/components/LoginFromBookMarked.vue'
 
 
 const routes = [
@@ -24,6 +27,7 @@ const routes = [
         path: '/bookmarked',
         name: 'Bookmarked',
         component: BookMarked,
+        props:true,
         children: [
           {
             path: '',
@@ -45,7 +49,12 @@ const routes = [
             component: Ongoing
           }
           // other nested routes under /bookmarked...
-        ]
+        ],
+      },
+      {
+        path:'/readingHistory',
+        name: 'readingHistory',
+        component: readingHistory
       },
       {
         path: '/library',
@@ -68,6 +77,11 @@ const routes = [
         component: UserProfile
       },
       {
+        path: '/userprofileO',
+        name: 'UserProfileO',
+        component: UserProfileO
+      },
+      {
         path:'/library',
         name:'Library',
         component: Library
@@ -85,7 +99,7 @@ const routes = [
         props: true
       },
       {
-        path: '/read/:name/:chapter',
+        path: '/read/:name/:bookId/:userId/:chapter',
         name: 'ReadingPanel',
         component: Reading,
         props: true,
@@ -101,10 +115,11 @@ const routes = [
         name: 'Favourite',
         component: Favourite,
       },
-
-
-
-      
+      {
+        path: '/loginfrombookmarked',
+        name: 'LoginFromBookmarked',
+        component: LoginFromBookMarked,
+      }
 ]
 
 const router = createRouter({
