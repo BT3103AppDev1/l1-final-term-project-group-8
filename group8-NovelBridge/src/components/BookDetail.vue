@@ -21,6 +21,7 @@
       <button @click="toggleBookmark" class="bookmark-btn">
         {{ book.isBookmarked ? 'Added' : 'Add to Bookmark' }}
       </button>
+
       <button @click="toggleFavourite" class="favourite-btn">
         <img v-if="book.isFavourite" src="@/assets/heart-filled.jpg" 
           alt="Favourite icon" class="heart-icon">
@@ -409,18 +410,18 @@ export default {
 }
 
 .highlighted-number {
-font-size: 25px; /* Adjust the font size as needed */
-color: black; /* Ensure the numbers are black */
+  font-size: 25px; /* Adjust the font size as needed */
+  color: black; /* Ensure the numbers are black */
 }
 
 .text-label {
-color: grey; /* Make the text grey */
+  color: grey; /* Make the text grey */
 }
 
 .heart-icon {
-width: 24px; /* Adjust the size of the heart icon */
-height: 30px;
-margin-right: 5px; /* Space between the icon and the text */
+  margin-top: 5px;
+  width: 24px; /* Adjust the size of the heart icon */
+  height: 35px;
 }
 .favourite-btn {
   background-color: transparent; 

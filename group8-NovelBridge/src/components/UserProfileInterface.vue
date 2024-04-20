@@ -213,7 +213,7 @@
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    margin-top: 20px;
+    margin-top: 50px;
     margin-left: 60px; 
   }
   
@@ -240,6 +240,7 @@
     color: white;
     border: none;
     padding: 10px 15px;
+    margin-top: 20px;
     margin-left: 42px;
     width: 70%;
     border-radius: 7px;

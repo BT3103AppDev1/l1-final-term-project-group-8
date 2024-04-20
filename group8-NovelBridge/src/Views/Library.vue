@@ -66,7 +66,7 @@
             cover:docData.Cover,
             wordcount: docData['Word Count'],
             gender: docData.Gender,
-            view: docData['Number of Views']         
+            views: docData['Number of Views']         
           };
         });
         this.filteredBooks = this.allBooks;
@@ -89,8 +89,8 @@
             this.allBooks.filter(book => book.gender.toLowerCase() === value.toLowerCase());
           break;
         case 'numberOfViews': 
-          this.filteredBooks = this.filterByViewCount(value);
-          break;
+            this.filteredBooks = this.filterByNumberOfViews(value);
+            break;
         // ... handle other filters ...
       }
     },
@@ -126,6 +126,14 @@
       } else {
         return wordcount.toString();
       }
+    },
+
+    filterByNumberOfViews(viewRange) {
+      const [min, max] = this.parseViewRange(viewRange);
+      return this.allBooks.filter(book => {
+        const views = parseInt(book.views, 10);
+        return views >= min && views <= max;
+      });
     },
 
     parseViewRange(viewRange) {
