@@ -146,9 +146,41 @@ export default {
     },
     
     toggleFavourite() {
-      this.book.isFavourite = !this.book.isFavourite;
-      // Further favourite logic goes here
-    },
+  // Reference to the current user and Firestore
+  const userId = firebase.auth().currentUser.uid;
+  const db = firebase.firestore();
+  
+  // Book ID should be the unique identifier for the book, assumed to be in the route parameters
+  const bookId = this.$route.params.id;
+
+  // Reference to the user's document in Firestore
+  const userRef = db.collection('users').doc(userId);
+
+  // Get the current user's document
+  userRef.get().then((doc) => {
+    if (doc.exists) {
+      // Retrieve the user's favourites from the document
+      const userFavourites = doc.data().Favourite || [];
+
+      // Check if the book is currently in the favourites
+      if (userFavourites.includes(bookId)) {
+        // It's already a favourite, remove it
+        this.book.isFavourite = false;
+        const newFavourites = userFavourites.filter((favBookId) => favBookId !== bookId);
+        userRef.update({ Favourite: newFavourites });
+      } else {
+        // It's not a favourite yet, add it
+        this.book.isFavourite = true;
+        userRef.update({ Favourite: [...userFavourites, bookId] });
+      }
+    } else {
+      // The document does not exist, you might want to handle this case as well
+      console.error("User document does not exist!");
+    }
+  }).catch((error) => {
+    console.error("Error updating favourites:", error);
+  });
+},
     readBook() {
     // Assuming `chapter` is the first chapter identifier passed when calling this method
     this.$router.push({
