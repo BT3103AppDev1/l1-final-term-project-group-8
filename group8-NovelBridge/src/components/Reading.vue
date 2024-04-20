@@ -52,6 +52,7 @@
         </div>
     </div>
     </div>
+    <Footer></Footer>
 </template>
 
 <script>
@@ -61,9 +62,12 @@ import { getFirestore, collection, getDocs, doc, deleteDoc,getDoc, updateDoc,arr
 import { getStorage, ref as storageRef, listAll, getDownloadURL } from 'firebase/storage';
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 import axios from 'axios';
+import Footer from './Footer.vue';
+
 export default {
     components: {
         LayoutHeader,
+        Footer
         // ... any other components
     },
     props: {

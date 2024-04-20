@@ -14,7 +14,7 @@
             <h3>Find</h3>
             <p>Find the novel you are interested in</p>
           </div>
-          <div class="instruction">
+          <div class="instruction"> 
             <h3>Translate</h3>
             <p>Choose your preferred language and enjoy the novel that is automated translated</p>
           </div>
@@ -27,7 +27,8 @@
       
       <div class="about-contact">
         <p>Contact us: enquiries@novelbridge.com</p>
-      </div>
+    </div>
+
     </div>
   </template>
   
@@ -40,6 +41,9 @@
   <style scoped>
   .about-container {
     background-color: #f5f5f5; /* Adjust the background color as needed */
+    background:#fff url(https://i.imgur.com/FaNoH6x.png);
+    background-size: 100%;
+    box-shadow: 0 12px 67px 0 rgba(0,0,0,.04);
     color: #333; /* Text color */
     padding: 2rem;
     text-align: center;
@@ -48,11 +52,13 @@
   .about-slogan p {
     margin: 0;
     font-style: italic;
+    font-size: large;
   }
   
   .about-title {
     font-size: 3rem;
     margin-top: 1rem;
+    font-weight: bold;
   }
   
   .how-to-use {
@@ -72,6 +78,7 @@
   .instruction h3 {
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
+    font-weight: bold;
   }
   
   .instruction p {
@@ -81,6 +88,9 @@
   .about-contact {
     margin-top: 3rem;
     font-weight: bold;
+    font-size: larger;
   }
+
+
   </style>
   
