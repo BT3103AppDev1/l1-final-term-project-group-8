@@ -16,6 +16,7 @@ import readingHistory from '@/components/ReadingHistory.vue'
 import UserProfileO from '@/components/UserProfileOnMainpage.vue'
 import LoginFromBookMarked from '@/components/LoginFromBookMarked.vue'
 
+
 const routes = [
     {
         path: '/',
