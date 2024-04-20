@@ -13,6 +13,7 @@
           <span><span class="highlighted-number">{{ book.views }}K</span> <span class="text-label">views</span></span>
         </div>
       </div>
+      
     </div>
 
 
@@ -51,6 +52,7 @@
 
     </div>
   </div>
+  <Footer></Footer>
 </template>
 
 <script>
@@ -58,11 +60,12 @@ import firebaseApp from "@/firebase";
 import {getFirestore, doc, getDoc, collection, updateDoc,arrayUnion, arrayRemove } from "firebase/firestore";
 import LayoutHeader from '@/components/LayoutHeader.vue';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
+import Footer from "./Footer.vue";
 
 export default {
   components: {
     LayoutHeader,
+    Footer
     // ... any other components
   },
   props: {

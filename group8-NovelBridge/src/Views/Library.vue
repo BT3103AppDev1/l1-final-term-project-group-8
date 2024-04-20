@@ -16,6 +16,7 @@
       </div>
     </div>
     <router-view/>
+    <Footer></Footer>
   </template>
   
   <script>
@@ -25,12 +26,14 @@
   import firebaseApp from "@/firebase";
   import {getFirestore, doc, getDocs, collection} from "firebase/firestore"
   import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
-  
+  import Footer from '@/components/Footer.vue';
+
   export default {
     name: "Library",
     components: {
       LayoutHeader,
-      BookFilter // Register the BookFilter component
+      BookFilter, // Register the BookFilter component
+      Footer
     },
     props: {
       category: String, // Add this if you need to pass 'category' as a prop

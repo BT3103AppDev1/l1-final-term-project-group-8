@@ -11,6 +11,7 @@
     <div>
         <router-view/>
     </div>
+    <Footer></Footer>
   </template>
   
   <script>
@@ -19,12 +20,12 @@
   import {getFirestore, doc, getDocs, getDoc, collection} from "firebase/firestore"
   import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
   import LoginFromBookMarked from '@/components/LoginFromBookMarked.vue';
-
+  import Footer from '@/components/Footer.vue';
 
   export default {
     name: "BookMarked",
     components: {
-        LayoutHeader, LoginFromBookMarked
+        LayoutHeader, LoginFromBookMarked, Footer
     },
     data() {
       return {

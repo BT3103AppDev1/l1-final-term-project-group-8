@@ -1,6 +1,6 @@
 <template>
     <LayoutHeader></LayoutHeader>
-    <About></About>
+    <FAQ></FAQ>
     <Footer></Footer>
   </template>
 
@@ -11,15 +11,14 @@ import firebaseApp from "@/firebase";
 import {getFirestore, doc, getDocs, getDoc, collection} from "firebase/firestore"
 import { getAuth, signOut, onAuthStateChanged, FacebookAuthProvider } from "firebase/auth";
 import LoginFromBookMarked from '@/components/LoginFromBookMarked.vue';
-import About from '@/components/About.vue';
 import Footer from '@/components/Footer.vue';
-
+import FAQ from '@/components/FAQ.vue';
 
 export default {
-  name: "AboutPage",
+  name: "FAQPage",
   components: {
       LayoutHeader, 
-      About,
+      FAQ,
       Footer
   },
 }
