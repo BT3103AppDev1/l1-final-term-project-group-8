@@ -6,24 +6,23 @@
     </div>
 
     <div id="reading_pane">
-        <br>
-        <div id="gotohome" @click="goToHome"> {{bookName}} </div>
-        <br>
-        <h1 id="title">Chapter {{ chapter }}</h1>
-        <br>
-        <div id="text">
-            <p v-bind:style="{ fontSize: this.fontSize + 'px' }">
-            {{ chapter_data }}
-            </p>
+            <br>
+            <div id="gotohome" @click="goToHome">{{ bookName }}</div>
+            <br>
+            <h1 id="title">Chapter {{ chapter }}</h1>
+            <br>
+            <div id="text">
+                <p v-for="(paragraph, index) in paragraphs" :key="index" v-bind:style="{ fontSize: this.fontSize + 'px' }">
+                    {{ paragraph }}
+                </p>
+            </div>
+            <br>
+            <div id="footer_pane">
+                <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Prev</button>
+                <button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
+            </div>
+            <br><br>
         </div>
-        <br>
-        <div id="footer_pane">
-        <!-- for the previous and next button -->
-            <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Prev</button>
-            <button id="gotonext" @click="goToNextChapter" :disabled="chapter_num === totalChapters">Next</button>
-        </div>
-        <br><br>
-    </div>
 
     <div id="right_pane">
         <div class="icon-container" @click="goToHome">
@@ -86,6 +85,11 @@ export default {
         fontSize: 16
 
       }
+    },
+    computed: {
+        paragraphs() {
+            return this.chapter_data.split(/\r?\n/).filter(paragraph => paragraph.length > 0);
+        }
     },
     created(){
         if (this.$route.params.name) {
@@ -356,8 +360,12 @@ export default {
     cursor: pointer;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
+p {
+    margin-bottom: 10px;  /* Adds space between paragraphs */
+    line-height: 1.6;    /* Increases the space between lines in a paragraph */
+}
 #text {
-    text-align: center;
+    text-align: left;
     padding: 5px 15px;
     font-size: 16px;
     margin-right: 80px;
