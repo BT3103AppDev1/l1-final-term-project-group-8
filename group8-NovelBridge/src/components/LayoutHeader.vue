@@ -39,7 +39,7 @@
 
         <transition name="slide">
             <div v-if="isLoggedIn"> 
-                <router-link to="/userprofile"><img :src="userProfile" alt="User profile img" class="profileImg"></router-link>
+                <router-link to="/userprofileO"><img :src="userProfile" alt="User profile img" class="profileImg"></router-link>
             </div>
         </transition>
     </header>
