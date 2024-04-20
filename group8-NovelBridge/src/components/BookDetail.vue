@@ -392,13 +392,15 @@ export default {
     border: none; 
     margin-right: 10px;
     width: 30px;
-    background-color: rgba(244, 222, 184, 0.769)
+    background-color: rgba(244, 222, 184, 0.769);
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .bookmark-btn {
-background-color: white;  
-border-color: darkgray;
-margin-right: 10px;
+  background-color: white;  
+  border-color: darkgray;
+  margin-right: 10px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 
