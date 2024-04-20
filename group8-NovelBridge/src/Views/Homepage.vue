@@ -9,6 +9,7 @@
       <Top10Books :books="filteredBooks"></Top10Books>
     </section>
   </div>
+  <Footer></Footer>
 </template>
 
 <script>
@@ -18,6 +19,7 @@ import Top10Books from '@/components/Top10Books.vue';
 import Recommendation from '@/components/Recommendation.vue';
 import {getFirestore, doc, getDocs, collection} from "firebase/firestore"
 import firebaseApp from "@/firebase";
+import Footer from '@/components/Footer.vue';
 
 export default {
   name: "Library",
@@ -25,7 +27,8 @@ export default {
     LayoutHeader,
     MovingBanner,
     Top10Books,
-    Recommendation
+    Recommendation,
+    Footer
   },
   data() {
     return {

@@ -15,6 +15,8 @@ import Favourite from '@/components/Favourite.vue';
 import readingHistory from '@/components/ReadingHistory.vue'
 import UserProfileO from '@/components/UserProfileOnMainpage.vue'
 import LoginFromBookMarked from '@/components/LoginFromBookMarked.vue'
+import About from '@/components/About.vue'
+import AboutPage from '@/Views/AboutPage.vue'
 
 
 const routes = [
@@ -119,7 +121,13 @@ const routes = [
         path: '/loginfrombookmarked',
         name: 'LoginFromBookmarked',
         component: LoginFromBookMarked,
+      },
+      {
+        path: '/about',
+        name: 'AboutPage',
+        component: AboutPage,
       }
+      
 ]
 
 const router = createRouter({
