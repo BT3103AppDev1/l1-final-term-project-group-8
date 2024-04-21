@@ -141,14 +141,14 @@
 
     parseViewRange(viewRange) {
       switch (viewRange) {
-        case 'Below 1000':
-          return [0, 1000];
-        case '1000 - 5000':
-          return [1000, 5000];
-        case '5000 - 10000':
-          return [5000, 10000];
-        case 'Above 10000':
-          return [10000, Infinity];
+        case 'Below 30k':
+          return [0, 30];
+        case '30k - 50k':
+          return [30, 50];
+        case '50k - 1million':
+          return [50, 100];
+        case 'Above 1million':
+          return [100, Infinity];
         default:
           return [0, Infinity];
       }
@@ -251,9 +251,6 @@ p{
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-
-
 
   </style>
   

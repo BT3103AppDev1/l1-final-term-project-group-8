@@ -57,8 +57,8 @@
 
     .overlay {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 0.5em;
+    right: 1.5em;
   }
     
   
