@@ -16,7 +16,7 @@
           </div>
           <div class="instruction"> 
             <h3>Translate</h3>
-            <p>Choose your preferred language and enjoy the novel that is automated translated</p>
+            <p>Choose your preferred language and enjoy the novel which will be automatedly translated</p>
           </div>
           <div class="instruction">
             <h3>Save</h3>
