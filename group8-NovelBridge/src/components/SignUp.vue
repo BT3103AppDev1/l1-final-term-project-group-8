@@ -29,7 +29,14 @@
         <input type="password" id="confirm-password" v-model="user.confirmPassword" placeholder="Confirm Password" required>
       </div>
       <div class="error-message">{{error}}</div>
-      <button type="submit">Sign Up</button>
+      <button class="submit-btn" type="submit">Sign Up</button>
+      <h5> OR </h5>
+      <div class="google-signin">
+        <button @click="signInWithGoogle">
+         <img src="@/assets/google.png" alt="Google logo"/>
+          Sign in with Google
+        </button>
+      </div>
     </form>
   </div>
 </template>
@@ -37,7 +44,7 @@
 <script>
 import firebaseApp from "@/firebase";
 import {getFirestore} from "firebase/firestore"
-import { getAuth, createUserWithEmailAndPassword} from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword,GoogleAuthProvider, signInWithPopup} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
 const db = getFirestore(firebaseApp)
@@ -90,8 +97,39 @@ export default {
         this.error = "An error occurred. Please try again later.";
       }
     }
-  }
-  }}
+  },
+  signInWithGoogle() {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          // This gives you a Google Access Token which you can use to access the Google API.
+          // const token = result.credential.accessToken;
+          // The signed-in user info.
+          const user = result.user;
+          
+          // You might want to create or update the user document in Firestore
+          // If a document with the UID already exists, it won't be overwritten due to `merge: true`.
+          setDoc(doc(db, "users", user.uid), {
+            email: user.email,
+            // You can store additional user information here
+          }, { merge: true });
+
+          console.log('Google sign-in successful');
+          this.$router.push({path:"/userprofile"});
+        }).catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          const credential = GoogleAuthProvider.credentialFromError(error);
+          console.error(errorCode, errorMessage, email, credential);
+          this.error = "An error occurred with Google Sign-In. Please try again.";
+        });
+    },
+  },
+}
 </script>
 
 <style scoped>
@@ -157,7 +195,31 @@ label{
 input::placeholder{
     text-indent: 3px;
 }
-button{
+
+.google-signin img {
+  width:30px;
+  height:27px;
+  margin-right: 8px;
+}
+
+.google-signin button {
+  display: flex; /* Use flexbox */
+  align-items: center; /* Align items vertically */
+  justify-content: center; /* Align items horizontally */
+  width: 180px;
+  height: 35px; /* Adjust height as needed */
+  border: none;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 3%;
+  margin-left:16%;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  cursor: pointer; /* Makes it clear the button is clickable */
+  transition: background-color 0.3s;
+}
+
+.submit-btn{
     width:230px;
     height:30px;
     margin-top:8%;

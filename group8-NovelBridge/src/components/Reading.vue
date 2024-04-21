@@ -463,7 +463,7 @@ p {
   display:flex;
   flex-direction:column;
   justify-content: space-around;
-  gap:15px;
+  gap:10px;
   align-items:center;
   margin-left:85%; /* Aligns vertically in the center */
 }
