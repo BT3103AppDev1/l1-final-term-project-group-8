@@ -12,10 +12,10 @@
             <h1 id="title">Chapter {{ chapter }}</h1>
             <br>
             <div id="text">
-                <p v-for="(paragraph, index) in paragraphs" :key="index" v-bind:style="{ fontSize: this.fontSize + 'px' }">
-                    {{ paragraph }}
-                </p >
-            </div>
+  <p v-for="(paragraph, index) in paragraphs" :key="index" v-bind:style="{ fontSize: fontSize + 'px' }">
+    <span v-html="decodeHtml(paragraph)"></span>
+  </p>
+</div>
             <br>
             <div id="footer_pane">
                 <button id="gotoprevious" @click="goToPreviousChapter" :disabled="chapter_num === 1">Prev</button>
@@ -92,8 +92,13 @@ export default {
     },
     computed: {
         paragraphs() {
-            return this.chapter_data.split(/\r?\n/).filter(paragraph => paragraph.length > 0);
-        }
+    if (this.translatedText) {
+      // If translatedText contains newline characters to indicate paragraphs
+      return this.translatedText.split(/\n\n+/);
+    }
+    // Fall back to original text paragraphs if no translation is available
+    return this.chapter_data.split(/\r?\n/);
+  }
     },
     created(){
         if (this.$route.params.name) {
@@ -121,6 +126,22 @@ export default {
     },
 
     methods: {
+        decodeHtml(html) {
+    var textArea = document.createElement('textarea');
+    textArea.innerHTML = html;
+    return textArea.value;
+  },
+  postProcessTranslation(text) {
+      // Move any quotation marks that are alone on a line back to the end/beginning of the previous/next line
+      text = text.replace(/\n\s*”/g, '”'); // Move closing quotes to end of the previous line
+      text = text.replace(/“\s*\n/g, '“'); // Move opening quotes to beginning of the next line
+
+      // Refine this further based on actual patterns in your text
+      // ...
+
+      return text;
+    },
+
 
         goToHome() {
             this.$router.push({
@@ -180,8 +201,21 @@ translateText(text, userLanguage) {
         target: userLanguage,
       })
       .then(response => {
-        this.chapter_data = response.data.data.translations[0].translatedText;
-      })
+    let translatedTextWithParagraphs = response.data.data.translations[0].translatedText;
+
+    // For languages like Chinese and Japanese, split the text by full stop characters used in these languages.
+    if(userLanguage === 'zh' || userLanguage === 'ja') {
+      // The regular expression \u3002 is the Unicode for the "。" full stop character
+      // used in Chinese and Japanese. The same for \uff1f for the "？" question mark.
+      translatedTextWithParagraphs = translatedTextWithParagraphs.replace(/(\u3002|\uff1f|\uff01)/g, "$1\n\n");
+    } else {
+      // For other languages, assuming sentences end with a period followed by a space.
+      translatedTextWithParagraphs = translatedTextWithParagraphs.replace(/\. /g, '.\n\n');
+    }
+    translatedTextWithParagraphs = this.postProcessTranslation(translatedTextWithParagraphs);
+
+    this.translatedText = translatedTextWithParagraphs;
+  })
       .catch(error => {
         console.error('Error translating text:', error);
       });
