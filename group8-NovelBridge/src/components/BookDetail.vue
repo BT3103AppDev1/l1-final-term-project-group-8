@@ -183,42 +183,64 @@ export default {
 
     async readBook() {
     const db = getFirestore(firebaseApp);
-    const bookId = this.book.id; // Assuming this.book.id is already set
-    const userId = this.userID;
-    const userDocRef = doc(db, "users", userId);
+    const bookId = this.book.id; // Ensuring this.book.id is already set
+
+    // If no user is logged in, directly navigate to the Reading Panel
+    if (!this.userID) {
+        console.log("No user logged in, reading as guest.");
+        this.$router.push({
+            name: 'ReadingPanel',
+            params: {
+                bookId: bookId,
+                chapter: 1, // Start from the first chapter for guests
+                name: this.book.title,
+                userId: -1
+            }
+        });
+        return;
+    }
+
+    // Logic for logged-in users
+    const userDocRef = doc(db, "users", this.userID);
     const userDocSnap = await getDoc(userDocRef);
     if (userDocSnap.exists()) {
-      const userData = userDocSnap.data();
-      let { Unread, Ongoing, Progress } = userData;
-      // Determine the chapter to start reading from
-      let chapterToStart = Progress && Progress[bookId] ? Progress[bookId] : 1;
-      // Update Progress with the starting chapter
-      const newProgress = { ...Progress, [bookId]: chapterToStart };
-      await updateDoc(userDocRef, {
-        Progress: newProgress
-      });
-      console.log(`Progress updated to start at chapter ${chapterToStart} for bookId ${bookId}.`);
-      // Add to Ongoing if not already included
-      if (!Ongoing.includes(bookId) && Unread.includes(bookId)) {
+        const userData = userDocSnap.data();
+        let { Unread, Ongoing, Progress } = userData;
+
+        // Determine the chapter to start reading from
+        let chapterToStart = Progress && Progress[bookId] ? Progress[bookId] : 1;
+
+        // Update Progress with the starting chapter
+        const newProgress = { ...Progress, [bookId]: chapterToStart };
         await updateDoc(userDocRef, {
-          Ongoing: arrayUnion(bookId), Unread: arrayRemove(bookId)
+            Progress: newProgress
         });
-        console.log(`Book ID ${bookId} added to Ongoing.`);
-      }
-      this.$router.push({
-          name: 'ReadingPanel',
-          params: {
-            name: this.book.title,
-            chapter: chapterToStart,
-            bookId: this.book.id,
-            userId: this.userID
-          }
+
+        console.log(`Progress updated to start at chapter ${chapterToStart} for bookId ${bookId}.`);
+
+        // Add to Ongoing if not already included
+        if (!Ongoing.includes(bookId) && Unread.includes(bookId)) {
+            await updateDoc(userDocRef, {
+                Ongoing: arrayUnion(bookId),
+                Unread: arrayRemove(bookId)
+            });
+            console.log(`Book ID ${bookId} added to Ongoing.`);
+        }
+
+        this.$router.push({
+            name: 'ReadingPanel',
+            params: {
+                name: this.book.title,
+                chapter: chapterToStart,
+                bookId: bookId,
+                userId: this.userID
+            }
         });
-      } else {
+    } else {
         console.error("Error in fetching user data");
-      }
-      
-    },
+    }
+},
+
   
 
     async startReadingChapter(chapterNumber) {
