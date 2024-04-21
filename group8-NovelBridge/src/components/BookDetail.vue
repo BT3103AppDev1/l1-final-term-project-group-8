@@ -243,14 +243,33 @@ export default {
 
   
 
-    async startReadingChapter(chapterNumber) {
-      const db = getFirestore(firebaseApp);
-      const bookId = this.$route.params.id;
-      const userId = this.userID;
-      const userDocRef = doc(db, "users", userId);
-      const userDocSnap = await getDoc(userDocRef);
+async startReadingChapter(chapterNumber) {
+    const db = getFirestore(firebaseApp);
+    const bookId = this.$route.params.id; // Ensure this value is not undefined
 
-      if (userDocSnap.exists()) {
+    if (!bookId) {
+        console.error("Book ID is undefined.");
+        return; // Early return if bookId is not available
+    }
+
+    if (!this.userID) {
+        // Handle reading for non-signed in users
+        this.$router.push({
+            name: 'ReadingPanel',
+            params: {
+                name: this.book.title,
+                chapter: chapterNumber,
+                bookId: bookId,
+                userId: -1
+            }
+        });
+        return;
+    }
+
+    const userDocRef = doc(db, "users", this.userID);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
         let { Unread, Ongoing, Progress } = userData;
 
@@ -269,21 +288,20 @@ export default {
           console.log(`Book ID ${bookId} added to Ongoing.`);
         }
 
-        // Navigate to the ReadingPanel with the selected chapter
         this.$router.push({
           name: 'ReadingPanel',
           params: {
             name: this.book.title,
             chapter: chapterNumber,
-            bookId: this.book.id,
-            userId: this.userID,
+            bookId: bookId,
+            userId: this.userID
           }
         });
-      } else {
+    } else {
         console.error("Error in fetching user data");
-      }
-      
-    },
+    }
+},
+
 
     async toggleBookmark() {
 
