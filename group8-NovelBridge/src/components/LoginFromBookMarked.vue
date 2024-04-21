@@ -7,7 +7,7 @@
     <button class="bookmark-btn" @click="goToLogIn">
         Log in to Novel Bridge
     </button>
-    </div> 
+    </div> <br><br>
 </template>
 
 <script>

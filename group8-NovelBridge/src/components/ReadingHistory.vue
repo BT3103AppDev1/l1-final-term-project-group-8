@@ -8,7 +8,7 @@
           <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
             <img :src="book.cover" :alt="book.title" class="book-cover" />
           </router-link>
-          <router-link :to="{ name: 'BookDetail', params: { id: book.id }}">
+          <router-link :to="{ name: 'BookDetail', params: { id: book.id }}" class="book-title">
             {{ book.title }}
           </router-link>
         </div>
@@ -137,4 +137,13 @@ import Bookmarked from '@/Views/BookMarked.vue';
   color: black; /* Set text color to black */
   margin: 0; /* Reset margin */
 }
+
+.book-title {
+    color: black; 
+    text-decoration: none;
+  }
+
+  .book-title:hover {
+    text-decoration: underline;
+  }
 </style>

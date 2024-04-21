@@ -16,7 +16,7 @@
         </ul>
         <UserProfileMenu @editProfile="showEditProfile = true" />
         <EditProfile v-if="showEditProfile" @close="showEditProfile = false" />
-        <button @click="signOut" class="logout-btn" >Log out</button>
+        <button @click="signOut" class="logout-btn" >LogOut</button>
       </div>
     </div>
   </template>
