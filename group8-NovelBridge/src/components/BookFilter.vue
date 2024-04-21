@@ -45,7 +45,7 @@ export default {
       activeCategory: 'All',
       wordCounts: ['All', 'Below 30k', '30k - 50k', '50k - 1million', 'Above 1million'],
       activeWordCounts: 'All',
-      numbersOfViews: ['All', 'Below 1000', '1000 - 5000', '5000 - 10000', 'Above 10000'],
+      numbersOfViews: ['All', 'Below 30k', '30k - 50k', '50k - 1million', 'Above 1million'],
       activeNumberOfViews: 'All'
     };
   },

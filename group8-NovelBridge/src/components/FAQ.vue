@@ -100,7 +100,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
   
   .faq-icon {
     transition: transform 0.3s ease; /* Smooth transition for icon rotation */
