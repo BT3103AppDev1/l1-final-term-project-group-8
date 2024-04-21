@@ -18,6 +18,7 @@ import LoginFromBookMarked from '@/components/LoginFromBookMarked.vue'
 import About from '@/components/About.vue'
 import AboutPage from '@/Views/AboutPage.vue'
 import FAQPage from '@/Views/FAQPage.vue'
+import ResetPassword from '@/components/ResetPassword.vue'
 
 
 const routes = [
@@ -132,6 +133,11 @@ const routes = [
         path: '/faq',
         name: 'FAQ',
         component: FAQPage,
+      },
+      {
+        path: '/resetpassword',
+        name: 'ResetPassword',
+        component: ResetPassword,
       }
 
       
