@@ -38,16 +38,16 @@
             Preferred Language:
           </label>
             <select v-model="user.language" class="custom-select">
-              <option value="en">English</option>
-              <option value="zh">中文</option>
-              <option value="ja">日本語</option>
-              <option value="es">Español</option>
-              <option value="fr">Français</option>
-              <option value="de">Deutsch</option>
-              <option value="it">Italiano</option>
-              <option value="pt">Português</option>
-              <option value="ru">Русский</option>
-              <option value="ko">한국어</option>
+              <option>English</option>
+              <option>中文</option>
+              <option>日本語 </option>
+              <option>Español</option>
+              <option>Français</option>
+              <option>Deutsch</option>
+              <option>Italiano</option>
+              <option>Português</option>
+              <option>Русский</option>
+              <option>한국어</option>
               <!-- ... other languages ... -->
             </select>
             </div>
