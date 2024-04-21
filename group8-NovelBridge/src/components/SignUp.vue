@@ -31,12 +31,9 @@
       <div class="error-message">{{error}}</div>
       <button class="submit-btn" type="submit">Sign Up</button>
       <h5> OR </h5>
-      <div class="google-signin">
-        <button @click="signInWithGoogle">
-         <img src="@/assets/google.png" alt="Google logo"/>
-          Sign in with Google
-        </button>
-      </div>
+      <router-link to="/login" class="google-link">
+          Sign in with Google?
+      </router-link>
     </form>
   </div>
 </template>
@@ -78,7 +75,12 @@ export default {
         then((userCredential) => {
           const userInfo = {
             email:this.user.email,
-            password: this.user.password
+            password: this.user.password,
+            Favourite: [],
+            Completed: [],
+            Ongoing: [],
+            Unread: [],
+            Progress:[],
           }
           console.log('User created');
           this.$router.push({path:"/userprofile"})
@@ -98,7 +100,7 @@ export default {
       }
     }
   },
-  signInWithGoogle() {
+  /*signInWithGoogle() {
       const provider = new GoogleAuthProvider();
       signInWithPopup(auth, provider)
         .then((result) => {
@@ -111,6 +113,11 @@ export default {
           // If a document with the UID already exists, it won't be overwritten due to `merge: true`.
           setDoc(doc(db, "users", user.uid), {
             email: user.email,
+            Favourite: [],
+            Completed: [],
+            Ongoing: [],
+            Unread: [],
+            Progress:[],
             // You can store additional user information here
           }, { merge: true });
 
@@ -127,7 +134,7 @@ export default {
           console.error(errorCode, errorMessage, email, credential);
           this.error = "An error occurred with Google Sign-In. Please try again.";
         });
-    },
+    },*/
   },
 }
 </script>
@@ -167,6 +174,11 @@ p {
     font-size:18px;
     font-weight:bolder;
 }
+.google-link{
+  color:#FF6E05;
+  font-size:13px;
+}
+
 .link{
   color:#FF6E05;
   font-size:10px;

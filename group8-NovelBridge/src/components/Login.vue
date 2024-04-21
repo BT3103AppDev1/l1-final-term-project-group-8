@@ -40,7 +40,7 @@
 <script>
 import firebaseApp from "@/firebase";
 import {getFirestore} from "firebase/firestore"
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc} from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup} from "firebase/auth";
 
 const db = getFirestore(firebaseApp);
@@ -86,25 +86,34 @@ export default {
                 }
             }
         },
-        signInWithGoogle() {
+        async signInWithGoogle() {
           const provider = new GoogleAuthProvider();
-          signInWithPopup(auth, provider)
-            .then((result) => {
-              // This gives you a Google Access Token which you can use to access the Google API.
-              // const token = result.credential.accessToken;
-              // The signed-in user info.
-              const user = result.user;
-              
-              // You might want to create or update the user document in Firestore
-              // If a document with the UID already exists, it won't be overwritten due to `merge: true`.
-              setDoc(doc(db, "users", user.uid), {
+          try {
+            const result = await signInWithPopup(auth, provider);
+            // The signed-in user info.
+            const user = result.user;
+            const userDocRef = doc(db, "users", user.uid);
+            
+            // Check if the user document already exists
+            const docSnap = await getDoc(userDocRef);
+            if (!docSnap.exists()) {
+              this.$router.push({path:"/userprofile"});
+              // Document does not exist, it's a new user
+              await setDoc(userDocRef, {
                 email: user.email,
+                Favourite: [],
+                Completed: [],
+                Ongoing: [],
+                Unread: [],
+                Progress: {},
                 // You can store additional user information here
-              }, { merge: true });
+              });
+              return;
+            }
 
               console.log('Google sign-in successful');
               this.$router.push({path:"/"});
-            }).catch((error) => {
+            } catch(error) {
               // Handle Errors here.
               const errorCode = error.code;
               const errorMessage = error.message;
@@ -114,7 +123,7 @@ export default {
               const credential = GoogleAuthProvider.credentialFromError(error);
               console.error(errorCode, errorMessage, email, credential);
               this.error = "An error occurred with Google Sign-In. Please try again.";
-            });
+            };
         },
       },
     }
