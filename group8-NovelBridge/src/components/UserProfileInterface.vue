@@ -12,7 +12,9 @@
           <li><router-link to="/favourite" class="header-link" >Favourite</router-link></li>
           <li><router-link to="/bookmarked" class="header-link" >Bookmarked</router-link></li>
           <li><router-link to="/readingHistory" class="header-link" >Reading History</router-link></li>
-          <li>Share the website with friends</li>
+          <li>
+            <button @click="copyLink" class="button-link">Share the website with friends</button>
+          </li>
         </ul>
         <UserProfileMenu @editProfile="showEditProfile = true" />
         <EditProfile v-if="showEditProfile" @close="showEditProfile = false" />
@@ -69,6 +71,17 @@
           });
       },
     methods: {
+      copyLink() {
+        const homepageUrl = this.$router.resolve({ name: 'Homepage' }).href;
+        const el = document.createElement('textarea'); 
+        el.value = window.location.origin + homepageUrl;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert('Link copied to clipboard!');  // Optionally show a message
+      },
+
       goToHomePage() {
       this.$router.push('/');
       },
@@ -174,7 +187,28 @@
     .header-link:hover {
       color: rgb(244, 161, 67); /* Color when hovered */
     }
-    
+
+    .header-link {
+    text-decoration: none;
+    color: black;
+    background: none; /* Ensure there's no background if it's set by default */
+    border: none; /* Removes the border */
+    cursor: pointer; /* Makes it clear it's clickable */
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  }
+  
+
+  .button-link {
+    font-size: 15px;
+    background-color: white;
+    border: none;
+    margin-left: 0;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  }
+
+  .button-link:hover {
+    color: rgb(244, 161, 67); /* Consistent hover effect with the logout button */
+  }
     .user-profile-overlay {
       display: flex;
       justify-content: center;
