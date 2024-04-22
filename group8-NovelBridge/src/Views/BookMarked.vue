@@ -1,5 +1,6 @@
-<template>
+<template>  
     <LayoutHeader/>
+    <div class="main-content">
     <div v-if = "isLoggedIn" class="status-bar">
         <router-link to="/unread" class="status-link" active-class="active">Unread</router-link>
         <router-link to="/ongoing" class="status-link" active-class="active">Ongoing</router-link>
@@ -11,7 +12,9 @@
     <div>
         <router-view/>
     </div>
+  </div>
     <Footer></Footer>
+
   </template>
   
   <script>
@@ -47,6 +50,17 @@
   </script>
   
   <style scoped>
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+footer {
+  flex-shrink: 0;
+}
+  
   .status-bar{
     display:flex;
     gap: 40px;
@@ -67,4 +81,5 @@
     color: #EC9006;
     text-decoration: underline;
   }
+
   </style>

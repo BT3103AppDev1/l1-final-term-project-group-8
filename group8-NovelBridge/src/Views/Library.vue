@@ -1,6 +1,7 @@
 <template>
     <LayoutHeader />
     <!-- BookFilter component for filtering books -->
+    <div class="main-content">
     <BookFilter :categories="categories" @apply-filter="applyFilter" class="category-bar" />
     <!-- Display filtered books -->
     <div class="books-grid">
@@ -16,6 +17,7 @@
       </div>
     </div>
     <router-view/>
+    </div>
     <Footer></Footer>
   </template>
   
@@ -161,6 +163,12 @@
   </script>
   
   <style scoped>
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
  .category-bar {
   display: flex;
   justify-content: center; /* Center the category bar */

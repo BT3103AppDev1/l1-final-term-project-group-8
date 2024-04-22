@@ -49,6 +49,7 @@ const limitedBooks = books.slice(0, 7);*/
 </script>
 
 <style scoped>
+
 .main-content {
   display: flex;
 }
