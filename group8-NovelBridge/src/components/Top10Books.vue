@@ -49,7 +49,6 @@ export default {
       async fetchBooks() {
         const db = getFirestore(firebaseApp)
         const queryBooks = await getDocs(collection(db, "Books"));
-        console.log("fetched",queryBooks.docs)
         this.books = queryBooks.docs.map(doc => {
           const docData = doc.data();
           return { 

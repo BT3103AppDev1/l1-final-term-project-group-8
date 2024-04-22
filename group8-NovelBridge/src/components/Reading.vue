@@ -72,7 +72,7 @@ export default {
     },
     props: {
         name : String,
-        chapter: String
+        chapter: String,
     },
     data() {
       return {
@@ -84,9 +84,10 @@ export default {
         isBookmarked: false,
         isFavourite: false,
         translatedText: '',
+        fontSize: 16,
+        totalChapters:0,
         bookId: '',
-        userid:'',
-        fontSize: 16
+        userId: '',
 
       }
     },
@@ -103,8 +104,6 @@ export default {
     created(){
         if (this.$route.params.name) {
             this.bookName = this.$route.params.name;
-            console.log(this.bookName);
-            console.log("tryout");
             this.bookId = this.$route.params.bookId;
             this.userId = this.$route.params.userId;
             
@@ -116,7 +115,6 @@ export default {
         this.chapter_num = this.$route.params.chapter;//this.$route.params.chapter;
         const storage = getStorage(firebaseApp);
         const novelsRef= storageRef(storage, '/Novels/' + this.bookName);
-        console.log(this.chapter_num);
 
         listAll(novelsRef).then((result) => {
             this.files = result.items.filter((item) => item.name.endsWith(".txt"));
@@ -166,7 +164,10 @@ export default {
     } else {
       console.log("User document not found, proceeding with default language.");
     }
-    
+    listAll(chaptersRef).then((result) => {
+      this.files = result.items.filter((item) => item.name.endsWith(".txt"));
+      this.totalChapters = this.files.length;
+    });
     const result = await listAll(chaptersRef);
     const chapterFileRef = result.items.find(itemRef => itemRef.name.includes(`Chapter ${this.chapter_num}`));
     
@@ -174,8 +175,6 @@ export default {
       const url = await getDownloadURL(chapterFileRef);
       const response = await fetch(url);
       let text = await response.text();
-      console.log(userLanguage);
-      // Check user's preferred language
       if (userLanguage && userLanguage !== 'en') {
         await this.translateText(text, userLanguage);
       } else {
@@ -391,13 +390,10 @@ translateText(text, userLanguage) {
     },
 
     async mounted() {
-        console.log(this.userId)
         const db = getFirestore(firebaseApp);
         if (this.userId) {
                 const userDocRef = doc(db, "users", this.userId);
                 const userDocSnap = await getDoc(userDocRef);
-                console.log(this.isFavourite)
-
                 if (userDocSnap.exists()) {
                     const userData = userDocSnap.data();
                     const { Unread, Ongoing, Completed, Favourite } = userData;
@@ -406,7 +402,6 @@ translateText(text, userLanguage) {
                 } else {
                     console.error("Error fetching user details.");
                 }
-                console.log(this.isFavourite)
         }
 
     }

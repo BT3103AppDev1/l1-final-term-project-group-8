@@ -1,5 +1,5 @@
 <template>
-    <LayoutHeader @search-input="handleSearch" />
+    <LayoutHeader/>
     <div v-if = "isLoggedIn" class="status-bar">
         <router-link to="/unread" class="status-link" active-class="active">Unread</router-link>
         <router-link to="/ongoing" class="status-link" active-class="active">Ongoing</router-link>
@@ -36,7 +36,6 @@
     created() {
       const auth = getAuth();
       const user = auth.currentUser;
-      console.log ("User info", user)
       // Listen for authentication state changes
       onAuthStateChanged(auth, (user) => {
           if (user) {
