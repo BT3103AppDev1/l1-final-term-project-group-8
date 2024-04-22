@@ -1,4 +1,5 @@
 <template>
+  <div class="app-container">
     <LayoutHeader/>
     <div v-if = "isLoggedIn" class="status-bar">
         <router-link to="/unread" class="status-link" active-class="active">Unread</router-link>
@@ -8,10 +9,11 @@
     <div v-else>
       <LoginFromBookMarked/>
     </div>
-    <div>
-        <router-view/>
-    </div>
+    <main class="main-content">
+      <router-view/>
+    </main>
     <Footer></Footer>
+  </div>
   </template>
   
   <script>
@@ -47,6 +49,17 @@
   </script>
   
   <style scoped>
+    .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .main-content {
+  flex: 1;  /* This makes the main content expand and take up any remaining space */
+  margin-top: 20px; /* Space above main content */
+}
+
   .status-bar{
     display:flex;
     gap: 40px;
