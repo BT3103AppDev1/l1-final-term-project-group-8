@@ -80,14 +80,13 @@ export default {
         // Assuming checkIfBookmarked is a method that checks bookmark status
         this.book.isBookmarked = await this.checkIfBookmarked(this.book.id);
       } else {
-        console.error("No user logged in!")
+        console.log("user has not signed in");
       }
       onAuthStateChanged(auth, user => {
         if (user) {
           this.userID = user.uid;
-          console.log(user.uid);
         } else {
-          console.error("No user logged in!");
+          console.log("user has not signed in");
           
         }
       });
@@ -215,9 +214,6 @@ export default {
         await updateDoc(userDocRef, {
             Progress: newProgress
         });
-
-        console.log(`Progress updated to start at chapter ${chapterToStart} for bookId ${bookId}.`);
-
         // Add to Ongoing if not already included
         if (!Ongoing.includes(bookId) && Unread.includes(bookId)) {
             await updateDoc(userDocRef, {

@@ -62,7 +62,6 @@ export default {
     created() {
         const auth = getAuth();
         const user = auth.currentUser;
-        console.log ("User info", user)
         // Listen for authentication state changes
         onAuthStateChanged(auth, (user) => {
             if (user) {

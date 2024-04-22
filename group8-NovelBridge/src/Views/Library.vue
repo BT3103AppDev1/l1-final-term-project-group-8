@@ -32,7 +32,7 @@
     name: "Library",
     components: {
       LayoutHeader,
-      BookFilter, // Register the BookFilter component
+      BookFilter,
       Footer
     },
     props: {
@@ -57,10 +57,8 @@
       async fetchBooks() {
         const db = getFirestore(firebaseApp)
         const queryBooks = await getDocs(collection(db, "Books"));
-        //console.log("fetched",queryBooks.docs)
         this.allBooks = queryBooks.docs.map(doc => {
           const docData = doc.data();
-          console.log("Data fetched", docData)
           return { 
             id: doc.id,
             title: docData.Title,

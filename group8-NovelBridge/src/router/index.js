@@ -35,7 +35,7 @@ const routes = [
         children: [
           {
             path: '',
-            redirect: '/unread'
+            redirect: { name: 'Unread' } 
           },
           {
             path: '/unread',
