@@ -9,8 +9,7 @@
         <span class="genre-badge">{{ book.category}}</span>
       
         <div class="book-stats">
-          <span class="page-count"><span class="highlighted-number">{{ book.wordCount }}</span> <span class="text-label">words</span></span> |
-          <span><span class="highlighted-number">{{ book.views }}K</span> <span class="text-label">views</span></span>
+          <span class="page-count"><span class="highlighted-number">{{ book.wordCount }}</span> <span class="text-label">words</span></span>
         </div>
       </div>
       
