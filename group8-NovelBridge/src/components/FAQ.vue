@@ -26,12 +26,17 @@
         faqItems: [
           {
             question: 'How do I create an account on the website?',
-            answer: 'To create an account, simply click on the "Sign Up" button on the homepage. Fill in the required information, such as your email address and a password, and click "Sign Up." You will receive a confirmation email to activate your account.',
+            answer: 'To create an account, simply click on the "Sign Up" button on the homepage. Fill in the required information, such as your email address and a password, and click "Sign Up."',
+            open: false,
+          },
+          {
+            question: 'What are the benefits of registering for an account on the website?',
+            answer: 'Registering for an account allows you to access exclusive features such as bookmarking and favoriting. Your reading history will also be tracked, and you will be directed to the page you left off at the next time you click the read button.',
             open: false,
           },
           {
             question: 'How do I search for novels on the website?',
-            answer: 'You can search for novels using the search bar located at the top of the website. Simply enter keywords, such as the title, author, or genre of the novel you are looking for, and click the search icon. You can also use the filters and categories provided to narrow down your search results in the Library page.',
+            answer: 'You can search for novels using the search bar located at the top of the website. Simply enter the keyword or title of the novel you are looking for, and click the search icon. You can also use the filters by categories, gender, word count, and number of views provided to narrow down your search results on the Library page.',
             open: false,
           },
           {
@@ -40,15 +45,26 @@
             open: false,
           },
           {
+            question: 'Are there any reading tools available, like text size adjustment?',
+            answer: 'Yes, our reading interface includes several tools to enhance your reading experience. You can adjust the text size, and even change the preferred language according to your preferences',
+            open: false,
+          },
+          {
             question: 'How do I report an issue with a novel or the website?',
             answer: 'If you encounter any issues while reading a novel or navigating the website, please contact our support team by going to the "Contact Us" section. Provide a detailed description of the problem, and we will address it as promptly as possible.',
             open: false,
           },
           {
-            question: 'Can I download novels to read offline?',
-            answer: 'Yes, some of our novels are available for download so that you can enjoy reading them offline. Look for the download icon next to the novel description. Please note that this feature may be available only to registered users or subscribers.',
+            question: 'Can I access the website from multiple devices?',
+            answer: ' Yes, you can access your account and read novels from multiple devices. Your bookmarks and reading progress will be synced across all devices where you are logged in.',
             open: false,
           },
+          {
+            question: 'Is there a limit to how many books I can bookmark',
+            answer: 'No, there is no limit to how many books you can bookmark. Feel free to save as many novels as you like to your for easy access later.',
+            open: false,
+          },
+
           // Add more FAQs as needed
         ],
       };
@@ -63,8 +79,9 @@
   
   <style scoped>
   .faq-container {
-    background:#fff url(https://i.imgur.com/FaNoH6x.png);
-    background-size: 100%;
+    background:#fff url(https://i.imgur.com/FaNoH6x.png) no-repeat center;
+    background-size: cover; /* This ensures the background covers the entire element */
+    background-position: center 10%;
     color: #333; /* Text color */
     padding: 2rem;
     text-align: center;
