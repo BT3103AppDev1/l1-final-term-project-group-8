@@ -9,7 +9,8 @@
         <span class="genre-badge">{{ book.category}}</span>
       
         <div class="book-stats">
-          <span class="page-count"><span class="highlighted-number">{{ book.wordCount }}</span> <span class="text-label">words</span></span>
+          <span class="page-count"><span class="highlighted-number">{{ formatWordCount(book.wordCount) }}</span> <span class="text-label">words</span></span>
+    
         </div>
       </div>
       
@@ -388,6 +389,16 @@ async startReadingChapter(chapterNumber) {
         console.error('User document does not exist');
       }
     },
+
+    formatWordCount(wordcount) {
+      if (wordcount >= 1000000) {
+        return (wordcount / 1000000).toFixed(1) + 'M';
+      } else if (wordcount >= 1000) {
+        return (wordcount / 1000).toFixed(1) + 'K';
+      } else {
+        return wordcount.toString();
+      }
+    },
   }
 }
 </script>
@@ -398,6 +409,7 @@ async startReadingChapter(chapterNumber) {
 .book-container {
   display: flex; /* This will create a flexbox container */
   align-items: start; /* Aligns items to the start of the container */
+  margin-left:0.5%;
   gap: 20px; /* Adjust the gap between the book cover and details */
 }
 
@@ -405,6 +417,7 @@ async startReadingChapter(chapterNumber) {
  .book-cover {
   width: 150px; /* Set the width of the image */
   height: auto;
+
 }
 
 .chapters-list {
@@ -425,17 +438,28 @@ async startReadingChapter(chapterNumber) {
 .genre-badge {
   color: grey;
   border: 1px solid #cccccc; /* Add a light grey border */
-  padding: 5px 10px; /* Add some padding inside the badge */
-  border-radius: 15px; /* Rounded corners for the badge */
+  padding: 5px; /* Add some padding inside the badge */
+  border-radius: 12px; /* Rounded corners for the badge */
   display: inline-block; /* Ensures padding and border-radius are applied */
   margin-top: 5px; /* Optional: adds some space above the badge */
-  font-size: 0.8em; 
+  margin-bottom: 20px;
+  font-size:12px; 
+}
+
+.actions{
+  display: flex;
+  align-items: center; /* Vertically center the items in the container */
+  justify-content: center; /* Align the items to the start of the container */
+  margin-right:50%;;
+  gap: 10px;
 }
 
 .actions button {
-  border-radius: 10px; 
-  width: 120px; 
-  text-align: center; 
+  border-radius: 20px;
+  padding: 5px 10px; /* Use padding to control button size */
+  text-align: center;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  cursor: pointer; 
 }
 
 .read-btn:hover {
@@ -444,10 +468,16 @@ async startReadingChapter(chapterNumber) {
 }
 
 .read-btn {
+    background-image:linear-gradient(#FF6E05,#FF9E44, #F8AF40);
+    margin-right:2%;
+    font-weight: bolder;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
     border: none; 
     margin-right: 10px;
-    width: 30px;
-    background-color: rgba(244, 222, 184, 0.769);
+    width: 100px;
+    height:29px;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
@@ -464,7 +494,7 @@ async startReadingChapter(chapterNumber) {
 }
 
 .highlighted-number {
-  font-size: 25px; /* Adjust the font size as needed */
+  font-size: 20px; /* Adjust the font size as needed */
   color: black; /* Ensure the numbers are black */
 }
 
@@ -478,16 +508,14 @@ async startReadingChapter(chapterNumber) {
   height: 35px;
 }
 .favourite-btn {
-  background-color: transparent; 
-  border: none; 
+  display: flex; /* Makes the button a flex container */
+  justify-content: center; /* Centers the icon horizontally */
+  align-items: center; /* Centers the icon vertically */
+  padding: 10px; /* Matches padding of other buttons */
+  background-color: transparent;
+  border: none;
+  width: auto; /* 
 }
-
-.about-content {
-background: #F4F2EC;
-margin-top: 20px; 
-padding: 15px;
-}
-
 .book-description {
   
 }
@@ -508,6 +536,10 @@ justify-content: flex-start; /* Aligns items to the start of the container */
 
 .chapter-item:hover {
   background-color: #f0f0f0; /* A light grey background on hover */
+}
+
+.about-content {
+padding: 10px;
 }
 
 </style>

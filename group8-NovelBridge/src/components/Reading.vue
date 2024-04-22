@@ -7,7 +7,7 @@
 
     <div id="reading_pane">
             <br>
-            <div id="gotohome" @click="goToHome">{{ bookName }}</div>
+            <div id="gotohome" @click="goToHome">< {{ bookName }}</div>
             <br>
             <h1 id="title">Chapter {{ chapter }}</h1>
             <br>
@@ -290,6 +290,12 @@ translateText(text, userLanguage) {
             const db = getFirestore(firebaseApp);
             const bookId = this.bookId; 
             const userId = this.userId;
+            if (userId === '-1') {
+                this.$router.push({ 
+                name: 'Bookmarked',
+                })
+                console.log("directed to bookmarked")
+            } 
             const userDocRef = doc(db, "users", userId);
             const userDocSnap = await getDoc(userDocRef);
             console.log('1')
@@ -330,6 +336,14 @@ translateText(text, userLanguage) {
             const db = getFirestore(firebaseApp);
             const bookId = this.bookId; // Assuming this.book.id is already set
             const userId = this.userId;
+            console.log(userId);
+            if (userId === '-1') {
+                this.$router.push({ 
+                name: 'Bookmarked',
+                })
+                console.log("directed to bookmarked")
+            }
+            else {
             const userDocRef = doc(db, "users", userId);
             const userDocSnap = await getDoc(userDocRef);
 
@@ -362,10 +376,10 @@ translateText(text, userLanguage) {
                     this.isBookmarked = false;
                     }
             } else {
-                console.error('User document does not exist');
+                console.log('User document does not exist');
             }
-        },
-
+        }},
+        
         increaseFontSize() {
             this.fontSize = this.fontSize+1;
         },
