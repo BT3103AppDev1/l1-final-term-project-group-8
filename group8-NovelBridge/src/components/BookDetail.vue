@@ -1,5 +1,7 @@
 <template>
+  <div class="app-container">
   <LayoutHeader></LayoutHeader><br>
+  <main class="main-content">
   <div class="book-detail">
     <div class="book-container">
       <img :src="book.cover" alt="bookcover" class="book-cover" />
@@ -52,7 +54,9 @@
 
     </div>
   </div>
+</main>
   <Footer></Footer>
+</div>
 </template>
 
 <script>
@@ -406,6 +410,16 @@ async startReadingChapter(chapterNumber) {
 
 <style scoped>
 
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .main-content {
+  flex: 1;
+  margin-top: 20px; /* Space above main content */
+  }
 .book-container {
   display: flex; /* This will create a flexbox container */
   align-items: start; /* Aligns items to the start of the container */
