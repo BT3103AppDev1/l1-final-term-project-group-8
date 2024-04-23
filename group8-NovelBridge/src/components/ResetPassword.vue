@@ -26,7 +26,7 @@
   </template>
 
 <script>
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { getAuth, sendPasswordResetEmail, signInWithEmailAndPassword} from "firebase/auth";
 
 
 export default {
@@ -44,22 +44,42 @@ export default {
     methods: {
     async submitForm() {
       const auth = getAuth();
-      sendPasswordResetEmail(auth, this.user.email)
+      // Dummy password to trigger sign-in attempt
+      const dummyPassword = 'password1234';
+      signInWithEmailAndPassword(auth, this.user.email, dummyPassword)
         .then(() => {
-          // Password reset email sent!
-          this.error = '';
-          this.successMessage = 'Email sent! Check inbox for the reset link.';
-          setTimeout(() => {
-            this.$router.push({ name: 'Login' }); // Use the actual name of your login route
-          }, 5000); // 3 seconds delay
+          // If signInWithEmailAndPassword succeeds, it means the user exists, but this should not happen with a dummy password
         })
         .catch((error) => {
-          this.error = error.message;
-          this.successMessage = '';
-        });
+          // Check for the error code that indicates the user does not exist
+          if (error.code === 'auth/user-not-found') {
+            this.error = 'No account found with this email address.';
+            this.successMessage = '';
+          } else if (error.code === 'auth/wrong-password') {
+            // The user exists, trigger the password reset flow
+            this.error = '';
+            sendPasswordResetEmail(auth, this.user.email)
+              .then(() => {
+                // Password reset email sent!
+                this.error = '';
+                this.successMessage = 'Email sent! Check inbox for the reset link.';
+                setTimeout(() => {
+                  this.$router.push({ name: 'Login' }); // Use the actual name of your login route
+                }, 5000); // 3 seconds delay
+              })
+              .catch((error) => {
+                this.error = error.message;
+                this.successMessage = '';
+              });
+            } else {
+              // Handle other errors such as network issues
+              this.error = error.message;
+              this.successMessage = '';
+            }
+          });
+        }
+      },
     }
-  },
-}
 </script>
 
 <style scoped>

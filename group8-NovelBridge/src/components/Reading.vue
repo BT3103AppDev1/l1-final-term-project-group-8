@@ -149,79 +149,76 @@ export default {
         },
     
         async getChapterData() {
-  this.chapter_data = '';
-  const storage = getStorage(firebaseApp);
-  const chaptersRef = storageRef(storage, `Novels/${this.bookName}`);
-  
-  try {
-    const db = getFirestore(firebaseApp);
-    const userDocRef = doc(db, "users", this.userId); // Assuming you have this.userId set correctly
-    const userDocSnap = await getDoc(userDocRef);
-    
-    let userLanguage = 'en'; // Default language
-    if (userDocSnap.exists()) {
-      userLanguage = userDocSnap.data().language || 'en'; // or whatever field you have for language preference
-    } else {
-      console.log("User document not found, proceeding with default language.");
-    }
-    listAll(chaptersRef).then((result) => {
-      this.files = result.items.filter((item) => item.name.endsWith(".txt"));
-      this.totalChapters = this.files.length;
-    });
-    const result = await listAll(chaptersRef);
-    const chapterFileRef = result.items.find(itemRef => itemRef.name.includes(`Chapter ${this.chapter_num}`));
-    
-    if (chapterFileRef) {
-      const url = await getDownloadURL(chapterFileRef);
-      const response = await fetch(url);
-      let text = await response.text();
-      if (userLanguage && userLanguage !== 'en') {
-        await this.translateText(text, userLanguage);
-      } else {
-        this.chapter_data = text;
-      }
-      
-      this.chapter_data = text;
-    } else {
-      console.error(`No file found for Chapter ${this.chapter_num}`);
-    }
-  } catch (error) {
-    console.error("Error fetching chapter data:", error);
-  }
-},
+            this.chapter_data = '';
+            const storage = getStorage(firebaseApp);
+            const chaptersRef = storageRef(storage, `Novels/${this.bookName}`);
+            
+            try {
+                const db = getFirestore(firebaseApp);
+                const userDocRef = doc(db, "users", this.userId); // Assuming you have this.userId set correctly
+                const userDocSnap = await getDoc(userDocRef);
+                
+                let userLanguage = 'en'; // Default language
+                if (userDocSnap.exists()) {
+                userLanguage = userDocSnap.data().language || 'en'; // or whatever field you have for language preference
+                } else {
+                console.log("User document not found, proceeding with default language.");
+                }
+                listAll(chaptersRef).then((result) => {
+                this.files = result.items.filter((item) => item.name.endsWith(".txt"));
+                this.totalChapters = this.files.length;
+                });
+                const result = await listAll(chaptersRef);
+                const chapterFileRef = result.items.find(itemRef => itemRef.name.includes(`Chapter ${this.chapter_num}`));
+                
+                if (chapterFileRef) {
+                const url = await getDownloadURL(chapterFileRef);
+                const response = await fetch(url);
+                let text = await response.text();
+                if (userLanguage && userLanguage !== 'en') {
+                    await this.translateText(text, userLanguage);
+                } else {
+                    this.chapter_data = text;
+                }
+                
+                this.chapter_data = text;
+                } else {
+                console.error(`No file found for Chapter ${this.chapter_num}`);
+                }
+            } catch (error) {
+                console.error("Error fetching chapter data:", error);
+            }
+            },
 
-translateText(text, userLanguage) {
-      const apiKey = import.meta.env.VITE_API_KEY;
-      const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+            translateText(text, userLanguage) {
+                const apiKey = import.meta.env.VITE_API_KEY;
+                const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
 
-      // Make a POST request to the API
-      axios.post(url, {
-        q: text,
-        target: userLanguage,
-      })
-      .then(response => {
-    let translatedTextWithParagraphs = response.data.data.translations[0].translatedText;
+                // Make a POST request to the API
+                axios.post(url, {
+                    q: text,
+                    target: userLanguage,
+                })
+                .then(response => {
+                let translatedTextWithParagraphs = response.data.data.translations[0].translatedText;
 
-    // For languages like Chinese and Japanese, split the text by full stop characters used in these languages.
-    if(userLanguage === 'zh' || userLanguage === 'ja') {
-      // The regular expression \u3002 is the Unicode for the "。" full stop character
-      // used in Chinese and Japanese. The same for \uff1f for the "？" question mark.
-      translatedTextWithParagraphs = translatedTextWithParagraphs.replace(/(\u3002|\uff1f|\uff01)/g, "$1\n\n");
-    } else {
-      // For other languages, assuming sentences end with a period followed by a space.
-      translatedTextWithParagraphs = translatedTextWithParagraphs.replace(/\. /g, '.\n\n');
-    }
-    translatedTextWithParagraphs = this.postProcessTranslation(translatedTextWithParagraphs);
+                // For languages like Chinese and Japanese, split the text by full stop characters used in these languages.
+                if(userLanguage === 'zh' || userLanguage === 'ja') {
+                // The regular expression \u3002 is the Unicode for the "。" full stop character
+                // used in Chinese and Japanese. The same for \uff1f for the "？" question mark.
+                translatedTextWithParagraphs = translatedTextWithParagraphs.replace(/(\u3002|\uff1f|\uff01)/g, "$1\n\n");
+                } else {
+                // For other languages, assuming sentences end with a period followed by a space.
+                translatedTextWithParagraphs = translatedTextWithParagraphs.replace(/\. /g, '.\n\n');
+                }
+                translatedTextWithParagraphs = this.postProcessTranslation(translatedTextWithParagraphs);
 
-    this.translatedText = translatedTextWithParagraphs;
-  })
-      .catch(error => {
-        console.error('Error translating text:', error);
-      });
-    },
-
-
-
+                this.translatedText = translatedTextWithParagraphs;
+            })
+                .catch(error => {
+                    console.error('Error translating text:', error);
+                });
+            },
 
         changeLanguage() {
             this.$router.push({
