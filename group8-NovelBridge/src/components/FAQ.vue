@@ -46,7 +46,7 @@
           },
           {
             question: 'Are there any reading tools available, like text size adjustment?',
-            answer: 'Yes, our reading interface includes several tools to enhance your reading experience. You can adjust the text size, and even change the preferred language according to your preferences',
+            answer: 'Yes, our reading interface includes several tools to enhance your reading experience. You can adjust the text size, and even change the preferred language according to your preferences.',
             open: false,
           },
           {
@@ -60,7 +60,7 @@
             open: false,
           },
           {
-            question: 'Is there a limit to how many books I can bookmark',
+            question: 'Is there a limit to how many books I can bookmark?',
             answer: 'No, there is no limit to how many books you can bookmark. Feel free to save as many novels as you like to your for easy access later.',
             open: false,
           },
