@@ -72,14 +72,13 @@
       },
     methods: {
       copyLink() {
-        const homepageUrl = this.$router.resolve({ name: 'Homepage' }).href;
         const el = document.createElement('textarea'); 
-        el.value = window.location.origin + homepageUrl;
+        el.value = 'https://novel-bridge.web.app';
         document.body.appendChild(el);
         el.select();
         document.execCommand('copy');
         document.body.removeChild(el);
-        alert('Link copied to clipboard!');  // Optionally show a message
+        alert('Link copied to clipboard!');
       },
 
       goToHomePage() {
