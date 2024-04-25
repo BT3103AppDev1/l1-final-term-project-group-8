@@ -88,20 +88,20 @@ export default {
         totalChapters:0,
         bookId: '',
         userId: '',
-
       }
     },
     computed: {
         paragraphs() {
-    if (this.translatedText) {
-      // If translatedText contains newline characters to indicate paragraphs
-      return this.translatedText.split(/\n\n+/);
-    }
-    // Fall back to original text paragraphs if no translation is available
-    return this.chapter_data.split(/\r?\n/);
-  }
+            if (this.translatedText) {
+            // If translatedText contains newline characters to indicate paragraphs
+            return this.translatedText.split(/\n\n+/);
+            }
+            // Fall back to original text paragraphs if no translation is available
+            return this.chapter_data.split(/\r?\n/);
+        }
     },
     created(){
+
         if (this.$route.params.name) {
             this.bookName = this.$route.params.name;
             this.bookId = this.$route.params.bookId;
@@ -126,20 +126,21 @@ export default {
 
     methods: {
         decodeHtml(html) {
-    var textArea = document.createElement('textarea');
-    textArea.innerHTML = html;
-    return textArea.value;
-  },
-  postProcessTranslation(text) {
-      // Move any quotation marks that are alone on a line back to the end/beginning of the previous/next line
-      text = text.replace(/\n\s*”/g, '”'); // Move closing quotes to end of the previous line
-      text = text.replace(/“\s*\n/g, '“'); // Move opening quotes to beginning of the next line
+            var textArea = document.createElement('textarea');
+            textArea.innerHTML = html;
+            return textArea.value;
+        },
 
-      // Refine this further based on actual patterns in your text
-      // ...
+        postProcessTranslation(text) {
+            // Move any quotation marks that are alone on a line back to the end/beginning of the previous/next line
+            text = text.replace(/\n\s*”/g, '”'); // Move closing quotes to end of the previous line
+            text = text.replace(/“\s*\n/g, '“'); // Move opening quotes to beginning of the next line
 
-      return text;
-    },
+            // Refine this further based on actual patterns in your text
+            // ...
+
+            return text;
+        },
 
 
         goToHome() {
@@ -224,8 +225,16 @@ export default {
         changeLanguage() {
             this.$router.push({
             name: 'EditProfile', 
+            query: {
+                returnTo: 'ReadingPanel', // Name of the route to return to
+                name: this.bookName,
+                bookId: this.bookId, // Include all the necessary params
+                chapter: this.chapter_num,
+                userId: this.userId
+            }
             });
         },
+
         async goToNextChapter() {
             this.chapter_num = parseInt(this.chapter_num, 10) + 1;
             console.log(this.chapter_num);
@@ -380,14 +389,13 @@ export default {
             }
         }},
         
-        increaseFontSize() {
-            this.fontSize = this.fontSize+1;
-        },
+            increaseFontSize() {
+                this.fontSize = this.fontSize+1;
+            },
 
-        decreaseFontSize() {
-            this.fontSize = this.fontSize-1;
-        }
-    },
+            decreaseFontSize() {
+                this.fontSize = this.fontSize-1;   
+            },
 
     async mounted() {
         const db = getFirestore(firebaseApp);
@@ -403,9 +411,8 @@ export default {
                     console.error("Error fetching user details.");
                 }
         }
-
     }
-}
+}}
 </script>
 
 <style>
