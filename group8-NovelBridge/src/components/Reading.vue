@@ -113,6 +113,7 @@ export default {
         }
         //this.userId = firebase.auth().currentUser.uid; 
         this.chapter_num = this.$route.params.chapter;//this.$route.params.chapter;
+        console.log(this.chapter_num);
         const storage = getStorage(firebaseApp);
         const novelsRef= storageRef(storage, '/Novels/' + this.bookName);
 
@@ -271,25 +272,27 @@ export default {
         },
 
         async updateUserProgress() {
-            const db = getFirestore(firebaseApp);
-            const userId = this.$route.params.userId;
-            console.log(userId);
-            const userDocRef = doc(db, "users", userId);
-            const userDoc = await getDoc(userDocRef);
-            if (userDoc.exists()) {
-                let progress = userDoc.data().Progress || [];
-                let progressToUpdate = {};
-                if (progress.length > 0) {
-                    progressToUpdate = progress[0];
-                }
-                progressToUpdate[this.bookId] = this.chapter_num;
-                await updateDoc(userDocRef, {
-                    Progress : [progressToUpdate]
-                });
-            } else {
-                console.error("User document does not exist");
-            }
-        },
+    const db = getFirestore(firebaseApp);
+    const userId = this.$route.params.userId;
+    console.log(userId);
+    const userDocRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+        // Retrieve the existing progress map or initialize it if it doesn't exist
+        let progress = userDoc.data().Progress || {};
+
+        // Update the progress for this bookId
+        progress[this.bookId] = this.chapter_num;
+
+        // Update the progress in Firestore
+        await updateDoc(userDocRef, {
+            Progress: progress
+        });
+    } else {
+        console.error("User document does not exist");
+    }
+},
+
         
         async toggleFavourite() {
             console.log('toggleFavourite called');
