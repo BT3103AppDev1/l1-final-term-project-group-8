@@ -117,12 +117,26 @@
             language:this.user.language,
             imageUrl: this.user.imageUrl,
           }, {merge: true});
-  
           console.log('Profile saved')
-          this.$router.push({path:"/"})
+
+          console.log(this.$route.query.name)
+          if (this.$route.query.returnTo) {
+            console.log(this.$route.query.returnTo)
+            this.$router.push({
+              name: this.$route.query.returnTo,
+              params: {
+                name: this.$route.query.name,
+                bookId: this.$route.query.bookId,
+                userId: this.$route.query.userId,
+                chapter: this.$route.query.chapter,
+              }
+            })
+          } else {
+            this.$router.push({ path: "/" }); // Redirect to the homepage if not returning to a specific page
+          }
         } catch (error) {
           this.error = "Error saving profile"
-          console.error(this.error);
+          console.error(error);
         }
       },
   
